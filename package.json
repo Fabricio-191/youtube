@@ -1,0 +1,29 @@
+{
+  "name": "@fabricio-191/yt",
+  "version": "0.0.0",
+  "main": "./src/index.js",
+  "types": "./typings/index.d.ts",
+  "license": "Apache License 2.0",
+  "description": "Get info from youtube videos/playlists easy",
+  "deprecated": false,
+  "keywords": [
+    "youtube",
+    "info",
+    "videos",
+    "playlist"
+  ],
+  "author": "Fabricio-191",
+  "scripts": {
+    "test": "node test/test.js",
+    "eslint": "npx eslint ./src/methods/**.js ./src/utils/**.js --fix",
+    "eslintd": "npx eslint ./typings/index.d.ts  --fix --parser @typescript-eslint/parser"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "4.2.0",
+    "@typescript-eslint/parser": "4.2.0",
+    "babel-eslint": "10.1.0",
+    "eslint": "7.9.0",
+    "typescript": "4.0.3"
+  }
+}
