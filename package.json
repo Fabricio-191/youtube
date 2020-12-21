@@ -1,5 +1,5 @@
 {
-  "name": "@fabricio-191/yt",
+  "name": "@fabricio-191/youtube",
   "version": "0.0.0",
   "main": "./src/index.js",
   "types": "./typings/index.d.ts",
@@ -15,8 +15,7 @@
   "author": "Fabricio-191",
   "scripts": {
     "test": "node test/test.js",
-    "eslint": "npx eslint ./src/methods/**.js ./src/utils/**.js --fix",
-    "eslintd": "npx eslint ./typings/index.d.ts  --fix --parser @typescript-eslint/parser"
+    "eslint": "npx eslint . --ext .js --fix && npx eslint . --ext .ts --parser @typescript-eslint/parser"
   },
   "dependencies": {},
   "devDependencies": {

@@ -1,12 +1,17 @@
-const { getVideo, search, getPlaylist } = require('../src/index.js');
+const YTinfo = require('../src/index.js');
+const fs = require('fs');
+
+YTinfo.setDefaulOptions({ 
+	location: 'AR',
+	language: 'es'
+});
 
 (async () => {
 	let data = {
-		video: await getVideo('https://www.youtube.com/watch?v=H2wCwdHk-ao&list=PLDS0dpumEOi0pu_0pCGqvcaRkxg-o1gqg'),
-		playlist: await getPlaylist('https://www.youtube.com/watch?v=H2wCwdHk-ao&list=PLDS0dpumEOi0pu_0pCGqvcaRkxg-o1gqg'),
-		search: await search('Fazt')
+		video: await YTinfo.getVideo('https://www.youtube.com/watch?v=H2wCwdHk-ao&list=PLDS0dpumEOi0pu_0pCGqvcaRkxg-o1gqg'),
+		playlist: await YTinfo.getPlaylist('https://www.youtube.com/watch?v=H2wCwdHk-ao&list=PLDS0dpumEOi0pu_0pCGqvcaRkxg-o1gqg', { quantity: 'all' }),
+		search: await YTinfo.search('Node.js', { quantity: 5 })
 	};
 
-	require('fs')
-		.writeFileSync('./cosas.json', JSON.stringify(data, null, '\t'));
+	fs.writeFileSync('./results.json', JSON.stringify(data, null, '\t'));
 })();

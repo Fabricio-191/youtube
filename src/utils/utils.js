@@ -2,10 +2,10 @@ const http = require('http'), https = require('https');
 const defaultOptions = {
 	language: 'en',
 	location: 'US',
-	quantity: 100
+	quantity: 0
 };
 
-function fetch(url, options = {}){
+function fetch(url, options){
 	//https://nodejs.org/api/http.html#http_http_request_options_callback
 	const parsedURL = new URL(url);
 
@@ -25,7 +25,7 @@ function fetch(url, options = {}){
 		}
 
 		(parsedURL.protocol === 'https:' ? https : http)
-			.request(url, options, cb)
+			.request(parsedURL, options, cb)
 			.on('error', reject)
 			.end(options.body || '');
 	});
@@ -66,10 +66,10 @@ function getData(body, type){
 	}
 }
 
-async function getContinuation(continuationToken, { INNERTUBE_API_KEY, INNERTUBE_CONTEXT }, isSearch){
+async function getContinuation(token, { INNERTUBE_API_KEY, INNERTUBE_CONTEXT }, isSearch){
 	const POST_BODY = {
 		context: INNERTUBE_CONTEXT, 
-		continuation: continuationToken
+		continuation: token
 	};
 
 	let URL = `https://www.youtube.com/youtubei/v1/${isSearch?'search':'browse'}?key=${INNERTUBE_API_KEY}`;
@@ -81,31 +81,21 @@ async function getContinuation(continuationToken, { INNERTUBE_API_KEY, INNERTUBE
 
 	let data = JSON.parse(body);
 
-	data = (
-		data.onResponseReceivedActions || //playlist
-		data.onResponseReceivedCommands //search
-	);
-
-	return data[0]
-		.appendContinuationItemsAction
+	return (
+		isSearch ? 
+			data.onResponseReceivedCommands :
+			data.onResponseReceivedActions
+	)[0].appendContinuationItemsAction
 		.continuationItems;
 }
 
-
 module.exports = {
-	getData, fetch,
-	parseOptions, defaultOptions,
-	getID, getContinuation, parseText, extractInt,
+	getData, fetch, getContinuation,
+	
+	parseText, extractInt,
+
+	getID, parseOptions, defaultOptions,
 };
-
-function getID(string, playlist){
-	let url = new URL(string);
-	let ID = url.searchParams.get(
-		playlist ? 'list' : 'v'
-	);
-
-	return ID;
-}
 
 function parseText(obj = ''){
 	if(obj.simpleText) return obj.simpleText;
@@ -128,17 +118,43 @@ function extractInt(str){
 	);
 }
 
-function parseOptions(obj = {}){
-	if(typeof obj !== 'object'){
-		throw new Error('');
-	}
-	let options = Object.assign({}, defaultOptions, obj);
+function getID(string, playlist){
+	let url = new URL(string);
+	let ID = url.searchParams.get(
+		playlist ? 'list' : 'v'
+	);
 
-	return {
-		quantity: options.quantity,
-		query: {
-			gl: options.location,
-			hl: options.language,
-		}
-	};
+	return ID;
+}
+
+
+function parseOptions(options = {}, type){
+	//types: 1 = video, 2 = playlist, 3 = search
+	if(options === 'all' || typeof options === 'number'){
+		options = { quantity: options };
+	}
+	
+	if(typeof options !== 'object'){
+		throw new Error('The options should be an object');
+	}
+
+	options = Object.assign({}, defaultOptions, options);
+	
+	if(type === 3 && options.quantity === 'all'){
+		console.warn('I hope you know what you are doing when trying to get all the results of a search on youtube');
+	}
+
+	if(options.quantity === 'all'){
+		options.quantity = Infinity;
+	}
+
+	if(typeof options.language !== 'string'){
+		throw new Error('Language option must be a string');
+	}else if(typeof options.location !== 'string'){
+		throw new Error('Location option must be a string');
+	}else if(Math.sign(options.quantity) !== 1){
+		throw new Error("Quantity must be an non-zero positive number or 'all'");
+	}
+
+	return options;
 }

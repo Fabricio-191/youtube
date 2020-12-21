@@ -1,13 +1,13 @@
 const Utils = require('../utils/utils.js');
 const Structures = require('../utils/structures/structures.js');
 
-async function getPlaylist(url, options = {}){
+async function getPlaylist(url, options){
+	options = Utils.parseOptions(options, 2);
 	let playlistId = Utils.getID(url, true);
 	url = 'https://www.youtube.com/playlist?list=' + playlistId;
-	options = Utils.parseOptions(options);
 
 	let body = await Utils.fetch(url, options);
-	let data = Utils.getData(body, 1), ytcfg = Utils.getData(body, 3);
+	let data = Utils.getData(body, 1), YTconfig = Utils.getData(body, 3);
 
 	let videos = data.contents
 		.twoColumnBrowseResultsRenderer.tabs[0]
@@ -25,7 +25,7 @@ async function getPlaylist(url, options = {}){
 			.token;
 
 		let continuation = await Utils.getContinuation(
-			token, ytcfg
+			token, YTconfig
 		);
 
 		videos = videos.concat(continuation);
@@ -57,10 +57,6 @@ async function getPlaylist(url, options = {}){
 }
 
 module.exports = getPlaylist;
-
-getPlaylist('https://www.youtube.com/watch?v=SscXqrrK8dg&list=UU7tD6Ifrwbiy-BoaAHEinmQ&index=41')
-	.then(videos => console.log(videos.videos.length))
-	.catch(console.error);
 	
 function PlaylistVideo({ playlistVideoRenderer }){
 	return {

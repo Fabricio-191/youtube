@@ -2,6 +2,7 @@ const Utils = require('../utils/utils.js');
 const Structures = require('../utils/structures/structures.js');
 
 async function getVideo(url, options){
+	options = Utils.parseOptions(options, 1);
 	let ID = Utils.getID(url);
 
 	let body = await Utils.fetch('https://www.youtube.com/watch?v=' + ID, options);

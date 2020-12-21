@@ -1,8 +1,12 @@
 /*eslint no-unused-vars: "off"*/
 interface Video{
-    
+	title: string;
+		
+	views: Views;
+	duration: Duration;
+	thumbnails: Thumbnails<Thumbnail>;
 
-    channel: Channel;
+	channel: Channel;
 }
 
 interface Channel{
@@ -10,19 +14,52 @@ interface Channel{
 }
 
 interface Views{
+	normal: string;
+	short?: string;
+	number: number;
+
+	toString(): string;
+}
+
+interface Duration{
+	normal: string;
+	long?: string;
+	number: number;
+
+	toString(): string;
+}
+
+interface Thumbnail {
+	url: string;
+	width: number;
+	height: number;
+		
+	toString(): string;
+}
+ 
+interface Thumbnails<Thumbnail> extends Array<Thumbnail>{
+	[index: number]: Thumbnail | undefined;
+	bigger: Thumbnail | null;
+		
+	toString(): string;
+}
+
+interface Playlist{
 
 }
 
-interface Thumbnails extends Array{
-    
+interface Search{
+
 }
 
-declare function getVideoInfo(url: string): Video;
-declare function getPlaylist(url: string): Playlist;
-declare function search(search_query: string): Search;
+declare function getVideo(url: string, options: Options): Video;
+declare function getPlaylist(url: string, options: Options): Playlist;
+declare function search(search_query: string, options: Options): Search;
 
-export = {
-    getVideoInfo,
-    getPlaylist,
-    search
-};
+interface Options{
+	language?: string,
+	location?: string,
+	quantity?: number
+}
+
+declare function setDefaulOptions(options: Options): void;
