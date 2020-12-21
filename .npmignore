@@ -1,6 +1,7 @@
 node_modules/
 package-lock.json
+todo.json
+raw.json
 
 .gitignore
 .eslintrc.json
-.todo

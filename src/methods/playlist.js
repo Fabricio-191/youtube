@@ -64,11 +64,10 @@ function PlaylistVideo({ playlistVideoRenderer }){
 
 		ID: playlistVideoRenderer.videoId,
 		URL: `https://www.youtube.com/watch?v=${this.ID}`,
-
-		thumbnails: new Structures.Thumbnails(playlistVideoRenderer),
-
+		
 		index: Utils.extractInt(playlistVideoRenderer.index),
 
+		thumbnails: new Structures.Thumbnails(playlistVideoRenderer),
 		duration: new Structures.Duration(playlistVideoRenderer),
 	};
 }

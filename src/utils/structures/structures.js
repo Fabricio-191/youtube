@@ -67,7 +67,6 @@ class Duration{
 				this.number = hours * 3600 + minutes * 60 + seconds;
 			}
 		}
-		
 	}
 	normal = null;
 	long = null;
@@ -105,12 +104,27 @@ class Views{
 	}
 }
 
+class Subscribers{
+	constructor(data){
+		this.normal = parseText(data.subscriberCountText);
+		this.number = extractInt(this.normal);
+	}
+	normal = null;
+	number = null;
+
+	toString(){
+		return this.normal;
+	}
+}
+
 function Owner(data){
 	return {
 		name: parseText(data.title),
 		ID: data.navigationEndpoint.browseEndpoint.browseId,
 		URL: 'https://www.youtube.com' + data.navigationEndpoint
 			.browseEndpoint.canonicalBaseUrl,
+
+		subscribers: new Subscribers(data),
 
 		thumbnails: new Thumbnails(data),
 	};
