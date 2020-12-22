@@ -33,24 +33,20 @@ interface Thumbnail {
 	url: string;
 	width: number;
 	height: number;
-		
-	toString(): string;
 }
  
 interface Thumbnails<Thumbnail> extends Array<Thumbnail>{
 	[index: number]: Thumbnail | undefined;
 	bigger: Thumbnail | null;
 		
+	/**
+	 * Returns the URL of the biggest thumbnail
+	 */
 	toString(): string;
 }
 
-interface Playlist{
 
-}
 
-interface Search{
-
-}
 
 declare function getVideo(url: string, options: Options): Video;
 declare function getPlaylist(url: string, options: Options): Playlist;

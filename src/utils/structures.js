@@ -8,7 +8,7 @@ class Thumbnails extends Array{
 			super(...data.thumbnails[0].thumbnails);
 		}
 
-		this.sort((a, b) => a.width - b.width);
+		this.sort((a, b) => b.width - a.width);
 	}
 
 	static get [Symbol.species](){
@@ -117,17 +117,25 @@ class Subscribers{
 	}
 }
 
+class Channel{
+	
+}
+
 function Owner(data){
-	return {
+	let obj = {
 		name: parseText(data.title),
 		ID: data.navigationEndpoint.browseEndpoint.browseId,
 		URL: 'https://www.youtube.com' + data.navigationEndpoint
 			.browseEndpoint.canonicalBaseUrl,
 
-		subscribers: new Subscribers(data),
-
 		thumbnails: new Thumbnails(data),
 	};
+
+	if(data.subscriberCountText){
+		obj.subscribers = new Subscribers(data);
+	}
+
+	return obj;
 }
 
 module.exports = {

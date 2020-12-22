@@ -10,44 +10,47 @@ async function search(search_query, options){
 	let body = await fetch('https://www.youtube.com/results?search_query=' + searchQuery, options);
 	let data = getData(body, 1), YTconfig = getData(body, 3);
 
-	const { contents } = data.search.initialData.contents.twoColumnSearchResultsRenderer
+	const results = {
+		searchQuery: search_query.trim(),
+		encodedSearchQuery: searchQuery,
+		estimatedResults: Number(data.estimatedResults),
+		results: { 
+			videos: [], playlists: [], 
+			channels: [], shelfs: [], 
+			others: [] 
+		},
+	};
+
+	const { contents } = data.contents.twoColumnSearchResultsRenderer
 		.primaryContents.sectionListRenderer;
 
-	let results = contents.find(a => 
-		a.itemSectionRenderer && a.itemSectionRenderer.contents.length > 3
+	if(
+		contents.length === 1 && 
+		contents[0].itemSectionRenderer.contents[0] && 
+		contents[0].itemSectionRenderer.contents[0].backgroundPromoRenderer
+	) return results;
+
+	let continuationItem = contents.pop();
+	let items = (
+		contents.length === 1 ? contents[0] : 
+			contents.find(a => 
+				a.itemSectionRenderer && a.itemSectionRenderer.contents.length > 2
+			)
 	).itemSectionRenderer.contents;
-
 	
-	let continuationToken = contents.pop()
-		.continuationItemRenderer.continuationEndpoint
-		.continuationCommand.token;
-
 	while(results.length < options.quantity){
-		try{
-			let continuation = await getContinuation(
-				continuationToken, YTconfig, true
-			);
+		let continuation = await getContinuation(continuationItem, YTconfig);
+		
+		let items = continuation.onResponseReceivedCommands[0]
+			.appendContinuationItemsAction.continuationItems;
 
-			let [
-				{ itemSectionRenderer }, { continuationItemRenderer }
-			] = continuation.onResponseReceivedCommands[0]
-				.appendContinuationItemsAction.continuationItems;
-
-			continuationToken = continuationItemRenderer.continuationEndpoint
-				.continuationCommand.token;
-
-			contents.push(
-				continuation.onResponseReceivedCommands[0].appendContinuationItemsAction
-					.continuationItems[1]
-			);
-
-			results = results.concat(itemSectionRenderer.contents);
-		}catch(e){
-			break;
-		}
+		items = items.concat(items[0].itemSectionRenderer.contents);
+		
+		continuationItem = items[1];
+		if(!continuationItem) break;
 	}
 
-	let resultsObj = results.reduce((acc, value) => {
+	items.reduce((acc, value) => {
 		let key = Object.keys(value)[0];
 
 		let prop = {
@@ -66,17 +69,9 @@ async function search(search_query, options){
 		}
 
 		return acc;
-	}, { 
-		videos: [], playlists: [], 
-		channels: [], shelfs: [], 
-		others: [] 
-	});
+	}, results.results);
 
-	return {
-		searchQuery: search_query.trim(),
-		estimatedResults: Number(data.estimatedResults),
-		results: resultsObj,
-	};
+	return results;
 }
 
 module.exports = search;

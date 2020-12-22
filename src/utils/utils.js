@@ -2,7 +2,7 @@ const http = require('http'), https = require('https');
 const defaultOptions = {
 	language: 'en',
 	location: 'US',
-	quantity: 0
+	quantity: 20
 };
 
 function fetch(url, options){
@@ -45,7 +45,18 @@ function getData(body, type){
 
 	let counter = 0;
 	for(let i = 0; i < body.length; i++){
-		if(body[i-1] === '\\') continue;
+		if(body[i-1] === '\\'){
+			continue;
+
+			/*
+			let count = 1;
+			while(body[i-1-count] === '\\'){
+				count++;
+			}
+
+			if(count % 2) continue;
+			*/
+		}
 		let char = body[i];
 
 		if(char === '{'){
@@ -66,27 +77,23 @@ function getData(body, type){
 	}
 }
 
-async function getContinuation(token, { INNERTUBE_API_KEY, INNERTUBE_CONTEXT }, isSearch){
+async function getContinuation(continuationItem, { INNERTUBE_API_KEY, INNERTUBE_CONTEXT }){
+	let continuationEndpoint = continuationItem.continuationItemRenderer.continuationEndpoint;
+	
 	const POST_BODY = {
 		context: INNERTUBE_CONTEXT, 
-		continuation: token
+		continuation: continuationEndpoint.continuationCommand.token
 	};
 
-	let URL = `https://www.youtube.com/youtubei/v1/${isSearch?'search':'browse'}?key=${INNERTUBE_API_KEY}`;
+	let endpoint = continuationEndpoint.commandMetadata.webCommandMetadata.apiUrl;
+	let URL = `https://www.youtube.com${endpoint}?key=${INNERTUBE_API_KEY}`;
 
 	let body = await fetch(URL, { 
 		method: 'POST',
 		body: JSON.stringify(POST_BODY)
 	});
 
-	let data = JSON.parse(body);
-
-	return (
-		isSearch ? 
-			data.onResponseReceivedCommands :
-			data.onResponseReceivedActions
-	)[0].appendContinuationItemsAction
-		.continuationItems;
+	return JSON.parse(body);
 }
 
 module.exports = {
@@ -118,6 +125,7 @@ function extractInt(str){
 	);
 }
 
+
 function getID(string, playlist){
 	let url = new URL(string);
 	let ID = url.searchParams.get(
@@ -126,7 +134,6 @@ function getID(string, playlist){
 
 	return ID;
 }
-
 
 function parseOptions(options = {}, type){
 	//types: 1 = video, 2 = playlist, 3 = search

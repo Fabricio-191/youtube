@@ -1,5 +1,5 @@
 const Utils = require('../utils/utils.js');
-const Structures = require('../utils/structures/structures.js');
+const Structures = require('../../utils/structures/structures.js');
 
 async function getVideo(url, options){
 	options = Utils.parseOptions(options, 1);
@@ -14,6 +14,8 @@ async function getVideo(url, options){
 
 	let [likes, dislikes] = videoPrimaryInfoRenderer.sentimentBar
 		.sentimentBarRenderer.tooltip.split(' / ').map(Number);
+
+	let endScreen = data.playerOverlays.playerOverlayRenderer.endScreen.watchNextEndScreenRenderer;
 
 	return {
 		ID,
@@ -30,6 +32,11 @@ async function getVideo(url, options){
 		thumbnails: new Structures.Thumbnails(videoDetails),
 
 		uploadDate: videoPrimaryInfoRenderer.dateText.simpleText,
+
+		endScreen: {
+			label: Utils.parseText(endScreen.title),
+			items: endScreen.results
+		}
 	};
 }
 

@@ -18,17 +18,15 @@ async function getPlaylist(url, options){
 	
 	while(videos.length < options.quantity){
 		if(!videos[videos.length -1].continuationItemRenderer) break;
-		let token = videos.pop()
-			.continuationItemRenderer
-			.continuationEndpoint
-			.continuationCommand
-			.token;
+		let continuationItem = videos.pop();
 
-		let continuation = await Utils.getContinuation(
-			token, YTconfig
+		let continuation = await Utils.getContinuation(continuationItem, YTconfig);
+
+		videos = videos.concat(
+			continuation.onResponseReceivedActions[0]
+				.appendContinuationItemsAction
+				.continuationItems
 		);
-
-		videos = videos.concat(continuation);
 	}
 
 	let [ 
@@ -40,7 +38,7 @@ async function getPlaylist(url, options){
 		ID: playlistId,
 		name: Utils.parseText(playlistInfo.title),
 
-		views: parseInt(playlistInfo.stats[1]),
+		views:  Utils.extractInt(playlistInfo.stats[1]),
 		itemsQuantity: Utils.extractInt(playlistInfo.stats[0]),
 
 		description: Utils.parseText(playlistInfo.description),
@@ -57,17 +55,3 @@ async function getPlaylist(url, options){
 }
 
 module.exports = getPlaylist;
-	
-function PlaylistVideo({ playlistVideoRenderer }){
-	return {
-		title: Utils.parseText(playlistVideoRenderer.title),
-
-		ID: playlistVideoRenderer.videoId,
-		URL: `https://www.youtube.com/watch?v=${this.ID}`,
-		
-		index: Utils.extractInt(playlistVideoRenderer.index),
-
-		thumbnails: new Structures.Thumbnails(playlistVideoRenderer),
-		duration: new Structures.Duration(playlistVideoRenderer),
-	};
-}
