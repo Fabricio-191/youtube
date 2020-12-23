@@ -2,3 +2,4 @@ node_modules/
 package-lock.json
 raw.json
 todo.json
+results.json

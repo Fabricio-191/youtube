@@ -1,5 +1,5 @@
 const Utils = require('../utils/utils.js');
-const Structures = require('../../utils/structures/structures.js');
+const Structures = require('../structures/structures.js');
 
 async function getVideo(url, options){
 	options = Utils.parseOptions(options, 1);
@@ -31,12 +31,7 @@ async function getVideo(url, options){
 
 		thumbnails: new Structures.Thumbnails(videoDetails),
 
-		uploadDate: videoPrimaryInfoRenderer.dateText.simpleText,
-
-		endScreen: {
-			label: Utils.parseText(endScreen.title),
-			items: endScreen.results
-		}
+		uploadDate: videoPrimaryInfoRenderer.dateText.simpleText
 	};
 }
 

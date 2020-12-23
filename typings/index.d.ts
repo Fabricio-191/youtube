@@ -1,4 +1,8 @@
 /*eslint no-unused-vars: "off"*/
+import { 
+	Views, Duration, Thumbnails, Thumbnail, Owner 
+} from './structures/structures';
+
 interface Video{
 	title: string;
 		
@@ -9,48 +13,17 @@ interface Video{
 	channel: Channel;
 }
 
-interface Channel{
+interface Playlist{
 
 }
 
-interface Views{
-	normal: string;
-	short?: string;
-	number: number;
+interface Search{
 
-	toString(): string;
 }
 
-interface Duration{
-	normal: string;
-	long?: string;
-	number: number;
-
-	toString(): string;
-}
-
-interface Thumbnail {
-	url: string;
-	width: number;
-	height: number;
-}
- 
-interface Thumbnails<Thumbnail> extends Array<Thumbnail>{
-	[index: number]: Thumbnail | undefined;
-	bigger: Thumbnail | null;
-		
-	/**
-	 * Returns the URL of the biggest thumbnail
-	 */
-	toString(): string;
-}
-
-
-
-
-declare function getVideo(url: string, options: Options): Video;
-declare function getPlaylist(url: string, options: Options): Playlist;
-declare function search(search_query: string, options: Options): Search;
+export function getVideo(url: string, options: Options): Video;
+export function getPlaylist(url: string, options: Options): Playlist;
+export function search(search_query: string, options: Options): Search;
 
 interface Options{
 	language?: string,
@@ -58,4 +31,4 @@ interface Options{
 	quantity?: number
 }
 
-declare function setDefaulOptions(options: Options): void;
+export function setDefaultOptions(options: Options): void;

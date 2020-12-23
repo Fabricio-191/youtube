@@ -1,24 +1,35 @@
-interface Channel{
+export interface Views{
+	normal: string;
+	short?: string;
+	number: number;
 
+	toString(): string;
 }
 
-interface Owner{
+export interface Duration{
+	normal: string;
+	long?: string;
+	number: number;
 
+	toString(): string;
 }
 
-interface Views{
-
+export interface Thumbnail {
+	url: string;
+	width: number;
+	height: number;
+}
+ 
+export class Thumbnails<Thumbnail> extends Array<Thumbnail>{
+	[index: number]: Thumbnail | undefined;
+	bigger: Thumbnail | null;
+		
+	/**
+	 * Returns the URL of the biggest thumbnail
+	 */
+	toString(): string;
 }
 
-interface Duration{
-
+export interface Owner{
+	
 }
-
-interface Thumbnails extends Array{
-
-}
-
-exports = {
-	Channel, Owner, Views,
-	Duration, Thumbnails
-};

@@ -52,7 +52,7 @@ function getData(body, type){
 			let count = 1;
 			while(body[i-1-count] === '\\'){
 				count++;
-			}
+			}	
 
 			if(count % 2) continue;
 			*/
@@ -123,16 +123,6 @@ function extractInt(str){
 	return Number(
 		str.match(/\d/g).join('')
 	);
-}
-
-
-function getID(string, playlist){
-	let url = new URL(string);
-	let ID = url.searchParams.get(
-		playlist ? 'list' : 'v'
-	);
-
-	return ID;
 }
 
 function parseOptions(options = {}, type){

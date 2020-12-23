@@ -17,7 +17,7 @@ YTinfo.setDefaulOptions({
 			{ quantity: 'all' }
 		),
 		search: await YTinfo.search(
-			'', { quantity: 5 }
+			'Rainbow six siege', { quantity: 5 }
 		)
 	};
 

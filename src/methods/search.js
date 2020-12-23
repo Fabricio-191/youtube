@@ -1,5 +1,5 @@
 const { fetch, getData, getContinuation, parseOptions } = require('../utils/utils.js');
-const SearchStructures = require('../utils/structures/searchResults.js');
+const SearchStructures = require('../structures/search.js');
 
 async function search(search_query, options){
 	options = parseOptions(options, 3);
@@ -70,6 +70,8 @@ async function search(search_query, options){
 
 		return acc;
 	}, results.results);
+
+	delete results.others;//just wait
 
 	return results;
 }

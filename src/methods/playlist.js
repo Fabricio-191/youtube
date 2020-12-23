@@ -1,5 +1,5 @@
 const Utils = require('../utils/utils.js');
-const Structures = require('../utils/structures/structures.js');
+const Structures = require('../structures/structures.js');
 
 async function getPlaylist(url, options){
 	options = Utils.parseOptions(options, 2);
@@ -55,3 +55,19 @@ async function getPlaylist(url, options){
 }
 
 module.exports = getPlaylist;
+
+function PlaylistVideo({ playlistVideoRenderer }){
+	let ID = playlistVideoRenderer.videoId;
+
+	return {
+		title: Utils.parseText(playlistVideoRenderer.title),
+
+		ID,
+		URL: `https://www.youtube.com/watch?v=${ID}`,
+		
+		index: Utils.extractInt(playlistVideoRenderer.index),
+
+		thumbnails: new Structures.Thumbnails(playlistVideoRenderer),
+		duration: new Structures.Duration(playlistVideoRenderer),
+	};
+}
