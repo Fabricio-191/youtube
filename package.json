@@ -4,18 +4,20 @@
   "main": "./src/index.js",
   "types": "./typings/index.d.ts",
   "license": "Apache License 2.0",
-  "description": "Get info from youtube videos/playlists easy",
+  "description": "Get info from youtube videos/playlists easy, and search videos from youtube",
   "deprecated": false,
   "keywords": [
     "youtube",
     "info",
-    "videos",
-    "playlist"
+    "video",
+    "playlist",
+    "search"
   ],
   "author": "Fabricio-191",
   "scripts": {
     "test": "node test/test.js",
-    "eslint": "npx eslint . --ext .js --fix && npx eslint . --ext .ts --parser @typescript-eslint/parser"
+    "eslint": "npx eslint . --ext .js --fix && npx eslint . --ext .ts --parser @typescript-eslint/parser",
+    "git": "git add . && git commit -m -"
   },
   "dependencies": {},
   "devDependencies": {
