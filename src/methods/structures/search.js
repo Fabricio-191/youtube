@@ -1,4 +1,4 @@
-const { parseText, extractInt } = require('../utils/utils.js');
+const { parseText, extractInt } = require('../utils.js');
 const { Thumbnails, Duration, Views } = require('./structures.js');
 
 function Video({ videoRenderer }){

@@ -14,7 +14,7 @@ function fetch(url, options){
 
 	return new Promise((resolve, reject) => {
 		function cb(response){
-			let body = [];
+			const body = [];
 
 			response
 				.on('data', chunk => body.push(chunk))
@@ -32,13 +32,13 @@ function fetch(url, options){
 }
 
 function getData(body, type){
-	let start = {
+	const start = {
 		1: 'var ytInitialData = {',
 		2: 'var ytInitialPlayerResponse = {',
 		3: 'ytcfg.set({'
 	}[type];
 	
-	let offset = body.indexOf(start);
+	const offset = body.indexOf(start);
 	if(offset === -1) throw new Error('Error getting data from youtube');
 
 	body = body.slice(offset + start.length -1);
@@ -54,7 +54,7 @@ function getData(body, type){
 				count++;
 			}	
 
-			if(count % 2) continue;
+			if(count % 0) continue;
 			*/
 		}
 		let char = body[i];
@@ -77,18 +77,18 @@ function getData(body, type){
 	}
 }
 
-async function getContinuation(continuationItem, { INNERTUBE_API_KEY, INNERTUBE_CONTEXT }){
-	let continuationEndpoint = continuationItem.continuationItemRenderer.continuationEndpoint;
+async function getContinuation(continuationItem, YTconfig){
+	const continuationEndpoint = continuationItem.continuationItemRenderer.continuationEndpoint;
 	
 	const POST_BODY = {
-		context: INNERTUBE_CONTEXT, 
+		context: YTconfig.INNERTUBE_CONTEXT, 
 		continuation: continuationEndpoint.continuationCommand.token
 	};
 
-	let endpoint = continuationEndpoint.commandMetadata.webCommandMetadata.apiUrl;
-	let URL = `https://www.youtube.com${endpoint}?key=${INNERTUBE_API_KEY}`;
+	const endpoint = continuationEndpoint.commandMetadata.webCommandMetadata.apiUrl;
+	const URL = `https://www.youtube.com${endpoint}?key=${YTconfig.INNERTUBE_API_KEY}`;
 
-	let body = await fetch(URL, { 
+	const body = await fetch(URL, { 
 		method: 'POST',
 		body: JSON.stringify(POST_BODY)
 	});
@@ -101,7 +101,8 @@ module.exports = {
 	
 	parseText, extractInt,
 
-	getID, parseOptions, defaultOptions,
+	parseOptions, defaultOptions,
+	getID: require('./url.js')
 };
 
 function parseText(obj = ''){
@@ -133,6 +134,10 @@ function parseOptions(options = {}, type){
 	
 	if(typeof options !== 'object'){
 		throw new Error('The options should be an object');
+	}
+
+	if(!options.quantity && type === 2){
+		options.quantity = Infinity;
 	}
 
 	options = Object.assign({}, defaultOptions, options);

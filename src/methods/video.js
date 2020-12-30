@@ -1,5 +1,5 @@
 const Utils = require('../utils/utils.js');
-const Structures = require('../structures/structures.js');
+const Structures = require('../utils/structures/structures.js');
 
 async function getVideo(url, options){
 	options = Utils.parseOptions(options, 1);
@@ -8,6 +8,12 @@ async function getVideo(url, options){
 	let body = await Utils.fetch('https://www.youtube.com/watch?v=' + ID, options);
 	let data = Utils.getData(body, 1), { videoDetails } = Utils.getData(body, 2);
 
+	return Video(data, videoDetails);
+}
+
+module.exports = getVideo;
+
+function Video(data, videoDetails){
 	let [
 		{ videoPrimaryInfoRenderer }, { videoSecondaryInfoRenderer }
 	] = data.contents.twoColumnWatchNextResults.results.results.contents;
@@ -15,16 +21,14 @@ async function getVideo(url, options){
 	let [likes, dislikes] = videoPrimaryInfoRenderer.sentimentBar
 		.sentimentBarRenderer.tooltip.split(' / ').map(Number);
 
-	let endScreen = data.playerOverlays.playerOverlayRenderer.endScreen.watchNextEndScreenRenderer;
-
 	return {
-		ID,
-		URL: 'https://www.youtube.com/watch?v=' + ID,
+		ID: videoDetails.videoID,
+		URL: 'https://www.youtube.com/watch?v=' + videoDetails.videoID,
 		title: Utils.parseText(videoPrimaryInfoRenderer.title),
 		views: new Structures.Views(videoPrimaryInfoRenderer.viewCount),
 
 		likes, dislikes,
-
+		
 		description: Utils.parseText(videoSecondaryInfoRenderer.description),
 		keywords: videoDetails.keywords,
 		owner: Structures.Owner(videoSecondaryInfoRenderer.owner.videoOwnerRenderer),
@@ -34,5 +38,3 @@ async function getVideo(url, options){
 		uploadDate: videoPrimaryInfoRenderer.dateText.simpleText
 	};
 }
-
-module.exports = getVideo;

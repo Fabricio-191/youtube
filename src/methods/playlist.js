@@ -1,10 +1,8 @@
 const Utils = require('../utils/utils.js');
-const Structures = require('../structures/structures.js');
+const Structures = require('../utils/structures/structures.js');
 
-async function getPlaylist(url, options){
-	options = Utils.parseOptions(options, 2);
-	let playlistId = Utils.getID(url, true);
-	url = 'https://www.youtube.com/playlist?list=' + playlistId;
+async function getPlaylist(ID, options){
+	let url = 'https://www.youtube.com/playlist?list=' + ID;
 
 	let body = await Utils.fetch(url, options);
 	let data = Utils.getData(body, 1), YTconfig = Utils.getData(body, 3);
@@ -29,14 +27,22 @@ async function getPlaylist(url, options){
 		);
 	}
 
+	return Playlist(ID, data, videos);
+}
+
+module.exports = getPlaylist;
+
+function Playlist(ID, data, videos){
 	let [ 
 		{ playlistSidebarPrimaryInfoRenderer: playlistInfo },
 		{ playlistSidebarSecondaryInfoRenderer: { videoOwner } }
 	] = data.sidebar.playlistSidebarRenderer.items;
 
 	return {
-		ID: playlistId,
 		name: Utils.parseText(playlistInfo.title),
+
+		ID,
+		URL: 'https://www.youtube.com/playlist?list=' + ID,
 
 		views:  Utils.extractInt(playlistInfo.stats[1]),
 		itemsQuantity: Utils.extractInt(playlistInfo.stats[0]),
@@ -53,8 +59,6 @@ async function getPlaylist(url, options){
 			.map(PlaylistVideo)
 	};
 }
-
-module.exports = getPlaylist;
 
 function PlaylistVideo({ playlistVideoRenderer }){
 	let ID = playlistVideoRenderer.videoId;

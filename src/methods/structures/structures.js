@@ -1,37 +1,16 @@
-const { parseText, extractInt } = require('../utils/utils.js');
+const { parseText, extractInt } = require('../../utils/utils.js');
 
 class Thumbnails extends Array{
-	constructor(data){
-		if(data.thumbnail){
-			super(...data.thumbnail.thumbnails);
-		}else{
-			super(...data.thumbnails[0].thumbnails);
-		}
-
-		this.sort((a, b) => b.width - a.width);
+	constructor({ thumbnails }){
+		super(...thumbnails);
+		
+		this.sort((a, b) => {
+			return b.width - a.width + b.height - a.height;
+		});
 	}
 
 	static get [Symbol.species](){
 		return Array;
-	}
-
-	get bigger(){
-		if(!this[0]) return null;
-		let biggerW = this.reduce(
-			(acc, value) => (value.width > acc.width) ? value : acc, 
-			this[0]
-		);
-
-		let biggerH = this.reduce(
-			(acc, value) => (value.height > acc.height) ? value : acc, 
-			this[0]
-		);
-
-		if(biggerH === biggerW) return biggerW;
-		let ratio = biggerH.width / biggerW.height;
-
-		return ratio > 1 ? 
-			biggerH : biggerW;
 	}
 
 	toString(){
@@ -104,19 +83,6 @@ class Views{
 	}
 }
 
-class Subscribers{
-	constructor(data){
-		this.normal = parseText(data.subscriberCountText);
-		this.number = extractInt(this.normal);
-	}
-	normal = null;
-	number = null;
-
-	toString(){
-		return this.normal;
-	}
-}
-
 function Owner(data){
 	let obj = {
 		name: parseText(data.title),
@@ -128,7 +94,13 @@ function Owner(data){
 	};
 
 	if(data.subscriberCountText){
-		obj.subscribers = new Subscribers(data);
+		obj.subscribers = {
+			normal: parseText(data.subscriberCountText),
+			number: extractInt(this.normal),
+			toString(){
+				return this.normal;
+			}
+		};
 	}
 
 	return obj;

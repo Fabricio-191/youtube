@@ -1,5 +1,5 @@
 const { fetch, getData, getContinuation, parseOptions } = require('../utils/utils.js');
-const SearchStructures = require('../structures/search.js');
+const SearchStructures = require('../utils/structures/search.js');
 
 async function search(search_query, options){
 	options = parseOptions(options, 3);
@@ -21,21 +21,19 @@ async function search(search_query, options){
 		},
 	};
 
-	const { contents } = data.contents.twoColumnSearchResultsRenderer
-		.primaryContents.sectionListRenderer;
+	const contents = data.contents
+		.twoColumnSearchResultsRenderer
+		.primaryContents.sectionListRenderer.contents;
 
 	if(
 		contents.length === 1 && 
-		contents[0].itemSectionRenderer.contents[0] && 
+		contents[0].itemSectionRenderer && 
 		contents[0].itemSectionRenderer.contents[0].backgroundPromoRenderer
 	) return results;
 
 	let continuationItem = contents.pop();
-	let items = (
-		contents.length === 1 ? contents[0] : 
-			contents.find(a => 
-				a.itemSectionRenderer && a.itemSectionRenderer.contents.length > 2
-			)
+	let items = contents.find(a => 
+		a.itemSectionRenderer && a.itemSectionRenderer.contents.length > 2
 	).itemSectionRenderer.contents;
 	
 	while(results.length < options.quantity){
@@ -50,6 +48,12 @@ async function search(search_query, options){
 		if(!continuationItem) break;
 	}
 
+	return Search(results, items);
+}
+
+module.exports = search;
+
+function Search(results, items){
 	items.reduce((acc, value) => {
 		let key = Object.keys(value)[0];
 
@@ -75,5 +79,3 @@ async function search(search_query, options){
 
 	return results;
 }
-
-module.exports = search;
