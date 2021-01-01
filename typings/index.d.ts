@@ -10,7 +10,7 @@ interface Video{
 	duration: Duration;
 	thumbnails: Thumbnails<Thumbnail>;
 
-	channel: Channel;
+	channel: Owner;
 }
 
 interface Playlist{
@@ -21,14 +21,13 @@ interface Search{
 
 }
 
-export function getVideo(url: string, options: Options): Video;
-export function getPlaylist(url: string, options: Options): Playlist;
-export function search(search_query: string, options: Options): Search;
-
 interface Options{
-	language?: string,
-	location?: string,
-	quantity?: number
+	language?: string | 'en',
+	location?: string | 'US',
+	quantity?: number | 20
 }
 
-export function setDefaultOptions(options: Options): void;
+declare function getVideo(url: string, options: Options): Video;
+declare function getPlaylist(url: string, options: Options): Playlist;
+declare function search(search_query: string, options: Options): Search;
+declare function setDefaultOptions(options: Options): void;

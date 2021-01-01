@@ -11,9 +11,9 @@ YT.setDefaultConfig({
 
 
 YT.getPlaylist('PLDS0dpumEOi0pu_0pCGqvcaRkxg-o1gqg')
-  .then(({ videos }) => {
+  .then(data => {
     //do something...
-  })
+  })  
   .catch(console.error);
 ``` 
 

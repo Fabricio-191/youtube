@@ -1,130 +1,52 @@
-const http = require('http'), https = require('https');
+const REGEX = [
+	null,
+	{
+		URL: /(?:youtube\.com\/(?:[^/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?/\s]{11})/i,
+		ID: /^[A-Za-z0-9-_]{9,11}$/,
+	}, {
+		URL: /[?&]list=([^#&?]+)/,
+		ID: /^(PL|UU|LL|RD)[A-Za-z0-9-_]{16,41}$/,
+	}
+];
 const defaultOptions = {
 	language: 'en',
 	location: 'US',
 	quantity: 20
 };
 
-function fetch(url, options){
-	//https://nodejs.org/api/http.html#http_http_request_options_callback
-	const parsedURL = new URL(url);
+/*
+const PLAYLIST_REGEX = /^(PL|UU|LL|RD)[a-zA-Z0-9-_]{16,41}$/;
+const ALBUM_REGEX = /^OLAK5uy_[a-zA-Z0-9-_]{33}$/;
+const CHANNEL_REGEX = /^UC[a-zA-Z0-9-_]{22,32}$/;
+*/
 
-	parsedURL.searchParams.set('hl', options.language);
-	parsedURL.searchParams.set('gl', options.location);
+function getID(string, type){
+	let { ID, URL } = REGEX[type];
 
-	return new Promise((resolve, reject) => {
-		function cb(response){
-			const body = [];
 
-			response
-				.on('data', chunk => body.push(chunk))
-				.on('end', () => 
-					resolve(Buffer.concat(body).toString())
-				)
-				.on('error', reject);
+	if(isURL(string)){
+		let matches = string.match(URL);
+		if(!matches){
+			throw Error("Canno't get a valid ID from the URL");
 		}
-
-		(parsedURL.protocol === 'https:' ? https : http)
-			.request(parsedURL, options, cb)
-			.on('error', reject)
-			.end(options.body || '');
-	});
-}
-
-function getData(body, type){
-	const start = {
-		1: 'var ytInitialData = {',
-		2: 'var ytInitialPlayerResponse = {',
-		3: 'ytcfg.set({'
-	}[type];
-	
-	const offset = body.indexOf(start);
-	if(offset === -1) throw new Error('Error getting data from youtube');
-
-	body = body.slice(offset + start.length -1);
-
-	let counter = 0;
-	for(let i = 0; i < body.length; i++){
-		if(body[i-1] === '\\'){
-			continue;
-
-			/*
-			let count = 1;
-			while(body[i-1-count] === '\\'){
-				count++;
-			}	
-
-			if(count % 0) continue;
-			*/
+		string = matches[1] || matches[0];
+		
+		if(!ID.test(string)){
+			throw Error("Canno't get a valid ID from the URL");
 		}
-		let char = body[i];
-
-		if(char === '{'){
-			counter++;
-		}else if(char === '}'){
-			counter--;
-		}
-
-		if(counter === 0){
-			try{
-				return JSON.parse(
-					body.slice(0, i +1)
-				);
-			}catch(e){
-				throw new Error('Error getting data from youtube');
-			}
-		}
+	}else if(!ID.test(string)){
+		throw Error('Introduced ID is not valid');
 	}
-}
 
-async function getContinuation(continuationItem, YTconfig){
-	const continuationEndpoint = continuationItem.continuationItemRenderer.continuationEndpoint;
-	
-	const POST_BODY = {
-		context: YTconfig.INNERTUBE_CONTEXT, 
-		continuation: continuationEndpoint.continuationCommand.token
-	};
-
-	const endpoint = continuationEndpoint.commandMetadata.webCommandMetadata.apiUrl;
-	const URL = `https://www.youtube.com${endpoint}?key=${YTconfig.INNERTUBE_API_KEY}`;
-
-	const body = await fetch(URL, { 
-		method: 'POST',
-		body: JSON.stringify(POST_BODY)
-	});
-
-	return JSON.parse(body);
+	return string;
 }
 
 module.exports = {
-	getData, fetch, getContinuation,
-	
-	parseText, extractInt,
+	requests: require('./requests.js'),
 
-	parseOptions, defaultOptions,
-	getID: require('./url.js')
+	defaultOptions, parseOptions,
+	getID
 };
-
-function parseText(obj = ''){
-	if(obj.simpleText) return obj.simpleText;
-	
-	let str = '';
-	if(obj.runs){
-		obj.runs.map(t => str += t.text);
-	}
-
-	return str;
-}
-
-function extractInt(str){
-	if(typeof str === 'object') {
-		str = parseText(str);
-	}
-
-	return Number(
-		str.match(/\d/g).join('')
-	);
-}
 
 function parseOptions(options = {}, type){
 	//types: 1 = video, 2 = playlist, 3 = search
@@ -159,4 +81,13 @@ function parseOptions(options = {}, type){
 	}
 
 	return options;
+}
+
+function isURL(string){
+	try{
+		new URL(string);
+		return true;
+	}catch(e){
+		return false;
+	}
 }

@@ -1,4 +1,4 @@
-export interface Views{
+interface Views{
 	normal: string;
 	short?: string;
 	number: number;
@@ -6,7 +6,7 @@ export interface Views{
 	toString(): string;
 }
 
-export interface Duration{
+interface Duration{
 	normal: string;
 	long?: string;
 	number: number;
@@ -14,22 +14,29 @@ export interface Duration{
 	toString(): string;
 }
 
-export interface Thumbnail {
+interface Thumbnail {
 	url: string;
 	width: number;
 	height: number;
 }
  
-export class Thumbnails<Thumbnail> extends Array<Thumbnail>{
-	[index: number]: Thumbnail | undefined;
+declare class Thumbnails<Thumbnail> extends Array<Thumbnail>{
 	bigger: Thumbnail | null;
 		
-	/**
+	/**	
 	 * Returns the URL of the biggest thumbnail
 	 */
 	toString(): string;
 }
 
-export interface Owner{
+interface Owner{
 	
 }
+
+export {
+	Views,
+	Duration,
+	Thumbnails,
+	Thumbnail,
+	Owner
+};

@@ -1,5 +1,5 @@
 const { fetch, getData, getContinuation, parseOptions } = require('../utils/utils.js');
-const SearchStructures = require('../utils/structures/search.js');
+const SearchStructures = require('./structures/search.js');
 
 async function search(search_query, options){
 	options = parseOptions(options, 3);
@@ -12,7 +12,6 @@ async function search(search_query, options){
 
 	const results = {
 		searchQuery: search_query.trim(),
-		encodedSearchQuery: searchQuery,
 		estimatedResults: Number(data.estimatedResults),
 		results: { 
 			videos: [], playlists: [], 
@@ -75,7 +74,7 @@ function Search(results, items){
 		return acc;
 	}, results.results);
 
-	delete results.others;//just wait
+	delete results.results.others;
 
 	return results;
 }

@@ -16,9 +16,11 @@
   "author": "Fabricio-191",
   "scripts": {
     "test": "node test/test.js",
-    "eslint": "npx eslint . --ext .js --fix && npx eslint . --ext .ts --parser @typescript-eslint/parser",
-    "git": "git add . && git commit -m -"
-  },
+    "eslint": "npx eslint src --ext .js --fix --config './eslint/.eslintrc.json'",
+    "eslintd": "npx eslint typings --ext .d.ts --fix --parser @typescript-eslint/parser  --config './eslint/.tslintrc.json'",
+    "git": "git add . && git commit -m - && git push",
+    "all": "npm run eslint && npm run eslintd && npm run test && npm run git"
+  },  
   "dependencies": {},
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "4.2.0",

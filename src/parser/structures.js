@@ -1,16 +1,33 @@
-const { parseText, extractInt } = require('../../utils/utils.js');
+const { parseText, extractInt } = require('../utils.js');
 
 class Thumbnails extends Array{
 	constructor({ thumbnails }){
 		super(...thumbnails);
-		
-		this.sort((a, b) => {
-			return b.width - a.width + b.height - a.height;
-		});
+
+		this.sort((a, b) => b.width - a.width);
 	}
 
 	static get [Symbol.species](){
 		return Array;
+	}
+
+	get bigger(){
+		if(!this[0]) return null;
+		let biggerW = this.reduce(
+			(acc, value) => (value.width > acc.width) ? value : acc, 
+			this[0]
+		);
+
+		let biggerH = this.reduce(
+			(acc, value) => (value.height > acc.height) ? value : acc, 
+			this[0]
+		);
+
+		if(biggerH === biggerW) return biggerW;
+		let ratio = biggerH.width / biggerW.height;
+
+		return ratio > 1 ? 
+			biggerH : biggerW;
 	}
 
 	toString(){
@@ -32,9 +49,7 @@ class Duration{
 			this.normal = 
 				hours ? hours + ':' : '' + `${mins}:${seconds}`;
 		}else{
-			this.normal = parseText(data.lengthText);
-			this.long = data.lengthText.accessibility
-				.accessibilityData.label;
+            Object.assign(this, parseText(data.lengthText));
 	
 			if(data.lengthSeconds){
 				this.number = Number(data.lengthSeconds);
@@ -83,6 +98,23 @@ class Views{
 	}
 }
 
+class Subscribers{
+	constructor(data){
+		this.normal = parseText(data.subscriberCountText);
+		this.number = extractInt(this.normal);
+	}
+	normal = null;
+	number = null;
+
+	toString(){
+		return this.normal;
+	}
+}
+
+class Channel{
+	
+}
+
 function Owner(data){
 	let obj = {
 		name: parseText(data.title),
@@ -94,13 +126,7 @@ function Owner(data){
 	};
 
 	if(data.subscriberCountText){
-		obj.subscribers = {
-			normal: parseText(data.subscriberCountText),
-			number: extractInt(this.normal),
-			toString(){
-				return this.normal;
-			}
-		};
+		obj.subscribers = new Subscribers(data);
 	}
 
 	return obj;
