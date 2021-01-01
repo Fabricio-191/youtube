@@ -1,4 +1,35 @@
-const { parseText, extractInt } = require('../utils.js');
+function parseText(obj = ''){
+	if(obj.simpleText){
+		if(obj.accessibility){
+			return {
+				normal: obj.simpleText,
+				long: obj.accessibility.accessibilityData.label,
+				toString(){
+					return obj.simpleText; //cuidar esto
+				}
+			};
+		}
+
+		return obj.simpleText;
+	}
+	
+	let str = '';
+	if(obj.runs){
+		obj.runs.map(t => str += t.text);
+	}
+
+	return str;
+}
+
+function extractInt(str){
+	if(typeof str === 'object') {
+		str = parseText(str);
+	}
+
+	return Number(
+		str.match(/\d/g).join('')
+	);
+}
 
 class Thumbnails extends Array{
 	constructor({ thumbnails }){
@@ -49,7 +80,7 @@ class Duration{
 			this.normal = 
 				hours ? hours + ':' : '' + `${mins}:${seconds}`;
 		}else{
-            Object.assign(this, parseText(data.lengthText));
+			Object.assign(this, parseText(data.lengthText));
 	
 			if(data.lengthSeconds){
 				this.number = Number(data.lengthSeconds);
@@ -98,40 +129,7 @@ class Views{
 	}
 }
 
-class Subscribers{
-	constructor(data){
-		this.normal = parseText(data.subscriberCountText);
-		this.number = extractInt(this.normal);
-	}
-	normal = null;
-	number = null;
-
-	toString(){
-		return this.normal;
-	}
-}
-
-class Channel{
-	
-}
-
-function Owner(data){
-	let obj = {
-		name: parseText(data.title),
-		ID: data.navigationEndpoint.browseEndpoint.browseId,
-		URL: 'https://www.youtube.com' + data.navigationEndpoint
-			.browseEndpoint.canonicalBaseUrl,
-
-		thumbnails: new Thumbnails(data),
-	};
-
-	if(data.subscriberCountText){
-		obj.subscribers = new Subscribers(data);
-	}
-
-	return obj;
-}
-
 module.exports = {
-	Thumbnails, Duration, Views, Owner
+	Thumbnails, Duration, Views,
+	parseText, extractInt
 };

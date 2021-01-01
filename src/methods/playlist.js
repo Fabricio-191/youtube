@@ -27,7 +27,6 @@ async function getPlaylist(ID, options){
 		);
 	}
 
-	return Playlist(data, videos);
 }
 
 module.exports = getPlaylist;

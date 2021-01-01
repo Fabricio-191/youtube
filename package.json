@@ -16,8 +16,8 @@
   "author": "Fabricio-191",
   "scripts": {
     "test": "node test/test.js",
-    "eslint": "npx eslint src --ext .js --fix --config './eslint/.eslintrc.json'",
-    "eslintd": "npx eslint typings --ext .d.ts --fix --parser @typescript-eslint/parser  --config './eslint/.tslintrc.json'",
+    "eslint": "npx eslint src --ext .js --fix --config eslint/.eslintrc.json",
+    "eslintd": "npx eslint typings --ext .d.ts --fix --parser @typescript-eslint/parser  --config eslint/.tslintrc.json",
     "git": "git add . && git commit -m - && git push",
     "all": "npm run eslint && npm run eslintd && npm run test && npm run git"
   },  

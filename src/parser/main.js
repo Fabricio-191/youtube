@@ -1,94 +1,70 @@
-const { Thumbnails, Duration, Views } = require('./structures.js');
-const parsers = {
-    
-};
-
-function parse(obj){
-	let key = Object.keys(obj)[0];
-
-	let parser = parsers[key];
-	if(!parsers){
-		console.warn(`Cannot parse: ${key}`)
-		return null;
-	}
-
-	return parser(obj);
-}
-
-module.exports = parse;
+const {
+	Thumbnails, Duration, Views,
+	parseText, extractInt
+} = require('./structures.js');
 
 //#region video
 function videoPrimaryInfoRenderer({ videoPrimaryInfoRenderer }){
-    const [likes, dislikes] = videoPrimaryInfoRenderer.sentimentBar
-        .sentimentBarRenderer.tooltip.split(' / ').map(Number);
+	const [likes, dislikes] = videoPrimaryInfoRenderer.sentimentBar
+		.sentimentBarRenderer.tooltip.split(' / ').map(Number);
 
-    return {
-        name: parseText(videoPrimaryInfoRenderer.title),
-        views: new Views(videoPrimaryInfoRenderer),
+	return {
+		name: parseText(videoPrimaryInfoRenderer.title),
+		views: new Views(videoPrimaryInfoRenderer),
 
-        likes, dislikes,
+		likes, dislikes,
 
-        uploadDate: parseText(videoPrimaryInfoRenderer.dateText),
-    }
+		uploadDate: parseText(videoPrimaryInfoRenderer.dateText),
+	};
 }
 
 function videoSecondaryInfoRenderer({ videoSecondaryInfoRenderer }){
-    return {
-        owner: parse(videoSecondaryInfoRenderer.owner),
-        description: parseText(videoSecondaryInfoRenderer.description)
-    }
+	return {
+		owner: parse(videoSecondaryInfoRenderer.owner),
+		description: parseText(videoSecondaryInfoRenderer.description)
+	};
 }
 
 function compactVideoRenderer({ compactVideoRenderer }){
-    let channelID = compactVideoRenderer.longBylineText.runs.find(
-		obj => obj.navigationEndpoint
-	).navigationEndpoint.browseEndpoint.browseId;
 
-    return {
-        name: parseText(compactVideoRenderer.title),
-        ID: compactVideoRenderer.videoId,
-        URL: 'https://www.youtube.com/watch?v=' + compactVideoRenderer.videoId,
+	return {
+		name: parseText(compactVideoRenderer.title),
+		ID: compactVideoRenderer.videoId,
+		URL: 'https://www.youtube.com/watch?v=' + compactVideoRenderer.videoId,
 
-        duration: new Duration(compactVideoRenderer),
-        views: new Views(compactVideoRenderer),
-        thumbnails: new Thumbnails(compactVideoRenderer.thumbnail),
+		duration: new Duration(compactVideoRenderer),
+		views: new Views(compactVideoRenderer),
+		thumbnails: new Thumbnails(compactVideoRenderer.thumbnail),
 
-        publishedDate: parseText(compactVideoRenderer.publishedTimeText),
+		publishedDate: parseText(compactVideoRenderer.publishedTimeText),
 
-        channel: {
-            ID: channelID,
-            URL: 'https://www.youtube.com/channel/' + channelID,
-            name: parseText(compactVideoRenderer.longBylineText)
-        }
-    }
+		channel: longBylineText(compactVideoRenderer)
+	};
 }
 
 function compactRadioRenderer({ compactRadioRenderer }){
-    
+    return {
+		name: parseText(compactRadioRenderer.title),
+		ID: compactRadioRenderer.playlistId,
+
+		thumbnails: new Thumbnails(compactRadioRenderer.thumbnail)
+	}
 }
 
 function playlistPanelVideoRenderer({ playlistPanelVideoRenderer }){
-    let channelID = compactVideoRenderer.longBylineText.runs.find(
-		obj => obj.navigationEndpoint
-	).navigationEndpoint.browseEndpoint.browseId;
+	return {
+		name: parseText(compactVideoRenderer.title),
+		ID: compactVideoRenderer.videoId,
+		URL: 'https://www.youtube.com/watch?v=' + compactVideoRenderer.videoId,
 
-    return {
-        name: parseText(compactVideoRenderer.title),
-        ID: compactVideoRenderer.videoId,
-        URL: 'https://www.youtube.com/watch?v=' + compactVideoRenderer.videoId,
+		duration: new Duration(compactVideoRenderer),
+		views: new Views(compactVideoRenderer),
+		thumbnails: new Thumbnails(compactVideoRenderer.thumbnail),
 
-        duration: new Duration(compactVideoRenderer),
-        views: new Views(compactVideoRenderer),
-        thumbnails: new Thumbnails(compactVideoRenderer.thumbnail),
+		publishedDate: parseText(compactVideoRenderer.publishedTimeText),
 
-        publishedDate: parseText(compactVideoRenderer.publishedTimeText),
-
-        channel: {
-            ID: channelID,
-            URL: 'https://www.youtube.com/channel/' + channelID,
-            name: parseText(compactVideoRenderer.longBylineText)
-        }
-    }
+		channel: longBylineText(playlistPanelVideoRenderer)
+	};
 }
 
 function endScreenVideoRenderer({ endScreenVideoRenderer }){
@@ -98,7 +74,6 @@ function endScreenVideoRenderer({ endScreenVideoRenderer }){
 function endScreenPlaylistRenderer({ endScreenPlaylistRenderer }){
     
 }
-
 //#endregion
 
 //#region playlist
@@ -120,26 +95,7 @@ function playlistSidebarPrimaryInfoRenderer({ playlistSidebarPrimaryInfoRenderer
 			playlistSidebarPrimaryInfoRenderer.thumbnailRenderer
 				.playlistVideoThumbnailRenderer.thumbnails
 		)
-	}
-}
-
-function videoOwnerRenderer({ videoOwnerRenderer }){
-	let a = videoOwnerRenderer.navigationEndpoint.browseEndpoint;
-
-	return {
-		name: parseText(videoOwnerRenderer.title),
-		thumbnails: new Thumbnails(videoOwnerRenderer.thumbnail),
-
-		channel: {
-			ID: a.browseId,
-			URL: 'https://www.youtube.com/channel/' + a.browseId
-		},
-
-		user: {
-			originalName: a.canonicalBaseUrl.slice(6),
-			URL: 'https://www.youtube.com/' + a.canonicalBaseUrl
-		}
-	}
+	};
 }
 
 function playlistVideoRenderer({ playlistVideoRenderer }){
@@ -192,10 +148,10 @@ function videoRenderer({ videoRenderer }){
 			name: parseText(videoRenderer.ownerText),
 	
 			thumbnails: new Thumbnails(
-                videoRenderer
-                    .channelThumbnailSupportedRenderers
-                    .channelThumbnailWithLinkRenderer
-                    .thumbnail
+				videoRenderer
+					.channelThumbnailSupportedRenderers
+					.channelThumbnailWithLinkRenderer
+					.thumbnail
 			),
 		},
 
@@ -210,13 +166,10 @@ function childVideoRenderer({ childVideoRenderer }){
 		URL: `https://www.youtube.com/watch?v=${childVideoRenderer.videoId}`,
 
 		duration: new Duration(childVideoRenderer),
-	}
+	};
 }
 
 function playlistRenderer({ playlistRenderer }){
-	let ownerEndpoint = playlistRenderer.longBylineText.runs
-		.find(a => a.navigationEndpoint).navigationEndpoint.browseEndpoint;
-
 	return {
 		ID: playlistRenderer.playlistId,
 		title: parseText(playlistRenderer.title),
@@ -224,22 +177,18 @@ function playlistRenderer({ playlistRenderer }){
 
 		showedVideos: playlistRenderer.videos.map(childVideoRenderer),
 
-		owner: {
-			name: parseText(playlistRenderer.longBylineText),
-			ID: ownerEndpoint.browseId,
-			URL: `https://www.youtube.com/${ownerEndpoint.canonicalBaseUrl}`
-		},
+		owner: longBylineText(playlistRenderer),
 
 		thumbnails: new Thumbnails(
-            playlistRenderer.thumbnailRenderer.playlistVideoThumbnailRenderer.thumbnail
-        ),
+			playlistRenderer.thumbnailRenderer.playlistVideoThumbnailRenderer.thumbnail
+		),
 	};
 }
 
 function channelRenderer({ channelRenderer }){
 	return {
-        ID: channelRenderer.channelId,
-        URL: 'https://www.youtube.com/channel/' + channelRenderer.channelId,
+		ID: channelRenderer.channelId,
+		URL: 'https://www.youtube.com/channel/' + channelRenderer.channelId,
 
 		name: parseText(channelRenderer.title),
 
@@ -264,7 +213,7 @@ function shelfRenderer({ shelfRenderer }){
 }
 
 function searchRefinementCardRenderer({ searchRefinementCardRenderer }){
-    /*
+	/*
     searchRefinementCardRenderer.thumbnail.thumbnails.map(img => {
         if(!img.url.startsWith('http')){
             img.url = 'https:' + img.url;
@@ -273,55 +222,111 @@ function searchRefinementCardRenderer({ searchRefinementCardRenderer }){
     })
     */
 
-    return {
-        query: parseText(searchRefinementCardRenderer.query),
-        thumbnails: new Thumbnails(searchRefinementCardRenderer.thumbnail)
-    }
+	return {
+		query: parseText(searchRefinementCardRenderer.query),
+		thumbnails: new Thumbnails(searchRefinementCardRenderer.thumbnail)
+	};
 }
 
 function horizontalCardListRenderer({ horizontalCardListRenderer }){
-    return {
-        title: parseText(
-            horizontalCardListRenderer.header
-            .richListHeaderRenderer.title
-        ),
-        items: horizontalCardListRenderer.cards.map(searchRefinementCardRenderer)
-    }
+	return {
+		title: parseText(
+			horizontalCardListRenderer.header
+				.richListHeaderRenderer.title
+		),
+		items: horizontalCardListRenderer.cards.map(searchRefinementCardRenderer)
+	};
 }
 //#endregion
 
-//#region utils
-function parseText(obj = ''){
-	if(obj.simpleText){
-		if(obj.accessibility){
-			return {
-				normal: obj.simpleText,
-				long: obj.accessibility.accessibilityData.label,
-				toString(){
-					return obj.simpleText; //cuidar esto
-				}
-			};
+//#region others
+function videoOwnerRenderer({ videoOwnerRenderer }){
+	let a = videoOwnerRenderer.navigationEndpoint.browseEndpoint;
+	let data = {
+		name: parseText(videoOwnerRenderer.title),
+		thumbnails: new Thumbnails(videoOwnerRenderer.thumbnail),
+
+		channel: {
+			ID: a.browseId,
+			URL: 'https://www.youtube.com/channel/' + a.browseId
+		},
+
+		user: {
+			originalName: a.canonicalBaseUrl.slice(6),
+			URL: 'https://www.youtube.com/' + a.canonicalBaseUrl
 		}
+	};
 
-		return obj.simpleText;
-	}
-	
-	let str = '';
-	if(obj.runs){
-		obj.runs.map(t => str += t.text);
+	if(videoOwnerRenderer.subscriberCountText){
+		let normal = parseText(data.subscriberCountText);
+
+		data.subscribers = {
+			normal,
+			number: extractInt(normal),
+			toString(){
+				return normal;
+			}
+		}
 	}
 
-	return str;
+	return data;
 }
 
-function extractInt(str){
-	if(typeof str === 'object') {
-		str = parseText(str);
+function longBylineText({ longBylineText }){//channel/owner
+	let endpoint = longBylineText.runs.find(
+		obj => obj.navigationEndpoint
+	);
+
+	if(!endpoint){
+		return parseText(longBylineText);
+	}
+	endpoint = endpoint.navigationEndpoint.browseEndpoint
+
+	let data = {
+		name: parseText(longBylineText),
+		ID: endpoint.browseId,
+		URL: 'https://www.youtube.com/channel/' + endpoint.browseId
 	}
 
-	return Number(
-		str.match(/\d/g).join('')
-	);
+	if(endpoint.canonicalBaseUrl){
+		data.canonicalURL = 'https://www.youtube.com' + endpoint.canonicalBaseUrl
+	}
+
+	return data;
 }
 //#endregion
+
+const parsers = {
+	videoPrimaryInfoRenderer,
+	videoSecondaryInfoRenderer,
+	compactVideoRenderer,
+	compactRadioRenderer,
+	playlistPanelVideoRenderer,
+	endScreenVideoRenderer,
+	endScreenPlaylistRenderer,
+
+	playlistSidebarPrimaryInfoRenderer,  
+	playlistVideoRenderer,
+
+	channelRenderer,
+	shelfRenderer,
+	videoRenderer,
+	playlistRenderer,
+	horizontalCardListRenderer
+};
+
+
+function parse(obj){
+	let key = Object.keys(obj)[0];
+
+	let parser = parsers[key];
+	if(!parsers){
+		console.warn(`Cannot parse: ${key}`);
+		return null;
+	}
+
+	return parser(obj);
+}
+
+module.exports = parse;
 

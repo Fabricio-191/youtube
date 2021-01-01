@@ -1,18 +1,13 @@
-const Utils = require('../utils/utils.js');
-const Structures = require('./structures/structures.js');
+const { requests } = require('../utils/utils.js');
+const parse = require('../parse/main.js');
 
-async function getVideo(url, options){
-	options = Utils.parseOptions(options, 1);
-	let ID = Utils.getID(url, 1);
-	let body = await Utils.fetch('https://www.youtube.com/watch?v=' + ID, options);
-	let data = Utils.getData(body, 1), { videoDetails } = Utils.getData(body, 2);
+async function getVideo(ID, options){
+	let body = await requests.fetch('https://www.youtube.com/watch?v=' + ID, options);
+	let data = requests.getData(body, 1), { videoDetails } = requests.getData(body, 2);
 	
 	if(!videoDetails) return null;
 
-	return new Video(
-		Utils.getData(body, 1), 
-		videoDetails
-	);
+
 }
 
 module.exports = getVideo;

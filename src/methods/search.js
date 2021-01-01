@@ -1,5 +1,5 @@
-const { fetch, getData, getContinuation, parseOptions } = require('../utils/utils.js');
-const SearchStructures = require('./structures/search.js');
+const { requests } = require('../utils/utils.js');
+const parse = require('../parse/main.js');
 
 async function search(search_query, options){
 	options = parseOptions(options, 3);
@@ -7,8 +7,8 @@ async function search(search_query, options){
 		search_query.trim().split(/\s+/).join('+')
 	);
 
-	let body = await fetch('https://www.youtube.com/results?search_query=' + searchQuery, options);
-	let data = getData(body, 1), YTconfig = getData(body, 3);
+	let body = await requests.fetch('https://www.youtube.com/results?search_query=' + searchQuery, options);
+	let data = requests.getData(body, 1), YTconfig = requests.getData(body, 3);
 
 	const results = {
 		searchQuery: search_query.trim(),
@@ -16,7 +16,6 @@ async function search(search_query, options){
 		results: { 
 			videos: [], playlists: [], 
 			channels: [], shelfs: [], 
-			others: [] 
 		},
 	};
 
@@ -36,7 +35,7 @@ async function search(search_query, options){
 	).itemSectionRenderer.contents;
 	
 	while(results.length < options.quantity){
-		let continuation = await getContinuation(continuationItem, YTconfig);
+		let continuation = await requests.getContinuation(continuationItem, YTconfig);
 		
 		let items = continuation.onResponseReceivedCommands[0]
 			.appendContinuationItemsAction.continuationItems;
@@ -47,7 +46,6 @@ async function search(search_query, options){
 		if(!continuationItem) break;
 	}
 
-	return Search(results, items);
 }
 
 module.exports = search;
@@ -57,24 +55,20 @@ function Search(results, items){
 		let key = Object.keys(value)[0];
 
 		let prop = {
-			videoRenderer: ['videos', 'Video'],
-			playlistRenderer: ['playlists', 'Playlist'],
-			channelRenderer: ['channels', 'Channel'],
-			shelfRenderer: ['shelfs', 'Shelf'],
+			videoRenderer: 'videos',
+			playlistRenderer: 'playlists',
+			channelRenderer: 'channels',
+			shelfRenderer: 'shelfs',
 		}[key];
 
-		if(!prop){
-			acc.others.push(value);
-		}else{
-			acc[prop[0]].push(
-				SearchStructures[prop[1]](value)
-			);
+		if(prop){
+			acc[prop].push(
+				parse(value)
+			)
 		}
 
 		return acc;
 	}, results.results);
-
-	delete results.results.others;
 
 	return results;
 }
