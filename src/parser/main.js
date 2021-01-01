@@ -26,12 +26,11 @@ function videoSecondaryInfoRenderer({ videoSecondaryInfoRenderer }){
 }
 
 function compactVideoRenderer({ compactVideoRenderer }){
-	return {
+	let data = {
 		name: parseText(compactVideoRenderer.title),
 		ID: compactVideoRenderer.videoId,
 		URL: 'https://www.youtube.com/watch?v=' + compactVideoRenderer.videoId,
 
-		duration: new Duration(compactVideoRenderer),
 		views: new Views(compactVideoRenderer),
 		thumbnails: new Thumbnails(compactVideoRenderer.thumbnail),
 
@@ -39,14 +38,23 @@ function compactVideoRenderer({ compactVideoRenderer }){
 
 		channel: bylineText(compactVideoRenderer)
 	};
+
+	if(compactVideoRenderer.lengthText){
+		data.duration = new Duration(compactVideoRenderer);
+	}
+
+	return data;
 }
 
 function compactRadioRenderer({ compactRadioRenderer }){
 	return {
 		name: parseText(compactRadioRenderer.title),
 		ID: compactRadioRenderer.playlistId,
+		URL: compactRadioRenderer.shareUrl || 'https://www.youtube.com/playlist?list=' + compactRadioRenderer.playlistId,
 
-		thumbnails: new Thumbnails(compactRadioRenderer.thumbnail)
+		thumbnails: new Thumbnails(compactRadioRenderer.thumbnail),
+
+		owner: bylineText(compactRadioRenderer),
 	};
 }
 
@@ -57,33 +65,18 @@ function watchNextEndScreenRenderer({ watchNextEndScreenRenderer }){
 	};
 }
 
-function endScreenVideoRenderer({ endScreenVideoRenderer }){
-	return {
-		name: parseText(endScreenVideoRenderer.title),
-		ID: endScreenVideoRenderer.videoId,
-		URL: 'https://www.youtube.com/watch?v=' + endScreenVideoRenderer.videoId,
+let endScreenVideoRenderer = ({ endScreenVideoRenderer }) => {
+	return compactVideoRenderer({
+		compactVideoRenderer: endScreenVideoRenderer
+	});
+};
 
-		duration: new Duration(endScreenVideoRenderer),
-		views: new Views(endScreenVideoRenderer),
-		thumbnails: new Thumbnails(endScreenVideoRenderer.thumbnail),
 
-		publishedDate: parseText(endScreenVideoRenderer.publishedTimeText),
-
-		channel: bylineText(endScreenVideoRenderer)
-	};
-}
-
-function endScreenPlaylistRenderer({ endScreenPlaylistRenderer }){
-	return {
-		name: parseText(endScreenPlaylistRenderer.title),
-		ID: endScreenPlaylistRenderer.playlistId,
-		URL: 'https://www.youtube.com/playlist?list=' + endScreenPlaylistRenderer.playlistId,
-
-		thumbnails: new Thumbnails(endScreenPlaylistRenderer.thumbnail),
-
-		owner: bylineText(endScreenPlaylistRenderer)
-	};
-}
+let endScreenPlaylistRenderer = ({ endScreenPlaylistRenderer }) => {
+	return compactRadioRenderer({
+		compactRadioRenderer: endScreenPlaylistRenderer
+	});
+};
 
 function playlist({ playlist }){//playlist where the video is
 	return {
@@ -150,10 +143,6 @@ function playlistSidebarPrimaryInfoRenderer({ playlistSidebarPrimaryInfoRenderer
 }
 
 function playlistVideoRenderer({ playlistVideoRenderer }){
-	let channelID = playlistVideoRenderer.shortBylineText.runs.find(x => 
-		x.navigationEndpoint
-	).navigationEndpoint.browseEndpoint.browseId;
-
 	return {
 		title: parseText(playlistVideoRenderer.title),
 
@@ -165,19 +154,20 @@ function playlistVideoRenderer({ playlistVideoRenderer }){
 		thumbnails: new Thumbnails(playlistVideoRenderer.thumbnail),
 		duration: new Duration(playlistVideoRenderer),
 
-		channel: {
-			ID: channelID,
-			name: parseText(playlistVideoRenderer.shortBylineText)
-		}
+		channel: bylineText(playlistVideoRenderer)
 	};
 }
 //#endregion
 
 //#region search
 function videoRenderer({ videoRenderer }){
-	let channelID = videoRenderer.ownerText.runs.find(
-		obj => obj.navigationEndpoint
-	).navigationEndpoint.browseEndpoint.browseId;
+	let channel = bylineText(videoRenderer);
+	channel.thumbnails = new Thumbnails(
+		videoRenderer
+			.channelThumbnailSupportedRenderers
+			.channelThumbnailWithLinkRenderer
+			.thumbnail
+	);
 
 	return {
 		ID: videoRenderer.videoId,
@@ -193,18 +183,7 @@ function videoRenderer({ videoRenderer }){
 		duration: new Duration(videoRenderer),
 		views: new Views(videoRenderer),
 
-		channel: {
-			ID: channelID,
-			URL: 'https://www.youtube.com/channel/' + channelID,
-			name: parseText(videoRenderer.ownerText),
-	
-			thumbnails: new Thumbnails(
-				videoRenderer
-					.channelThumbnailSupportedRenderers
-					.channelThumbnailWithLinkRenderer
-					.thumbnail
-			),
-		},
+		channel,
 
 		publishedTime: parseText(videoRenderer.publishedTimeText),
 	};

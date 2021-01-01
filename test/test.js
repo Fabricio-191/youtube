@@ -23,15 +23,33 @@ global['@Fabricio-191/debugging'] = true;
 		)
 	};
 
-	//fs.writeFileSync('./results.json', JSON.stringify(data, null, '\t'));
+	fs.writeFileSync('./results.json', JSON.stringify(data, null, '\t'));
 })();
 
 //to get raw data:
-/*
 (async function(){
-	let videoBody = await fetch('https://www.youtube.com/watch?v=H2wCwdHk-ao&list=PLDS0dpumEOi0pu_0pCGqvcaRkxg-o1gqg');
-	let playlistBody = await fetch('https://www.youtube.com/playlist?list=PLDS0dpumEOi0pu_0pCGqvcaRkxg-o1gqg');
-	let searchBody = await fetch('https://www.youtube.com/results?search_query=' + 'Fazt');
+	const { fetch, getData, getContinuation } = require('../src/utils/requests');
+	let videoBody = await fetch(
+		'https://www.youtube.com/watch?v=H2wCwdHk-ao&list=PLDS0dpumEOi0pu_0pCGqvcaRkxg-o1gqg',
+		{ 
+			location: 'AR',
+			language: 'es'
+		}
+	);
+	let playlistBody = await fetch(
+		'https://www.youtube.com/playlist?list=PLDS0dpumEOi0pu_0pCGqvcaRkxg-o1gqg',
+		{ 
+			location: 'AR',
+			language: 'es'
+		}
+	);
+	let searchBody = await fetch(
+		'https://www.youtube.com/results?search_query=' + 'Fazt',
+		{ 
+			location: 'AR',
+			language: 'es'
+		}
+	);
 
 	let data = {
 		video: {
@@ -59,14 +77,9 @@ global['@Fabricio-191/debugging'] = true;
 
 	while(playlistVideos.length < 300){
 		if(!playlistVideos[playlistVideos.length -1].continuationItemRenderer) break;
-		let token = playlistVideos.pop()
-			.continuationItemRenderer
-			.continuationEndpoint
-			.continuationCommand
-			.token;
-
+		let continuationItemRenderer = playlistVideos.pop()
 		let continuation = await getContinuation(
-			token, data.playlist.ytcfg
+			continuationItemRenderer, data.playlist.ytcfg
 		);
 
 		playlistVideos = playlistVideos.concat(
@@ -87,12 +100,10 @@ global['@Fabricio-191/debugging'] = true;
 	while(results.length < 40){
 		try{
 			let index = contents.findIndex(a => a.continuationItemRenderer);
-			let continuationToken = contents.splice(index, 1)[0]
-				.continuationItemRenderer.continuationEndpoint
-				.continuationCommand.token;
+			let continuationItemRenderer = contents.splice(index, 1)[0]
 
 			let continuation = await getContinuation(
-				continuationToken, data.search.ytcfg, true
+				continuationItemRenderer, data.search.ytcfg, true
 			);
 
 			contents.push(
@@ -115,4 +126,3 @@ global['@Fabricio-191/debugging'] = true;
 	require('fs')
 		.writeFileSync('./cosas.json', JSON.stringify(data, null, '\t'));
 });
-*/

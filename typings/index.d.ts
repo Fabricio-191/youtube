@@ -1,33 +1,30 @@
-/*eslint no-unused-vars: "off"*/
-import { 
-	Views, Duration, Thumbnails, Thumbnail, Owner 
-} from './structures/structures';
+declare module '@Fabricio-191/youtube' {
+	interface Options{
+		location: 'US',
+		language: 'en',
+		quantity: 20
+	}
 
-interface Video{
-	title: string;
-		
-	views: Views;
-	duration: Duration;
-	thumbnails: Thumbnails<Thumbnail>;
+	interface Owner{
+		name: string,
+	}
 
-	channel: Owner;
+	interface Video{
+		ID: string,
+		URL: string,
+	}
+
+	interface Playlist{
+		ID: string,
+		URL: string,
+	}
+
+	interface Search{
+		searchQuery: string,
+	}
+	
+	export function getVideo(URLorID, options): Video;
+	export function getPlaylist(URLorID, options): Playlist;
+	export function search(searchQuery, options): Search;
+	export function setDefaultOptions(options): void;
 }
-
-interface Playlist{
-
-}
-
-interface Search{
-
-}
-
-interface Options{
-	language?: string | 'en',
-	location?: string | 'US',
-	quantity?: number | 20
-}
-
-declare function getVideo(url: string, options: Options): Video;
-declare function getPlaylist(url: string, options: Options): Playlist;
-declare function search(search_query: string, options: Options): Search;
-declare function setDefaultOptions(options: Options): void;

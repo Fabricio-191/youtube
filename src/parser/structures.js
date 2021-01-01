@@ -1,16 +1,10 @@
 function parseText(obj = ''){
 	if(obj.simpleText){
-		if(obj.accessibility){
-			return {
-				normal: obj.simpleText,
-				long: obj.accessibility.accessibilityData.label,
-				toString(){
-					return obj.simpleText; //cuidar esto
-				}
-			};
-		}
-
 		return obj.simpleText;
+	}
+
+	if(obj.accessibilityData){
+		return obj.accessibilityData.label;
 	}
 	
 	let str = '';
@@ -80,7 +74,8 @@ class Duration{
 			this.normal = 
 				hours ? hours + ':' : '' + `${mins}:${seconds}`;
 		}else{
-			Object.assign(this, parseText(data.lengthText));
+			this.normal = parseText(data.lengthText);
+			this.long = parseText(data.lengthText.accessibility);
 
 			if(data.lengthSeconds || data.lengthInSeconds){
 				this.number = Number(data.lengthSeconds);

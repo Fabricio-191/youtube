@@ -2,15 +2,14 @@
 
 ## Use example:
 ```js
-const YT = require('@fabricio-191/youtube');
+const { getVideo, getPlaylist, search } = require('@fabricio-191/youtube')
+  .setDefaultConfig({
+    location: 'AR',
+    language: 'es'
+  });
 
-YT.setDefaultConfig({
-  location: 'AR',
-  language: 'es'
-})
 
-
-YT.getPlaylist('PLDS0dpumEOi0pu_0pCGqvcaRkxg-o1gqg')
+getPlaylist('PLDS0dpumEOi0pu_0pCGqvcaRkxg-o1gqg')
   .then(data => {
     //do something...
   })  

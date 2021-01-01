@@ -1,12 +1,12 @@
 const { requests } = require('../utils/utils.js');
 const parse = require('../parser/main.js');
+const { Thumbnails } = require('../parser/structures.js');
 
 async function getVideo(ID, options){
 	let body = await requests.fetch('https://www.youtube.com/watch?v=' + ID, options);
 	let data = requests.getData(body, 1), { videoDetails } = requests.getData(body, 2);
 	
 	if(!videoDetails) return null;
-
 
 	let { 
 		secondaryResults, playlist, results 
@@ -27,13 +27,19 @@ async function getVideo(ID, options){
 		secondaryResults[secondaryResults.length -1].continuationItemRenderer
 	) secondaryResults.pop(); //continuationItemRenderer
 
-	info.secondaryResults = secondaryResults.filter(a => !a.compactAutoplayRenderer).map(parse);
 
 	if(playlist){
 		info.playlist = parse(info.playlist);
 	}
 
-	info.endScreen = parse(data.playerOverlays.playerOverlayRenderer.endScreen);
+	Object.assign(info, {
+		ID: videoDetails.videoId,
+		URL: 'https://www.youtube.com/watch?v=' + videoDetails.videoId,
+		keywords: videoDetails.keywords,
+		thumbnails: new Thumbnails(videoDetails.thumbnail),
+		secondaryResults: secondaryResults.filter(a => !a.compactAutoplayRenderer).map(parse),
+		endScreen: parse(data.playerOverlays.playerOverlayRenderer.endScreen),
+	});
 
 	return info;
 }
