@@ -7,6 +7,8 @@ const YouTube = require('../')
 		language: 'es'
 	});
 
+global['@Fabricio-191/debugging'] = true;
+
 (async () => {
 	let data = {
 		video: await YouTube.getVideo(
@@ -21,7 +23,7 @@ const YouTube = require('../')
 		)
 	};
 
-	fs.writeFileSync('./results.json', JSON.stringify(data, null, '\t'));
+	//fs.writeFileSync('./results.json', JSON.stringify(data, null, '\t'));
 })();
 
 //to get raw data:

@@ -51,7 +51,6 @@ module.exports = {
 	fetch, getData, getContinuation
 };
 
-
 function getData(body, type){
 	const start = {
 		1: 'var ytInitialData = {',
@@ -65,20 +64,19 @@ function getData(body, type){
 	body = body.slice(offset + start.length -1);
 
 	let counter = 0;
+	let inString = false;
 	for(let i = 0; i < body.length; i++){
-		if(body[i-1] === '\\'){
-			continue;
-
-			/*
-			let count = 1;
-			while(body[i-1-count] === '\\'){
-				count++;
-			}	
-
-			if(count % 0) continue;
-			*/
-		}
 		let char = body[i];
+
+		if(char === '"'){
+			let count = 0;
+			while(body[i - 1 - count] === '\\') count++;
+			if(count % 2 === 1) continue;
+			
+			inString = !inString; 
+			continue;
+		}
+		if(inString) continue;
 
 		if(char === '{'){
 			counter++;

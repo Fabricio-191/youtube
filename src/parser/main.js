@@ -10,7 +10,7 @@ function videoPrimaryInfoRenderer({ videoPrimaryInfoRenderer }){
 
 	return {
 		name: parseText(videoPrimaryInfoRenderer.title),
-		views: new Views(videoPrimaryInfoRenderer),
+		views: new Views(videoPrimaryInfoRenderer.viewCount),
 
 		likes, dislikes,
 
@@ -26,7 +26,6 @@ function videoSecondaryInfoRenderer({ videoSecondaryInfoRenderer }){
 }
 
 function compactVideoRenderer({ compactVideoRenderer }){
-
 	return {
 		name: parseText(compactVideoRenderer.title),
 		ID: compactVideoRenderer.videoId,
@@ -38,45 +37,97 @@ function compactVideoRenderer({ compactVideoRenderer }){
 
 		publishedDate: parseText(compactVideoRenderer.publishedTimeText),
 
-		channel: longBylineText(compactVideoRenderer)
+		channel: bylineText(compactVideoRenderer)
 	};
 }
 
 function compactRadioRenderer({ compactRadioRenderer }){
-    return {
+	return {
 		name: parseText(compactRadioRenderer.title),
 		ID: compactRadioRenderer.playlistId,
 
 		thumbnails: new Thumbnails(compactRadioRenderer.thumbnail)
-	}
+	};
 }
 
-function playlistPanelVideoRenderer({ playlistPanelVideoRenderer }){
+function watchNextEndScreenRenderer({ watchNextEndScreenRenderer }){
 	return {
-		name: parseText(compactVideoRenderer.title),
-		ID: compactVideoRenderer.videoId,
-		URL: 'https://www.youtube.com/watch?v=' + compactVideoRenderer.videoId,
-
-		duration: new Duration(compactVideoRenderer),
-		views: new Views(compactVideoRenderer),
-		thumbnails: new Thumbnails(compactVideoRenderer.thumbnail),
-
-		publishedDate: parseText(compactVideoRenderer.publishedTimeText),
-
-		channel: longBylineText(playlistPanelVideoRenderer)
+		title: parseText(watchNextEndScreenRenderer.title),
+		items: watchNextEndScreenRenderer.results.map(parse)
 	};
 }
 
 function endScreenVideoRenderer({ endScreenVideoRenderer }){
-    
+	return {
+		name: parseText(endScreenVideoRenderer.title),
+		ID: endScreenVideoRenderer.videoId,
+		URL: 'https://www.youtube.com/watch?v=' + endScreenVideoRenderer.videoId,
+
+		duration: new Duration(endScreenVideoRenderer),
+		views: new Views(endScreenVideoRenderer),
+		thumbnails: new Thumbnails(endScreenVideoRenderer.thumbnail),
+
+		publishedDate: parseText(endScreenVideoRenderer.publishedTimeText),
+
+		channel: bylineText(endScreenVideoRenderer)
+	};
 }
 
 function endScreenPlaylistRenderer({ endScreenPlaylistRenderer }){
-    
+	return {
+		name: parseText(endScreenPlaylistRenderer.title),
+		ID: endScreenPlaylistRenderer.playlistId,
+		URL: 'https://www.youtube.com/playlist?list=' + endScreenPlaylistRenderer.playlistId,
+
+		thumbnails: new Thumbnails(endScreenPlaylistRenderer.thumbnail),
+
+		owner: bylineText(endScreenPlaylistRenderer)
+	};
 }
+
+function playlist({ playlist }){//playlist where the video is
+	return {
+		ID: playlist.playlistId,
+		title: parseText(playlist.titleText),
+
+		owner: bylineText(playlist),
+
+		videoQuantity: playlist.totalVideos,
+
+		videos: playlist.videos.map(parse)
+	};
+}
+
+function playlistPanelVideoRenderer({ playlistPanelVideoRenderer }){ //playlist video
+	return {
+		name: parseText(playlistPanelVideoRenderer.title),
+		ID: playlistPanelVideoRenderer.videoId,
+		playlistID: playlistPanelVideoRenderer.navigationEndpoint.watchEndpoint.playlistId,
+		URL: 'https://www.youtube.com' + playlistPanelVideoRenderer.navigationEndpoint.commandMetadata.webCommandMetadata.url,
+
+		duration: new Duration(playlistPanelVideoRenderer),
+		views: new Views(playlistPanelVideoRenderer),
+		thumbnails: new Thumbnails(playlistPanelVideoRenderer.thumbnail),
+
+		publishedDate: parseText(playlistPanelVideoRenderer.publishedTimeText),
+
+		channel: bylineText(playlistPanelVideoRenderer)
+	};
+}
+
 //#endregion
 
 //#region playlist
+function playlistSidebarRenderer({ playlistSidebarRenderer }){
+	let info = parse(playlistSidebarRenderer.items[0]);
+
+	let ownerInfo = parse(playlistSidebarRenderer.items[1].playlistSidebarSecondaryInfoRenderer.videoOwner);
+
+	info.owner = ownerInfo;
+
+	return info;
+}
+
 function playlistSidebarPrimaryInfoRenderer({ playlistSidebarPrimaryInfoRenderer }){
 	let ID = playlistSidebarPrimaryInfoRenderer.navigationEndpoint.watchEndpoint.playlistId;
 
@@ -85,7 +136,7 @@ function playlistSidebarPrimaryInfoRenderer({ playlistSidebarPrimaryInfoRenderer
 		URL: 'https://www.youtube.com/playlist?list=' + ID,
 		name: parseText(playlistSidebarPrimaryInfoRenderer.title),
 
-		itemsQuantity: extractInt(playlistSidebarPrimaryInfoRenderer.stats[0]),
+		videoQuantity: extractInt(playlistSidebarPrimaryInfoRenderer.stats[0]),
 		views: extractInt(playlistSidebarPrimaryInfoRenderer.stats[1]),
 		lastUpdate: parseText(playlistSidebarPrimaryInfoRenderer.stats[2]),
 
@@ -93,7 +144,7 @@ function playlistSidebarPrimaryInfoRenderer({ playlistSidebarPrimaryInfoRenderer
 
 		thumbnails: new Thumbnails(
 			playlistSidebarPrimaryInfoRenderer.thumbnailRenderer
-				.playlistVideoThumbnailRenderer.thumbnails
+				.playlistVideoThumbnailRenderer.thumbnail
 		)
 	};
 }
@@ -104,19 +155,19 @@ function playlistVideoRenderer({ playlistVideoRenderer }){
 	).navigationEndpoint.browseEndpoint.browseId;
 
 	return {
-		title: Utils.parseText(playlistVideoRenderer.title),
+		title: parseText(playlistVideoRenderer.title),
 
 		ID: playlistVideoRenderer.videoId,
 		URL: `https://www.youtube.com/watch?v=${playlistVideoRenderer.videoId}`,
 		
-		index: Utils.extractInt(playlistVideoRenderer.index),
+		index: extractInt(playlistVideoRenderer.index),
 
-		thumbnails: new Structures.Thumbnails(playlistVideoRenderer.thumbnail),
-		duration: new Structures.Duration(playlistVideoRenderer),
+		thumbnails: new Thumbnails(playlistVideoRenderer.thumbnail),
+		duration: new Duration(playlistVideoRenderer),
 
 		channel: {
 			ID: channelID,
-			name: Utils.parseText(playlistVideoRenderer.shortBylineText)
+			name: parseText(playlistVideoRenderer.shortBylineText)
 		}
 	};
 }
@@ -177,7 +228,7 @@ function playlistRenderer({ playlistRenderer }){
 
 		showedVideos: playlistRenderer.videos.map(childVideoRenderer),
 
-		owner: longBylineText(playlistRenderer),
+		owner: bylineText(playlistRenderer),
 
 		thumbnails: new Thumbnails(
 			playlistRenderer.thumbnailRenderer.playlistVideoThumbnailRenderer.thumbnail
@@ -208,7 +259,7 @@ function shelfRenderer({ shelfRenderer }){
 	return {
 		title: parseText(shelfRenderer.title),
 		label: parseText(collapsedStateButtonText),
-		items: items.map(Video)
+		items: items.map(parse)
 	};
 }
 
@@ -253,12 +304,12 @@ function videoOwnerRenderer({ videoOwnerRenderer }){
 
 		user: {
 			originalName: a.canonicalBaseUrl.slice(6),
-			URL: 'https://www.youtube.com/' + a.canonicalBaseUrl
+			URL: 'https://www.youtube.com' + a.canonicalBaseUrl
 		}
 	};
 
 	if(videoOwnerRenderer.subscriberCountText){
-		let normal = parseText(data.subscriberCountText);
+		let normal = parseText(videoOwnerRenderer.subscriberCountText);
 
 		data.subscribers = {
 			normal,
@@ -266,30 +317,32 @@ function videoOwnerRenderer({ videoOwnerRenderer }){
 			toString(){
 				return normal;
 			}
-		}
+		};
 	}
 
 	return data;
 }
 
-function longBylineText({ longBylineText }){//channel/owner
-	let endpoint = longBylineText.runs.find(
+function bylineText({ longBylineText, shortBylineText }){//channel/owner
+	let obj = longBylineText || shortBylineText;
+
+	let text = parseText(obj);
+	if(!obj.runs) return text;
+	let endpoint = obj.runs.find(
 		obj => obj.navigationEndpoint
 	);
 
-	if(!endpoint){
-		return parseText(longBylineText);
-	}
-	endpoint = endpoint.navigationEndpoint.browseEndpoint
+	if(!endpoint) return text;
+	endpoint = endpoint.navigationEndpoint.browseEndpoint;
 
 	let data = {
-		name: parseText(longBylineText),
+		name: text,
 		ID: endpoint.browseId,
 		URL: 'https://www.youtube.com/channel/' + endpoint.browseId
-	}
+	};
 
 	if(endpoint.canonicalBaseUrl){
-		data.canonicalURL = 'https://www.youtube.com' + endpoint.canonicalBaseUrl
+		data.canonicalURL = 'https://www.youtube.com' + endpoint.canonicalBaseUrl;
 	}
 
 	return data;
@@ -302,9 +355,12 @@ const parsers = {
 	compactVideoRenderer,
 	compactRadioRenderer,
 	playlistPanelVideoRenderer,
+	watchNextEndScreenRenderer,
 	endScreenVideoRenderer,
 	endScreenPlaylistRenderer,
+	playlist,
 
+	playlistSidebarRenderer,
 	playlistSidebarPrimaryInfoRenderer,  
 	playlistVideoRenderer,
 
@@ -312,16 +368,18 @@ const parsers = {
 	shelfRenderer,
 	videoRenderer,
 	playlistRenderer,
-	horizontalCardListRenderer
-};
+	horizontalCardListRenderer,
 
+	videoOwnerRenderer
+};
 
 function parse(obj){
 	let key = Object.keys(obj)[0];
 
 	let parser = parsers[key];
-	if(!parsers){
-		console.warn(`Cannot parse: ${key}`);
+	if(!parser){
+		console.trace(`Cannot parse: ${key}`);
+		//require('fs').writeFileSync(`./${key}.json`, JSON.stringify(obj, null, '\t'));
 		return null;
 	}
 

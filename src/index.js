@@ -7,33 +7,32 @@ const search = require('./methods/search.js'),
 
 module.exports = {
 	getVideo(URLorID, options){
-		if(!URLorID){
-			throw new Error('You must introduce and URL or ID to a video in YouTube');
-		}
-		const ID = Utils.getID(URLorID, 1);
-		options = Utils.parseOptions(options, 1);
-
 		try{
-			return getVideo(ID, options);
+			return getVideo(
+				Utils.getID(URLorID, 1), 
+				Utils.parseOptions(options, 1)
+			);
 		}catch(e){
+			if(global['@Fabricio-191/debugging']){
+				return console.error(e);
+			}
 			throw Error('');
 		}
 	},
 	getPlaylist(URLorID, options){
-		if(!URLorID){
-			throw new Error('You must introduce and URL or ID to a playlist or a video in a playlist in YouTube');
-		}
-		const ID = Utils.getID(URLorID, 2);
-		options = Utils.parseOptions(options, 2);
-
 		try{
-			return getPlaylist(ID, options);
+			return getPlaylist(
+				Utils.getID(URLorID, 2), 
+				Utils.parseOptions(options, 2)
+			);
 		}catch(e){
+			if(global['@Fabricio-191/debugging']){
+				return console.error(e);
+			}
 			throw Error('');
 		}
 	},
 	search(searchQuery, options){
-		options = Utils.parseOptions(options, 3);
 		if(!searchQuery){
 			throw new Error("You didn't introduced a search query");
 		}else if(typeof searchQuery !== 'string'){
@@ -41,8 +40,14 @@ module.exports = {
 		}
 
 		try{
-			return search(searchQuery, options);
+			return search(
+				searchQuery, 
+				Utils.parseOptions(options, 3)
+			);
 		}catch(e){
+			if(global['@Fabricio-191/debugging']){
+				return console.error(e);
+			}
 			throw Error('');
 		}
 	},

@@ -81,8 +81,8 @@ class Duration{
 				hours ? hours + ':' : '' + `${mins}:${seconds}`;
 		}else{
 			Object.assign(this, parseText(data.lengthText));
-	
-			if(data.lengthSeconds){
+
+			if(data.lengthSeconds || data.lengthInSeconds){
 				this.number = Number(data.lengthSeconds);
 			}else{
 				let [
@@ -113,11 +113,12 @@ class Views{
 			this.normal = parseText(data.viewCountText);
 			this.short = parseText(data.shortViewCountText);
 		}
-		if(this.normal === this.short){
-			delete this.short;
+		if(!this.normal && this.short){
+			this.normal = this.short;
+			delete this.number;
+		}else{
+			this.number = extractInt(this.normal);
 		}
-
-		this.number = extractInt(this.normal);
 	}
 	normal = null;
 	short = null;

@@ -1,5 +1,5 @@
-const { requests } = require('../utils/utils.js');
-const parse = require('../parse/main.js');
+const { requests, parseOptions } = require('../utils/utils.js');
+const parse = require('../parser/main.js');
 
 async function search(search_query, options){
 	options = parseOptions(options, 3);
@@ -46,11 +46,6 @@ async function search(search_query, options){
 		if(!continuationItem) break;
 	}
 
-}
-
-module.exports = search;
-
-function Search(results, items){
 	items.reduce((acc, value) => {
 		let key = Object.keys(value)[0];
 
@@ -64,7 +59,7 @@ function Search(results, items){
 		if(prop){
 			acc[prop].push(
 				parse(value)
-			)
+			);
 		}
 
 		return acc;
@@ -72,3 +67,5 @@ function Search(results, items){
 
 	return results;
 }
+
+module.exports = search;

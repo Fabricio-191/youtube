@@ -1,5 +1,5 @@
 const { requests } = require('../utils/utils.js');
-const parse = require('../parse/main.js');
+const parse = require('../parser/main.js');
 
 async function getPlaylist(ID, options){
 	let url = 'https://www.youtube.com/playlist?list=' + ID;
@@ -27,6 +27,11 @@ async function getPlaylist(ID, options){
 		);
 	}
 
+	let results = parse(data.sidebar);
+
+	results.videos = videos.map(parse);
+
+	return results;
 }
 
 module.exports = getPlaylist;
