@@ -77,7 +77,7 @@ global['@Fabricio-191/debugging'] = true;
 
 	while(playlistVideos.length < 300){
 		if(!playlistVideos[playlistVideos.length -1].continuationItemRenderer) break;
-		let continuationItemRenderer = playlistVideos.pop()
+		let continuationItemRenderer = playlistVideos.pop();
 		let continuation = await getContinuation(
 			continuationItemRenderer, data.playlist.ytcfg
 		);
@@ -100,7 +100,7 @@ global['@Fabricio-191/debugging'] = true;
 	while(results.length < 40){
 		try{
 			let index = contents.findIndex(a => a.continuationItemRenderer);
-			let continuationItemRenderer = contents.splice(index, 1)[0]
+			let continuationItemRenderer = contents.splice(index, 1)[0];
 
 			let continuation = await getContinuation(
 				continuationItemRenderer, data.search.ytcfg, true
