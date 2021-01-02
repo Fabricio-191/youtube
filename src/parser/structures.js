@@ -36,25 +36,6 @@ class Thumbnails extends Array{
 		return Array;
 	}
 
-	get bigger(){
-		if(!this[0]) return null;
-		let biggerW = this.reduce(
-			(acc, value) => (value.width > acc.width) ? value : acc, 
-			this[0]
-		);
-
-		let biggerH = this.reduce(
-			(acc, value) => (value.height > acc.height) ? value : acc, 
-			this[0]
-		);
-
-		if(biggerH === biggerW) return biggerW;
-		let ratio = biggerH.width / biggerW.height;
-
-		return ratio > 1 ? 
-			biggerH : biggerW;
-	}
-
 	toString(){
 		let bigger = this.bigger;
 		return bigger ? bigger.url : '';

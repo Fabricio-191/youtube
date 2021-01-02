@@ -23,7 +23,7 @@ global['@Fabricio-191/debugging'] = true;
 		)
 	};
 
-	fs.writeFileSync('./results.json', JSON.stringify(data, null, '\t'));
+	fs.writeFileSync('./test/results.json', JSON.stringify(data, null, '\t'));
 })();
 
 //to get raw data:
@@ -84,7 +84,7 @@ global['@Fabricio-191/debugging'] = true;
 
 		playlistVideos = playlistVideos.concat(
 			continuation.onResponseReceivedActions[0].appendContinuationItemsAction
-			.continuationItems
+				.continuationItems
 		);
 		data.playlist.continuations.push(continuation);
 	}
@@ -108,13 +108,13 @@ global['@Fabricio-191/debugging'] = true;
 
 			contents.push(
 				continuation.onResponseReceivedCommands[0].appendContinuationItemsAction
-				.continuationItems[1]
-			)
+					.continuationItems[1]
+			);
 
 			results = results.concat(
 				continuation.onResponseReceivedCommands[0].appendContinuationItemsAction
-				.continuationItems[0]
-				.itemSectionRenderer.contents
+					.continuationItems[0]
+					.itemSectionRenderer.contents
 			);
 			data.search.continuations.push(continuation);
 		}catch(e){
@@ -125,4 +125,4 @@ global['@Fabricio-191/debugging'] = true;
 		
 	require('fs')
 		.writeFileSync('./cosas.json', JSON.stringify(data, null, '\t'));
-});
+})();

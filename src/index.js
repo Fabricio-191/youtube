@@ -55,5 +55,6 @@ module.exports = {
 		Object.assign(Utils.defaultOptions, options);
 
 		return this;
-	}
+	},
+	defaultOptions: Utils.defaultOptions,
 };
