@@ -1,14 +1,23 @@
-const { requests, parseOptions } = require('../utils/utils.js');
+const { parseOptions, requests } = require('../utils/utils.js');
 const parse = require('../parser/main.js');
 
-async function search(search_query, options){
+async function search(searchQuery, options){
+	if(!searchQuery){
+		throw new Error("You didn't introduced a search query");
+	}else if(typeof searchQuery !== 'string'){
+		throw new Error('Search query must be a string');
+	}
+
 	options = parseOptions(options, 3);
-	const searchQuery = encodeURIComponent(
-		search_query.trim().split(/\s+/).join('+')
+	const search_query = encodeURIComponent(
+		searchQuery.trim().split(/\s+/).join('+')
 	);
 
-	let body = await requests.fetch('https://www.youtube.com/results?search_query=' + searchQuery, options);
-	let data = requests.getData(body, 1), YTconfig = requests.getData(body, 3);
+	let body = await requests.fetch(
+		'https://www.youtube.com/results?search_query=' + search_query, 
+		options
+	);
+	let data = requests.getData(body, 1), ytcfg = requests.getData(body, 3);
 
 	const results = {
 		searchQuery: search_query.trim(),
@@ -35,7 +44,7 @@ async function search(search_query, options){
 	).itemSectionRenderer.contents;
 	
 	while(results.length < options.quantity){
-		let continuation = await requests.getContinuation(continuationItem, YTconfig);
+		let continuation = await requests.getContinuation(continuationItem, ytcfg, options);
 		
 		let items = continuation.onResponseReceivedCommands[0]
 			.appendContinuationItemsAction.continuationItems;
@@ -44,6 +53,10 @@ async function search(search_query, options){
 		
 		continuationItem = items[1];
 		if(!continuationItem) break;
+	}
+	
+	if(options.raw){
+		return { initialData: data, ytcfg, items };
 	}
 
 	items.reduce((acc, value) => {

@@ -1,0 +1,766 @@
+{
+	"languages": [
+		{
+			"language": "Afrikaans",
+			"code": "af"
+		},
+		{
+			"language": "Azerbaijani",
+			"code": "az"
+		},
+		{
+			"language": "Indonesian",
+			"code": "id"
+		},
+		{
+			"language": "Malay",
+			"code": "ms"
+		},
+		{
+			"language": "Bosnian",
+			"code": "bs"
+		},
+		{
+			"language": "Catalan",
+			"code": "ca"
+		},
+		{
+			"language": "Czech",
+			"code": "cs"
+		},
+		{
+			"language": "Danish",
+			"code": "da"
+		},
+		{
+			"language": "German",
+			"code": "de"
+		},
+		{
+			"language": "Estonian",
+			"code": "et"
+		},
+		{
+			"language": "English (India)",
+			"code": "en-IN"
+		},
+		{
+			"language": "English (United Kingdom)",
+			"code": "en-GB"
+		},
+		{
+			"language": "English",
+			"code": "en"
+		},
+		{
+			"language": "Spanish (Spain)",
+			"code": "es"
+		},
+		{
+			"language": "Spanish (Latin America)",
+			"code": "es-419"
+		},
+		{
+			"language": "Spanish (United States)",
+			"code": "es-US"
+		},
+		{
+			"language": "Basque",
+			"code": "eu"
+		},
+		{
+			"language": "Filipino",
+			"code": "fil"
+		},
+		{
+			"language": "French",
+			"code": "fr"
+		},
+		{
+			"language": "French (Canada)",
+			"code": "fr-CA"
+		},
+		{
+			"language": "Galician",
+			"code": "gl"
+		},
+		{
+			"language": "Croatian",
+			"code": "hr"
+		},
+		{
+			"language": "Zulu",
+			"code": "zu"
+		},
+		{
+			"language": "Icelandic",
+			"code": "is"
+		},
+		{
+			"language": "Italian",
+			"code": "it"
+		},
+		{
+			"language": "Swahili",
+			"code": "sw"
+		},
+		{
+			"language": "Latvian",
+			"code": "lv"
+		},
+		{
+			"language": "Lithuanian",
+			"code": "lt"
+		},
+		{
+			"language": "Hungarian",
+			"code": "hu"
+		},
+		{
+			"language": "Dutch",
+			"code": "nl"
+		},
+		{
+			"language": "Norwegian",
+			"code": "no"
+		},
+		{
+			"language": "Uzbek",
+			"code": "uz"
+		},
+		{
+			"language": "Polish",
+			"code": "pl"
+		},
+		{
+			"language": "Portuguese (Portugal)",
+			"code": "pt-PT"
+		},
+		{
+			"language": "Portuguese (Brazil)",
+			"code": "pt"
+		},
+		{
+			"language": "Romanian",
+			"code": "ro"
+		},
+		{
+			"language": "Albanian",
+			"code": "sq"
+		},
+		{
+			"language": "Slovak",
+			"code": "sk"
+		},
+		{
+			"language": "Slovenian",
+			"code": "sl"
+		},
+		{
+			"language": "Serbian (Latin)",
+			"code": "sr-Latn"
+		},
+		{
+			"language": "Finnish",
+			"code": "fi"
+		},
+		{
+			"language": "Swedish",
+			"code": "sv"
+		},
+		{
+			"language": "Vietnamese",
+			"code": "vi"
+		},
+		{
+			"language": "Turkish",
+			"code": "tr"
+		},
+		{
+			"language": "Belarusian",
+			"code": "be"
+		},
+		{
+			"language": "Bulgarian",
+			"code": "bg"
+		},
+		{
+			"language": "Kyrgyz",
+			"code": "ky"
+		},
+		{
+			"language": "Kazakh",
+			"code": "kk"
+		},
+		{
+			"language": "Macedonian",
+			"code": "mk"
+		},
+		{
+			"language": "Mongolian",
+			"code": "mn"
+		},
+		{
+			"language": "Russian",
+			"code": "ru"
+		},
+		{
+			"language": "Serbian",
+			"code": "sr"
+		},
+		{
+			"language": "Ukrainian",
+			"code": "uk"
+		},
+		{
+			"language": "Greek",
+			"code": "el"
+		},
+		{
+			"language": "Armenian",
+			"code": "hy"
+		},
+		{
+			"language": "Hebrew",
+			"code": "iw"
+		},
+		{
+			"language": "Urdu",
+			"code": "ur"
+		},
+		{
+			"language": "Arabic",
+			"code": "ar"
+		},
+		{
+			"language": "Persian",
+			"code": "fa"
+		},
+		{
+			"language": "Nepali",
+			"code": "ne"
+		},
+		{
+			"language": "Marathi",
+			"code": "mr"
+		},
+		{
+			"language": "Hindi",
+			"code": "hi"
+		},
+		{
+			"language": "Assamese",
+			"code": "as"
+		},
+		{
+			"language": "Bangla",
+			"code": "bn"
+		},
+		{
+			"language": "Punjabi",
+			"code": "pa"
+		},
+		{
+			"language": "Gujarati",
+			"code": "gu"
+		},
+		{
+			"language": "Odia",
+			"code": "or"
+		},
+		{
+			"language": "Tamil",
+			"code": "ta"
+		},
+		{
+			"language": "Telugu",
+			"code": "te"
+		},
+		{
+			"language": "Kannada",
+			"code": "kn"
+		},
+		{
+			"language": "Malayalam",
+			"code": "ml"
+		},
+		{
+			"language": "Sinhala",
+			"code": "si"
+		},
+		{
+			"language": "Thai",
+			"code": "th"
+		},
+		{
+			"language": "Lao",
+			"code": "lo"
+		},
+		{
+			"language": "Myanmar (Burmese)",
+			"code": "my"
+		},
+		{
+			"language": "Georgian",
+			"code": "ka"
+		},
+		{
+			"language": "Amharic",
+			"code": "am"
+		},
+		{
+			"language": "Khmer",
+			"code": "km"
+		},
+		{
+			"language": "Chinese",
+			"code": "zh-CN"
+		},
+		{
+			"language": "Chinese (Taiwan)",
+			"code": "zh-TW"
+		},
+		{
+			"language": "Chinese (Hong Kong)",
+			"code": "zh-HK"
+		},
+		{
+			"language": "Japanese",
+			"code": "ja"
+		},
+		{
+			"language": "Korean",
+			"code": "ko"
+		}
+	],
+	"regions": [
+		{
+			"location": "Algeria",
+			"code": "DZ"
+		},
+		{
+			"location": "Argentina",
+			"code": "AR"
+		},
+		{
+			"location": "Australia",
+			"code": "AU"
+		},
+		{
+			"location": "Austria",
+			"code": "AT"
+		},
+		{
+			"location": "Azerbaijan",
+			"code": "AZ"
+		},
+		{
+			"location": "Bahrain",
+			"code": "BH"
+		},
+		{
+			"location": "Bangladesh",
+			"code": "BD"
+		},
+		{
+			"location": "Belarus",
+			"code": "BY"
+		},
+		{
+			"location": "Belgium",
+			"code": "BE"
+		},
+		{
+			"location": "Bolivia",
+			"code": "BO"
+		},
+		{
+			"location": "Bosnia and Herzegovina",
+			"code": "BA"
+		},
+		{
+			"location": "Brazil",
+			"code": "BR"
+		},
+		{
+			"location": "Bulgaria",
+			"code": "BG"
+		},
+		{
+			"location": "Canada",
+			"code": "CA"
+		},
+		{
+			"location": "Chile",
+			"code": "CL"
+		},
+		{
+			"location": "Colombia",
+			"code": "CO"
+		},
+		{
+			"location": "Costa Rica",
+			"code": "CR"
+		},
+		{
+			"location": "Croatia",
+			"code": "HR"
+		},
+		{
+			"location": "Cyprus",
+			"code": "CY"
+		},
+		{
+			"location": "Czechia",
+			"code": "CZ"
+		},
+		{
+			"location": "Denmark",
+			"code": "DK"
+		},
+		{
+			"location": "Dominican Republic",
+			"code": "DO"
+		},
+		{
+			"location": "Ecuador",
+			"code": "EC"
+		},
+		{
+			"location": "Egypt",
+			"code": "EG"
+		},
+		{
+			"location": "El Salvador",
+			"code": "SV"
+		},
+		{
+			"location": "Estonia",
+			"code": "EE"
+		},
+		{
+			"location": "Finland",
+			"code": "FI"
+		},
+		{
+			"location": "France",
+			"code": "FR"
+		},
+		{
+			"location": "Georgia",
+			"code": "GE"
+		},
+		{
+			"location": "Germany",
+			"code": "DE"
+		},
+		{
+			"location": "Ghana",
+			"code": "GH"
+		},
+		{
+			"location": "Greece",
+			"code": "GR"
+		},
+		{
+			"location": "Guatemala",
+			"code": "GT"
+		},
+		{
+			"location": "Honduras",
+			"code": "HN"
+		},
+		{
+			"location": "Hong Kong",
+			"code": "HK"
+		},
+		{
+			"location": "Hungary",
+			"code": "HU"
+		},
+		{
+			"location": "Iceland",
+			"code": "IS"
+		},
+		{
+			"location": "India",
+			"code": "IN"
+		},
+		{
+			"location": "Indonesia",
+			"code": "ID"
+		},
+		{
+			"location": "Iraq",
+			"code": "IQ"
+		},
+		{
+			"location": "Ireland",
+			"code": "IE"
+		},
+		{
+			"location": "Israel",
+			"code": "IL"
+		},
+		{
+			"location": "Italy",
+			"code": "IT"
+		},
+		{
+			"location": "Jamaica",
+			"code": "JM"
+		},
+		{
+			"location": "Japan",
+			"code": "JP"
+		},
+		{
+			"location": "Jordan",
+			"code": "JO"
+		},
+		{
+			"location": "Kazakhstan",
+			"code": "KZ"
+		},
+		{
+			"location": "Kenya",
+			"code": "KE"
+		},
+		{
+			"location": "Kuwait",
+			"code": "KW"
+		},
+		{
+			"location": "Latvia",
+			"code": "LV"
+		},
+		{
+			"location": "Lebanon",
+			"code": "LB"
+		},
+		{
+			"location": "Libya",
+			"code": "LY"
+		},
+		{
+			"location": "Liechtenstein",
+			"code": "LI"
+		},
+		{
+			"location": "Lithuania",
+			"code": "LT"
+		},
+		{
+			"location": "Luxembourg",
+			"code": "LU"
+		},
+		{
+			"location": "Malaysia",
+			"code": "MY"
+		},
+		{
+			"location": "Malta",
+			"code": "MT"
+		},
+		{
+			"location": "Mexico",
+			"code": "MX"
+		},
+		{
+			"location": "Montenegro",
+			"code": "ME"
+		},
+		{
+			"location": "Morocco",
+			"code": "MA"
+		},
+		{
+			"location": "Nepal",
+			"code": "NP"
+		},
+		{
+			"location": "Netherlands",
+			"code": "NL"
+		},
+		{
+			"location": "New Zealand",
+			"code": "NZ"
+		},
+		{
+			"location": "Nicaragua",
+			"code": "NI"
+		},
+		{
+			"location": "Nigeria",
+			"code": "NG"
+		},
+		{
+			"location": "North Macedonia",
+			"code": "MK"
+		},
+		{
+			"location": "Norway",
+			"code": "NO"
+		},
+		{
+			"location": "Oman",
+			"code": "OM"
+		},
+		{
+			"location": "Pakistan",
+			"code": "PK"
+		},
+		{
+			"location": "Panama",
+			"code": "PA"
+		},
+		{
+			"location": "Papua New Guinea",
+			"code": "PG"
+		},
+		{
+			"location": "Paraguay",
+			"code": "PY"
+		},
+		{
+			"location": "Peru",
+			"code": "PE"
+		},
+		{
+			"location": "Philippines",
+			"code": "PH"
+		},
+		{
+			"location": "Poland",
+			"code": "PL"
+		},
+		{
+			"location": "Portugal",
+			"code": "PT"
+		},
+		{
+			"location": "Puerto Rico",
+			"code": "PR"
+		},
+		{
+			"location": "Qatar",
+			"code": "QA"
+		},
+		{
+			"location": "Romania",
+			"code": "RO"
+		},
+		{
+			"location": "Russia",
+			"code": "RU"
+		},
+		{
+			"location": "Saudi Arabia",
+			"code": "SA"
+		},
+		{
+			"location": "Senegal",
+			"code": "SN"
+		},
+		{
+			"location": "Serbia",
+			"code": "RS"
+		},
+		{
+			"location": "Singapore",
+			"code": "SG"
+		},
+		{
+			"location": "Slovakia",
+			"code": "SK"
+		},
+		{
+			"location": "Slovenia",
+			"code": "SI"
+		},
+		{
+			"location": "South Africa",
+			"code": "ZA"
+		},
+		{
+			"location": "South Korea",
+			"code": "KR"
+		},
+		{
+			"location": "Spain",
+			"code": "ES"
+		},
+		{
+			"location": "Sri Lanka",
+			"code": "LK"
+		},
+		{
+			"location": "Sweden",
+			"code": "SE"
+		},
+		{
+			"location": "Switzerland",
+			"code": "CH"
+		},
+		{
+			"location": "Taiwan",
+			"code": "TW"
+		},
+		{
+			"location": "Tanzania",
+			"code": "TZ"
+		},
+		{
+			"location": "Thailand",
+			"code": "TH"
+		},
+		{
+			"location": "Tunisia",
+			"code": "TN"
+		},
+		{
+			"location": "Turkey",
+			"code": "TR"
+		},
+		{
+			"location": "Uganda",
+			"code": "UG"
+		},
+		{
+			"location": "Ukraine",
+			"code": "UA"
+		},
+		{
+			"location": "United Arab Emirates",
+			"code": "AE"
+		},
+		{
+			"location": "United Kingdom",
+			"code": "GB"
+		},
+		{
+			"location": "United States",
+			"code": "US"
+		},
+		{
+			"location": "Uruguay",
+			"code": "UY"
+		},
+		{
+			"location": "Venezuela",
+			"code": "VE"
+		},
+		{
+			"location": "Vietnam",
+			"code": "VN"
+		},
+		{
+			"location": "Yemen",
+			"code": "YE"
+		},
+		{
+			"location": "Zimbabwe",
+			"code": "ZW"
+		}
+	]
+}

@@ -1,7 +1,6 @@
 const http = require('http'), https = require('https');
 
 function fetch(url, options){
-	//https://nodejs.org/api/http.html#http_http_request_options_callback
 	const parsedURL = new URL(url);
 
 	parsedURL.searchParams.set('hl', options.language);
@@ -12,37 +11,42 @@ function fetch(url, options){
 			const chunks = [];
 
 			response
-				.on('data', chunk => chunks.push(chunk))
+				.on('data', chunk => {
+					chunks.push(chunk);
+				})
 				.on('end', () => {
 					let body = Buffer.concat(chunks).toString();
-
+					
 					resolve(body);
 				})
 				.on('error', reject);
 		}
 
 		(parsedURL.protocol === 'https:' ? https : http)
-			.request(parsedURL, options, cb)
+			.request(parsedURL, options.requestsOptions, cb) 
+			//https://nodejs.org/api/http.html#http_http_request_options_callback
 			.on('error', reject)
 			.end(options.body || '');
 	});
 }
 
-async function getContinuation(continuationItem, YTconfig){
+async function getContinuation(continuationItem, ytcfg, options){
 	const continuationEndpoint = continuationItem.continuationItemRenderer.continuationEndpoint;
 	
 	const POST_BODY = {
-		context: YTconfig.INNERTUBE_CONTEXT, 
+		context: ytcfg.INNERTUBE_CONTEXT, 
 		continuation: continuationEndpoint.continuationCommand.token
 	};
 
 	const endpoint = continuationEndpoint.commandMetadata.webCommandMetadata.apiUrl;
-	const URL = `https://www.youtube.com${endpoint}?key=${YTconfig.INNERTUBE_API_KEY}`;
-
-	const body = await fetch(URL, { 
-		method: 'POST',
-		body: JSON.stringify(POST_BODY)
-	});
+	const URL = `https://www.youtube.com${endpoint}?key=${ytcfg.INNERTUBE_API_KEY}`;
+	
+	const body = await fetch(URL, 
+		Object.assign({}, options.requestsOptions, {
+			method: 'POST',
+			body: JSON.stringify(POST_BODY)
+		})	
+	);
 
 	return JSON.parse(body);
 }

@@ -1,6 +1,5 @@
 node_modules/
-eslint/
+test/others.js
+
 *.json
 !package.json
-
-.gitignore

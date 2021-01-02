@@ -2,7 +2,6 @@
   "name": "@fabricio-191/youtube",
   "version": "0.0.0",
   "main": "./src/index.js",
-  "types": "./typings/index.d.ts",
   "license": "Apache License 2.0",
   "description": "Get info from youtube videos/playlists easy, and search videos from youtube",
   "deprecated": false,
@@ -17,9 +16,8 @@
   "scripts": {
     "test": "node test/test.js",
     "eslint": "npx eslint src --ext .js --fix",
-    "eslintd": "npx eslint typings --ext .d.ts --fix --parser @typescript-eslint/parser  --config typings/.tslintrc.json",
     "git": "git add . && git commit -m - && git push",
-    "all": "npm run eslint && npm run eslintd && npm run test && npm run git"
+    "all": "npm run eslint && npm run test && npm run git"
   },  
   "dependencies": {},
   "devDependencies": {

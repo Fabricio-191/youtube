@@ -1,2 +1,3 @@
 node_modules/
+test/others.js
 package-lock.json

@@ -30,14 +30,63 @@ class Thumbnails extends Array{
 		super(...thumbnails);
 
 		this.sort((a, b) => b.width - a.width);
+
+		/*
+		{
+			//if returned number is less than zero, a will be in a lower index than b
+			//if returned number is biffer than zero, b will be in a lower index than a
+			//ir returned nuber is zero, there will be no change
+			if(a.width > b.width && a.height > b.height){
+				return -1;
+			}else if(b.width > a.width && b.height > a.height){
+				return 1;
+			}else{
+				let Apixels = b.width * b.height;
+				let Bpixels = a.width * a.height;
+
+				if(Bpixels > Apixels){
+					return -1;
+				}else if(Apixels > Bpixels){
+					return 1;
+				}else{
+					if(a.width > b.width){
+						return -1;
+					}else{
+						return 1;
+					}
+				}
+			}
+		}
+		*/
 	}
 
 	static get [Symbol.species](){
 		return Array;
 	}
 
+	/*
+	get bigger(){
+		if(!this[0]) return null;
+		let biggerW = this.reduce(
+			(acc, value) => (value.width > acc.width) ? value : acc, 
+			this[0]
+		);
+
+		let biggerH = this.reduce(
+			(acc, value) => (value.height > acc.height) ? value : acc, 
+			this[0]
+		);
+
+		if(biggerH === biggerW) return biggerW;
+		let ratio = biggerH.width / biggerW.height;
+
+		return ratio > 1 ? 
+			biggerH : biggerW;
+	}
+	*/
+
 	toString(){
-		let bigger = this.bigger;
+		let bigger = this[0];
 		return bigger ? bigger.url : '';
 	}
 }

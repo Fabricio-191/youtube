@@ -107,7 +107,6 @@ function playlistPanelVideoRenderer({ playlistPanelVideoRenderer }){ //playlist 
 		channel: bylineText(playlistPanelVideoRenderer)
 	};
 }
-
 //#endregion
 
 //#region playlist
@@ -271,19 +270,20 @@ function horizontalCardListRenderer({ horizontalCardListRenderer }){
 
 //#region others
 function videoOwnerRenderer({ videoOwnerRenderer }){
-	let a = videoOwnerRenderer.navigationEndpoint.browseEndpoint;
+	let { browseId, canonicalBaseUrl } = videoOwnerRenderer.navigationEndpoint.browseEndpoint;
+	
 	let data = {
 		name: parseText(videoOwnerRenderer.title),
 		thumbnails: new Thumbnails(videoOwnerRenderer.thumbnail),
 
 		channel: {
-			ID: a.browseId,
-			URL: 'https://www.youtube.com/channel/' + a.browseId
+			ID: browseId,
+			URL: 'https://www.youtube.com/channel/' + browseId
 		},
 
 		user: {
-			originalName: a.canonicalBaseUrl.slice(6),
-			URL: 'https://www.youtube.com' + a.canonicalBaseUrl
+			originalName: canonicalBaseUrl.slice(6),
+			URL: 'https://www.youtube.com' + canonicalBaseUrl
 		}
 	};
 
@@ -357,8 +357,8 @@ function parse(obj){
 
 	let parser = parsers[key];
 	if(!parser){
-		console.trace(`Cannot parse: ${key}`);
-		//require('fs').writeFileSync(`./${key}.json`, JSON.stringify(obj, null, '\t'));
+		console.warn(`Cannot parse: ${key}`);
+		if(global['@Fabricio-191{ debugging }']) debugger;
 		return null;
 	}
 
@@ -366,4 +366,3 @@ function parse(obj){
 }
 
 module.exports = parse;
-

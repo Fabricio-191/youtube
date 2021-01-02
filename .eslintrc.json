@@ -11,6 +11,7 @@
         "ecmaVersion": 12
     },
     "rules": {
+        "no-debugger": "off",
         "indent": [ "error", "tab", {
             "SwitchCase": 1
         }],
