@@ -41,15 +41,16 @@ async function getContinuation(continuationItem, ytcfg, options){
 	const endpoint = continuationEndpoint.commandMetadata.webCommandMetadata.apiUrl;
 	const URL = `https://www.youtube.com${endpoint}?key=${ytcfg.INNERTUBE_API_KEY}`;
 
-	let oldRequestOptions = options.requestsOptions;
-	options.requestsOptions = Object.assign({}, oldRequestOptions, {
-		method: 'POST',
-		body: JSON.stringify(POST_BODY)
-	});
+	let optionsCopy = JSON.parse(JSON.stringify(options));
 
-	const body = await fetch(URL, options);
+	optionsCopy.requestsOptions = Object.assign(
+		{}, options.requestsOptions, {
+			method: 'POST',
+			body: JSON.stringify(POST_BODY)
+		}
+	);
 
-	options.requestsOptions = oldRequestOptions;
+	const body = await fetch(URL, optionsCopy);
 
 	return JSON.parse(body);
 }
