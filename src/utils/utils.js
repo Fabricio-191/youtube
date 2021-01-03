@@ -16,10 +16,7 @@ const CHANNEL_REGEX = /^UC[a-zA-Z0-9-_]{22,32}$/;
 */
 
 function getID(string, type){
-	let a = {
-		1: 'video',
-		2: 'playlist'
-	}[type];
+	let a = [null, 'video', 'playlist'][type];
 
 	if(!string){
 		throw new Error(`You must introduce and URL or ID to a ${a} in YouTube`);

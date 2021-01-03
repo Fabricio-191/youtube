@@ -9,6 +9,7 @@ const { getVideo, getPlaylist, search } = require('../')
 	});
 
 (async () => {
+	throw new Error('a');
 	let data = {
 		video: await getVideo(
 			'https://www.youtube.com/watch?v=H2wCwdHk-ao'
@@ -19,6 +20,8 @@ const { getVideo, getPlaylist, search } = require('../')
 		),
 		search: await search('Node.js', { quantity: 40 })
 	};
+
+	return; //console.log(data);
 
 	if(fs.existsSync('./test')) return; //running from the test script
 

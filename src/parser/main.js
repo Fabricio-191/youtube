@@ -161,15 +161,7 @@ function playlistVideoRenderer({ playlistVideoRenderer }){
 
 //#region search
 function videoRenderer({ videoRenderer }){
-	let channel = bylineText(videoRenderer);
-	channel.thumbnails = new Thumbnails(
-		videoRenderer
-			.channelThumbnailSupportedRenderers
-			.channelThumbnailWithLinkRenderer
-			.thumbnail
-	);
-
-	return {
+	let data = {
 		ID: videoRenderer.videoId,
 		URL: `https://www.youtube.com/watch?v=${videoRenderer.videoId}`,
 		type: 'video',
@@ -180,14 +172,25 @@ function videoRenderer({ videoRenderer }){
 		),
 
 		thumbnails: new Thumbnails(videoRenderer.thumbnail),
-
-		duration: new Duration(videoRenderer),
 		views: new Views(videoRenderer),
 
-		channel,
+		channel: bylineText(videoRenderer),
 
 		publishedTime: parseText(videoRenderer.publishedTimeText),
 	};
+
+	if(videoRenderer.lengthText){
+		data.duration = new Duration(videoRenderer);
+	}
+
+	data.channel.thumbnails = new Thumbnails(
+		videoRenderer
+			.channelThumbnailSupportedRenderers
+			.channelThumbnailWithLinkRenderer
+			.thumbnail
+	);
+
+	return data;
 }
 
 function childVideoRenderer({ childVideoRenderer }){
@@ -273,6 +276,44 @@ function horizontalCardListRenderer({ horizontalCardListRenderer }){
 		items: horizontalCardListRenderer.cards.map(searchRefinementCardRenderer)
 	};
 }
+
+function promotedVideoRenderer({ promotedVideoRenderer }){
+	let data = {
+		ID: promotedVideoRenderer.videoId,
+		URL: `https://www.youtube.com/watch?v=${promotedVideoRenderer.videoId}`,
+		AD: promotedVideoRenderer.navigationEndpoint.urlEndpoint.url,
+		type: 'promotedVideo',
+		
+		title: parseText(promotedVideoRenderer.title),
+		description: parseText(
+			promotedVideoRenderer.descriptionSnippet
+		),
+
+		thumbnails: new Thumbnails(promotedVideoRenderer.thumbnail),
+		views: new Views(promotedVideoRenderer),
+
+		channel: bylineText(promotedVideoRenderer),
+
+		publishedTime: parseText(promotedVideoRenderer.publishedTimeText),
+	};
+
+	if(promotedVideoRenderer.lengthText){
+		data.duration = new Duration(promotedVideoRenderer);
+	}
+
+	data.channel.thumbnails = new Thumbnails(
+		promotedVideoRenderer
+			.channelThumbnailSupportedRenderers
+			.channelThumbnailWithLinkRenderer
+			.thumbnail
+	);
+
+	return data;
+}
+
+function searchPyvRenderer({ searchPyvRenderer }){
+	return searchPyvRenderer.ads.map(parse);
+}
 //#endregion
 
 //#region others
@@ -355,6 +396,8 @@ const parsers = {
 	videoRenderer,
 	playlistRenderer,
 	horizontalCardListRenderer,
+	searchPyvRenderer,
+	promotedVideoRenderer,
 
 	videoOwnerRenderer
 };
@@ -365,6 +408,7 @@ function parse(obj){
 	let parser = parsers[key];
 	if(!parser){
 		console.warn(`Cannot parse: ${key}`);
+		//require('fs').writeFileSync(`./${key}.json`, JSON.stringify(obj, null, '\t'));
 		if(global['@Fabricio-191{ debugging }']) debugger;
 		return null;
 	}

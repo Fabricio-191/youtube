@@ -53,7 +53,7 @@ async function search(searchString, options){
 	return {
 		searchQuery: search_query.trim(),
 		estimatedResults: Number(data.estimatedResults),
-		results: results.map(parse) 
+		results: results.map(parse).filter(x => x)
 	};
 }
 
