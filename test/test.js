@@ -11,19 +11,16 @@ const { getVideo, getPlaylist, search } = require('../')
 (async () => {
 	let data = {
 		video: await getVideo(
-			'https://www.youtube.com/watch?v=H2wCwdHk-ao&list=PLDS0dpumEOi0pu_0pCGqvcaRkxg-o1gqg'
+			'https://www.youtube.com/watch?v=H2wCwdHk-ao'
 		),
 		playlist: await getPlaylist(
 			'https://www.youtube.com/watch?v=H2wCwdHk-ao&list=PLDS0dpumEOi0pu_0pCGqvcaRkxg-o1gqg', 
 			{ quantity: 'all' }
 		),
-		search: await search(
-			'Node.js', { quantity: 20 }
-		)
+		search: await search('Node.js', { quantity: 40 })
 	};
 
-	fs.writeFileSync(
-		fs.existsSync('./test') ? './test/results.json' : './results.json', 
-		JSON.stringify(data, null, '\t')
-	);
+	if(fs.existsSync('./test')) return; //running from the test script
+
+	fs.writeFileSync('./results.json', JSON.stringify(data, null, '\t'));
 })();

@@ -85,7 +85,7 @@ class Thumbnails extends Array{
 	}
 	*/
 
-	toString(){
+	toString = function(){
 		let bigger = this[0];
 		return bigger ? bigger.url : '';
 	}
@@ -123,7 +123,7 @@ class Duration{
 
 	number = 0;
 
-	toString(){
+	toString = function(){
 		return this.normal;
 	}
 }
@@ -150,7 +150,7 @@ class Views{
 
 	number = 0;
 
-	toString(){
+	toString = function(){
 		return this.short || this.normal;
 	}
 }

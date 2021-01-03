@@ -9,13 +9,13 @@ async function getVideo(URLorID, options){
 		'https://www.youtube.com/watch?v=' + getID(URLorID, 1), 
 		options
 	);
-	let data = requests.getData(body, 1), ytcfg = requests.getData(body, 2);
+	let data = requests.getData(body, 1), playerResponse = requests.getData(body, 2);
 
 	if(options.raw){
-		return { initialData: data, ytcfg };
+		return { initialData: data, playerResponse, ytcfg: requests.getData(body, 3) };
 	}
 	
-	if(!ytcfg.videoDetails) return null;
+	if(!playerResponse.videoDetails) return null;
 
 	let { 
 		secondaryResults, playlist, results 
@@ -31,14 +31,14 @@ async function getVideo(URLorID, options){
 
 	let info = Object.assign(
 		{
-			ID: ytcfg.videoDetails.videoId,
-			URL: 'https://www.youtube.com/watch?v=' + ytcfg.videoDetails.videoId
+			ID: playerResponse.videoDetails.videoId,
+			URL: 'https://www.youtube.com/watch?v=' + playerResponse.videoDetails.videoId
 		},
 		parse(videoPrimaryInfoRenderer),
 		parse(videoSecondaryInfoRenderer),
 		{
-			thumbnails: new Thumbnails(ytcfg.videoDetails.thumbnail),
-			keywords: ytcfg.videoDetails.keywords,
+			thumbnails: new Thumbnails(playerResponse.videoDetails.thumbnail),
+			keywords: playerResponse.videoDetails.keywords,
 			secondaryResults: secondaryResults.filter(a => !a.compactAutoplayRenderer).map(parse),
 			endScreen: parse(data.playerOverlays.playerOverlayRenderer.endScreen),
 		}

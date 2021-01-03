@@ -1,16 +1,16 @@
 const { parseOptions, requests } = require('../utils/utils.js');
 const parse = require('../parser/main.js');
 
-async function search(searchQuery, options){
-	if(!searchQuery){
+async function search(searchString, options){
+	if(!searchString){
 		throw new Error("You didn't introduced a search query");
-	}else if(typeof searchQuery !== 'string'){
+	}else if(typeof searchString !== 'string'){
 		throw new Error('Search query must be a string');
 	}
 
 	options = parseOptions(options, 3);
 	const search_query = encodeURIComponent(
-		searchQuery.trim().split(/\s+/).join('+')
+		searchString.trim().split(/\s+/).join('+')
 	);
 
 	let body = await requests.fetch(
@@ -50,29 +50,11 @@ async function search(searchQuery, options){
 		return { initialData: data, ytcfg, items: results };
 	}
 
-	return results.reduce((acc, value) => {
-		let key = Object.keys(value)[0];
-
-		let prop = {
-			videoRenderer: 'videos',
-			playlistRenderer: 'playlists',
-			channelRenderer: 'channels',
-			shelfRenderer: 'shelfs',
-		}[key];
-
-		if(prop){
-			acc[prop].push(parse(value));
-		}
-
-		return acc;
-	}, {
+	return {
 		searchQuery: search_query.trim(),
 		estimatedResults: Number(data.estimatedResults),
-		videos: [], 
-		playlists: [], 
-		channels: [], 
-		shelfs: [], 
-	});
+		results: results.map(parse) 
+	};
 }
 
 module.exports = search;

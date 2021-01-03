@@ -30,6 +30,7 @@ function compactVideoRenderer({ compactVideoRenderer }){
 		name: parseText(compactVideoRenderer.title),
 		ID: compactVideoRenderer.videoId,
 		URL: 'https://www.youtube.com/watch?v=' + compactVideoRenderer.videoId,
+		type: 'video',
 
 		views: new Views(compactVideoRenderer),
 		thumbnails: new Thumbnails(compactVideoRenderer.thumbnail),
@@ -51,6 +52,7 @@ function compactRadioRenderer({ compactRadioRenderer }){
 		name: parseText(compactRadioRenderer.title),
 		ID: compactRadioRenderer.playlistId,
 		URL: compactRadioRenderer.shareUrl || 'https://www.youtube.com/playlist?list=' + compactRadioRenderer.playlistId,
+		type: 'playlist',
 
 		thumbnails: new Thumbnails(compactRadioRenderer.thumbnail),
 
@@ -70,7 +72,6 @@ let endScreenVideoRenderer = ({ endScreenVideoRenderer }) => {
 		compactVideoRenderer: endScreenVideoRenderer
 	});
 };
-
 
 let endScreenPlaylistRenderer = ({ endScreenPlaylistRenderer }) => {
 	return compactRadioRenderer({
@@ -171,6 +172,7 @@ function videoRenderer({ videoRenderer }){
 	return {
 		ID: videoRenderer.videoId,
 		URL: `https://www.youtube.com/watch?v=${videoRenderer.videoId}`,
+		type: 'video',
 		
 		title: parseText(videoRenderer.title),
 		description: parseText(
@@ -201,7 +203,10 @@ function childVideoRenderer({ childVideoRenderer }){
 function playlistRenderer({ playlistRenderer }){
 	return {
 		ID: playlistRenderer.playlistId,
+		URL: 'https://www.youtube.com/playlist?list=' + playlistRenderer.playlistId,
 		title: parseText(playlistRenderer.title),
+
+		type: 'playlist',
 		videoCount: Number(playlistRenderer.videoCount),
 
 		showedVideos: playlistRenderer.videos.map(childVideoRenderer),
@@ -218,6 +223,7 @@ function channelRenderer({ channelRenderer }){
 	return {
 		ID: channelRenderer.channelId,
 		URL: 'https://www.youtube.com/channel/' + channelRenderer.channelId,
+		type: 'channel',
 
 		name: parseText(channelRenderer.title),
 
@@ -237,6 +243,7 @@ function shelfRenderer({ shelfRenderer }){
 	return {
 		title: parseText(shelfRenderer.title),
 		label: parseText(collapsedStateButtonText),
+		type: 'shelf',
 		items: items.map(parse)
 	};
 }
