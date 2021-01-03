@@ -252,17 +252,16 @@ function shelfRenderer({ shelfRenderer }){
 }
 
 function searchRefinementCardRenderer({ searchRefinementCardRenderer }){
-	/*
-    searchRefinementCardRenderer.thumbnail.thumbnails.map(img => {
-        if(!img.url.startsWith('http')){
-            img.url = 'https:' + img.url;
-        }
-        return img;
-    })
-    */
+	searchRefinementCardRenderer.thumbnail.thumbnails.map(img => {
+		if(!img.url.startsWith('http')){
+			img.url = 'https:' + img.url;
+		}
+		return img;
+	});
+    
 
 	return {
-		query: parseText(searchRefinementCardRenderer.query),
+		title: parseText(searchRefinementCardRenderer.query),
 		thumbnails: new Thumbnails(searchRefinementCardRenderer.thumbnail)
 	};
 }
@@ -273,6 +272,7 @@ function horizontalCardListRenderer({ horizontalCardListRenderer }){
 			horizontalCardListRenderer.header
 				.richListHeaderRenderer.title
 		),
+		type: 'horizontalCardList',
 		items: horizontalCardListRenderer.cards.map(searchRefinementCardRenderer)
 	};
 }
