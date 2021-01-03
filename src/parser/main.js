@@ -301,12 +301,15 @@ function promotedVideoRenderer({ promotedVideoRenderer }){
 		data.duration = new Duration(promotedVideoRenderer);
 	}
 
-	data.channel.thumbnails = new Thumbnails(
-		promotedVideoRenderer
-			.channelThumbnailSupportedRenderers
-			.channelThumbnailWithLinkRenderer
-			.thumbnail
-	);
+	if(promotedVideoRenderer.channelThumbnailSupportedRenderers){
+		data.channel.thumbnails = new Thumbnails(
+			promotedVideoRenderer
+				.channelThumbnailSupportedRenderers
+				.channelThumbnailWithLinkRenderer
+				.thumbnail
+		);
+	}
+
 
 	return data;
 }
