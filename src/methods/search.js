@@ -19,15 +19,6 @@ async function search(searchQuery, options){
 	);
 	let data = requests.getData(body, 1), ytcfg = requests.getData(body, 3);
 
-	const results = {
-		searchQuery: search_query.trim(),
-		estimatedResults: Number(data.estimatedResults),
-		results: { 
-			videos: [], playlists: [], 
-			channels: [], shelfs: [], 
-		},
-	};
-
 	const contents = data.contents
 		.twoColumnSearchResultsRenderer
 		.primaryContents.sectionListRenderer.contents;
@@ -36,10 +27,10 @@ async function search(searchQuery, options){
 		contents.length === 1 && 
 		contents[0].itemSectionRenderer && 
 		contents[0].itemSectionRenderer.contents[0].backgroundPromoRenderer
-	) return results;
+	) return null;
 
 	let continuationItem = contents.pop();
-	let items = contents.find(a => 
+	let results = contents.find(a => 
 		a.itemSectionRenderer && a.itemSectionRenderer.contents.length > 2
 	).itemSectionRenderer.contents;
 	
@@ -49,17 +40,17 @@ async function search(searchQuery, options){
 		let items = continuation.onResponseReceivedCommands[0]
 			.appendContinuationItemsAction.continuationItems;
 
-		items = items.concat(items[0].itemSectionRenderer.contents);
+		results.push(...items[0].itemSectionRenderer.contents);
 		
 		continuationItem = items[1];
 		if(!continuationItem) break;
 	}
 	
 	if(options.raw){
-		return { initialData: data, ytcfg, items };
+		return { initialData: data, ytcfg, items: results };
 	}
 
-	items.reduce((acc, value) => {
+	return results.reduce((acc, value) => {
 		let key = Object.keys(value)[0];
 
 		let prop = {
@@ -70,15 +61,18 @@ async function search(searchQuery, options){
 		}[key];
 
 		if(prop){
-			acc[prop].push(
-				parse(value)
-			);
+			acc[prop].push(parse(value));
 		}
 
 		return acc;
-	}, results.results);
-
-	return results;
+	}, {
+		searchQuery: search_query.trim(),
+		estimatedResults: Number(data.estimatedResults),
+		videos: [], 
+		playlists: [], 
+		channels: [], 
+		shelfs: [], 
+	});
 }
 
 module.exports = search;

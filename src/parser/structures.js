@@ -108,7 +108,7 @@ class Duration{
 			this.long = parseText(data.lengthText.accessibility);
 
 			if(data.lengthSeconds || data.lengthInSeconds){
-				this.number = Number(data.lengthSeconds);
+				this.number = Number(data.lengthSeconds || data.lengthInSeconds);
 			}else{
 				let [
 					seconds = 0, minutes = 0, hours = 0

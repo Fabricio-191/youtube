@@ -23,8 +23,8 @@ async function getPlaylist(URLorID, options){
 
 		let continuation = await requests.getContinuation(continuationItem, ytcfg, options);
 
-		videos = videos.concat(
-			continuation.onResponseReceivedActions[0]
+		videos.push(
+			...continuation.onResponseReceivedActions[0]
 				.appendContinuationItemsAction
 				.continuationItems
 		);
