@@ -1,5 +1,4 @@
 ![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg?color=white&style=for-the-badge)
-[![Coverage](https://codecov.io/gh/Fabricio-191/youtube/branch/main/graph/badge.svg?token=KZRX9WJR8)](https://codecov.io/gh/Fabricio-191/youtube)
 
 ## Use example:
 ```js
@@ -35,13 +34,13 @@ search('Node.js', { quantity: 40 })
 
 # Methods:
 
-## `getVideo(URLorID, options)`
+### `getVideo(URLorID, options)`
   * returns a `Promise`
-## `getPlaylist(URLorID, options)`
+### `getPlaylist(URLorID, options)`
   * returns a `Promise`
-## `search(searchString, options)`
+### `search(searchString, options)`
   * returns a `Promise`
-## `setDefaultConfig(options)`
+### `setDefaultConfig(options)`
   * returns `this` (the same as doing `require('@fabricio-191/youtube')`)
 
 # Options:
@@ -65,34 +64,34 @@ When you pass options to a method, the options without value, will be taken from
 You can also set the default values
 
 # Structures:
-  * Thumbnails
+  * Thumbnails  
     An array of thumbnails, the first will always be the bigger  
     The method `toString()` will return the URL of the bigger thumbnail
   * Views
   * Duration
   * Subscribers
 
-  All these structures are something like this (except Thumbnails)
+All these structures are something like this (except Thumbnails)
 
-  ```js
-  {
-    normal: '...',
-    short: '...',
-    number: 0,
-    toString: [Function: toString]
-  }
-  ```
+```js
+{
+  normal: '...',
+  short: '...',
+  number: 0,
+  toString: [Function: toString]
+}
+```
 
-  The method `toString` first it will try to return the `short` form if it is available, if not the `normal` one
+The method `toString` first it will try to return the `short` form if it is available, if not the `normal` one
   
-  # To-do
-    * A method to download videos
-    * Make typings and JSDoc
-    * A method to get info and videos from channel
-    * Get comments from a video
+# To-do
+  * A method to download videos
+  * Make typings and JSDoc
+  * A method to get info and videos from channel
+  * Get comments from a video
     
-  # Credits
-    * [ytpl](https://www.npmjs.com/package/ytpl) for the bases and the how-to
-    * [This](https://stackoverflow.com/questions/6903823/regex-for-youtube-id) stack overflow post for the regex to get videos ID's from URL's
-    * [This]((https://stackoverflow.com/questions/16868181/how-to-retrieve-a-youtube-playlist-id-using-regex-and-js) for the regex to get playlists ID's from URL's
-    * Me
+# Credits
+  * [ytpl](https://www.npmjs.com/package/ytpl) for the bases and the how-to
+  * [This](https://stackoverflow.com/questions/6903823/regex-for-youtube-id) stack overflow post for the regex to get videos ID's from URL's
+  * [This](https://stackoverflow.com/questions/16868181/how-to-retrieve-a-youtube-playlist-id-using-regex-and-js) for the regex to get playlists ID's from URL's
+  * Me
