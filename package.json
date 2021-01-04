@@ -18,7 +18,7 @@
     "eslint": "npx eslint src --ext .js --fix",
     "git": "git add . && git commit -m - && git push",
     "all": "npm run eslint && npm run test && npm run git"
-  },  
+  },
   "dependencies": {},
   "devDependencies": {
     "eslint": "7.9.0",

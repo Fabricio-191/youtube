@@ -60,13 +60,12 @@ The `requestsOptions` are passed directly to the `http.request()` (or https) met
 And [here](https://github.com/Fabricio-191/youtube/blob/main/docs/list.md) you can see a list of valid `locations` and `languages`
 
 When you pass options to a method, the options without value, will be taken from the default values  
-You can also set the default values, so you dont need to be setting the options everytime and also, the options without value, will be taken from the old default values
+You can also set the default values
 
 # Structures:
   * Thumbnails
     An array of thumbnails, the first will always be the bigger  
     The method `toString()` will return the URL of the bigger thumbnail
-
   * Views
   * Duration
   * Subscribers
@@ -84,3 +83,14 @@ You can also set the default values, so you dont need to be setting the options 
 
   The method `toString` first it will try to return the `short` form if it is available, if not the `normal` one
   
+  # To-do
+    * A method to download videos
+    * Make typings and JSDoc
+    * A method to get info and videos from channel
+    * Get comments from a video
+    
+  # Credits
+    * [ytpl](https://www.npmjs.com/package/ytpl) for the bases and the how-to
+    * [This](https://stackoverflow.com/questions/6903823/regex-for-youtube-id) stack overflow post for the regex to get videos ID's from URL's
+    * [This]((https://stackoverflow.com/questions/16868181/how-to-retrieve-a-youtube-playlist-id-using-regex-and-js) for the regex to get playlists ID's from URL's
+    * Me
