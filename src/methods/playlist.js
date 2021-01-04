@@ -10,11 +10,13 @@ async function getPlaylist(URLorID, options){
 	);
 	let data = requests.getData(body, 1), ytcfg = requests.getData(body, 3);
 
+
 	if(
 		!data.contents
 			.twoColumnBrowseResultsRenderer.tabs[0]
 			.tabRenderer.content.sectionListRenderer
 	)return null;
+
 
 	let videos = data.contents
 		.twoColumnBrowseResultsRenderer.tabs[0]
@@ -23,6 +25,7 @@ async function getPlaylist(URLorID, options){
 		.itemSectionRenderer.contents[0]
 		.playlistVideoListRenderer.contents;
 	
+
 	while(videos.length < options.quantity){
 		if(!videos[videos.length -1].continuationItemRenderer) break;
 		let continuationItem = videos.pop();
@@ -36,12 +39,12 @@ async function getPlaylist(URLorID, options){
 		);
 	}
 
+
 	if(options.raw){
 		return { initialData: data, ytcfg, items: videos };
 	}
 
 	let results = parse(data.sidebar);
-
 	results.videos = videos.map(parse);
 
 	return results;

@@ -23,11 +23,13 @@ async function search(searchString, options){
 		.twoColumnSearchResultsRenderer
 		.primaryContents.sectionListRenderer.contents;
 
+		
 	if(
 		contents.length === 1 && 
 		contents[0].itemSectionRenderer && 
 		contents[0].itemSectionRenderer.contents[0].backgroundPromoRenderer
 	) return null;
+
 
 	let continuationItem = contents.pop();
 	let results = contents.find(a => 
@@ -46,6 +48,7 @@ async function search(searchString, options){
 		if(!continuationItem) break;
 	}
 	
+
 	if(options.raw){
 		return { initialData: data, ytcfg, items: results };
 	}

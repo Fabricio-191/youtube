@@ -11,19 +11,19 @@ async function getVideo(URLorID, options){
 	);
 	let data = requests.getData(body, 1), playerResponse = requests.getData(body, 2);
 
+	if(!playerResponse.videoDetails) return null;
 	if(options.raw){
 		return { initialData: data, playerResponse, ytcfg: requests.getData(body, 3) };
 	}
 	
-	if(!playerResponse.videoDetails) return null;
 
 	let { 
 		secondaryResults, playlist, results 
 	} = data.contents.twoColumnWatchNextResults;
 
 	secondaryResults = secondaryResults.secondaryResults.results;
-
 	if(secondaryResults[secondaryResults.length -1].continuationItemRenderer) secondaryResults.pop();
+
 
 	let [
 		videoPrimaryInfoRenderer, videoSecondaryInfoRenderer

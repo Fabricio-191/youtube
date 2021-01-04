@@ -94,4 +94,3 @@ The method `toString` first it will try to return the `short` form if it is avai
   * [ytpl](https://www.npmjs.com/package/ytpl) for the bases and the how-to
   * [This](https://stackoverflow.com/questions/6903823/regex-for-youtube-id) stack overflow post for the regex to get videos ID's from URL's
   * [This](https://stackoverflow.com/questions/16868181/how-to-retrieve-a-youtube-playlist-id-using-regex-and-js) for the regex to get playlists ID's from URL's
-  * Me
