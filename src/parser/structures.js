@@ -101,8 +101,7 @@ class Duration{
 				mins = Math.floor(this.number / 60) - hours * 60, 
 				seconds = this.number - this.mins * 60 - this.hours * 3600;
 
-			this.normal = 
-				hours ? hours + ':' : '' + `${mins}:${seconds}`;
+			this.normal = `${hours ? `${hours}:` : ''}${mins}:${seconds}`;
 		}else{
 			this.normal = parseText(data.lengthText);
 			this.long = parseText(data.lengthText.accessibility);

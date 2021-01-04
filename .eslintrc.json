@@ -12,17 +12,17 @@
     },
     "rules": {
         "no-debugger": "off",
-        "indent": [ "error", "tab", {
-            "SwitchCase": 1
-        }],
         "linebreak-style": [ "error", "windows" ],
-        "quotes": [ "error", "single", { "avoidEscape": true } ],
         "semi": [ "error", "always" ],
-        "no-mixed-spaces-and-tabs": [
-            "error", "smart-tabs"
-        ],
-        "no-empty": [
-            "error", { "allowEmptyCatch": true }
-        ]
+
+        "quotes": [ "error", "single", { "avoidEscape": true } ],
+        "prefer-template": "error",
+        "no-useless-concat": "error",
+        "no-useless-computed-key": "error",
+
+        "indent": [ "error", "tab", { "SwitchCase": 1 }],
+        "no-mixed-spaces-and-tabs": ["error", "smart-tabs"],
+
+        "no-empty": ["error", { "allowEmptyCatch": true }]
     }
 }

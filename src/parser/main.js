@@ -29,7 +29,7 @@ function compactVideoRenderer({ compactVideoRenderer }){
 	let data = {
 		name: parseText(compactVideoRenderer.title),
 		ID: compactVideoRenderer.videoId,
-		URL: 'https://www.youtube.com/watch?v=' + compactVideoRenderer.videoId,
+		URL: `https://www.youtube.com/watch?v=${compactVideoRenderer.videoId}`,
 		type: 'video',
 
 		views: new Views(compactVideoRenderer),
@@ -51,7 +51,7 @@ function compactRadioRenderer({ compactRadioRenderer }){
 	return {
 		name: parseText(compactRadioRenderer.title),
 		ID: compactRadioRenderer.playlistId,
-		URL: compactRadioRenderer.shareUrl || 'https://www.youtube.com/playlist?list=' + compactRadioRenderer.playlistId,
+		URL: compactRadioRenderer.shareUrl || `https://www.youtube.com/playlist?list=${compactRadioRenderer.playlistId}`,
 		type: 'playlist',
 
 		thumbnails: new Thumbnails(compactRadioRenderer.thumbnail),
@@ -97,7 +97,7 @@ function playlistPanelVideoRenderer({ playlistPanelVideoRenderer }){ //playlist 
 		name: parseText(playlistPanelVideoRenderer.title),
 		ID: playlistPanelVideoRenderer.videoId,
 		playlistID: playlistPanelVideoRenderer.navigationEndpoint.watchEndpoint.playlistId,
-		URL: 'https://www.youtube.com' + playlistPanelVideoRenderer.navigationEndpoint.commandMetadata.webCommandMetadata.url,
+		URL: `https://www.youtube.com${playlistPanelVideoRenderer.navigationEndpoint.commandMetadata.webCommandMetadata.url}`,
 
 		duration: new Duration(playlistPanelVideoRenderer),
 		views: new Views(playlistPanelVideoRenderer),
@@ -126,7 +126,7 @@ function playlistSidebarPrimaryInfoRenderer({ playlistSidebarPrimaryInfoRenderer
 
 	return {
 		ID,
-		URL: 'https://www.youtube.com/playlist?list=' + ID,
+		URL: `https://www.youtube.com/playlist?list=${ID}`,
 		name: parseText(playlistSidebarPrimaryInfoRenderer.title),
 
 		videoQuantity: extractInt(playlistSidebarPrimaryInfoRenderer.stats[0]),
@@ -206,7 +206,7 @@ function childVideoRenderer({ childVideoRenderer }){
 function playlistRenderer({ playlistRenderer }){
 	return {
 		ID: playlistRenderer.playlistId,
-		URL: 'https://www.youtube.com/playlist?list=' + playlistRenderer.playlistId,
+		URL: `https://www.youtube.com/playlist?list=${playlistRenderer.playlistId}`,
 		title: parseText(playlistRenderer.title),
 
 		type: 'playlist',
@@ -225,7 +225,7 @@ function playlistRenderer({ playlistRenderer }){
 function channelRenderer({ channelRenderer }){
 	return {
 		ID: channelRenderer.channelId,
-		URL: 'https://www.youtube.com/channel/' + channelRenderer.channelId,
+		URL: `https://www.youtube.com/channel/${channelRenderer.channelId}`,
 		type: 'channel',
 
 		name: parseText(channelRenderer.title),
@@ -254,11 +254,9 @@ function shelfRenderer({ shelfRenderer }){
 function searchRefinementCardRenderer({ searchRefinementCardRenderer }){
 	searchRefinementCardRenderer.thumbnail.thumbnails.map(img => {
 		if(!img.url.startsWith('http')){
-			img.url = 'https:' + img.url;
+			img.url = `https:${img.url}`;
 		}
-		return img;
 	});
-    
 
 	return {
 		title: parseText(searchRefinementCardRenderer.query),
@@ -315,7 +313,10 @@ function promotedVideoRenderer({ promotedVideoRenderer }){
 }
 
 function searchPyvRenderer({ searchPyvRenderer }){
-	return searchPyvRenderer.ads.map(parse);
+	return {
+		type: 'searchAds',
+		items: searchPyvRenderer.ads.map(parse),
+	};
 }
 //#endregion
 
@@ -329,12 +330,12 @@ function videoOwnerRenderer({ videoOwnerRenderer }){
 
 		channel: {
 			ID: browseId,
-			URL: 'https://www.youtube.com/channel/' + browseId
+			URL: `https://www.youtube.com/channel/${browseId}`
 		},
 
 		user: {
 			originalName: canonicalBaseUrl.slice(6),
-			URL: 'https://www.youtube.com' + canonicalBaseUrl
+			URL: `https://www.youtube.com${canonicalBaseUrl}`
 		}
 	};
 
@@ -368,11 +369,11 @@ function bylineText({ longBylineText, shortBylineText }){//channel/owner
 	let data = {
 		name: text,
 		ID: endpoint.browseId,
-		URL: 'https://www.youtube.com/channel/' + endpoint.browseId
+		URL: `https://www.youtube.com/channel/${endpoint.browseId}`
 	};
 
 	if(endpoint.canonicalBaseUrl){
-		data.canonicalURL = 'https://www.youtube.com' + endpoint.canonicalBaseUrl;
+		data.canonicalURL = `https://www.youtube.com${endpoint.canonicalBaseUrl}`;
 	}
 
 	return data;

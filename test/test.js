@@ -15,7 +15,6 @@ const { getVideo, getPlaylist, search } = require('../')
 		),
 		playlist: await getPlaylist(
 			'https://www.youtube.com/watch?v=H2wCwdHk-ao&list=PLDS0dpumEOi0pu_0pCGqvcaRkxg-o1gqg', 
-			{ quantity: 'all' }
 		),
 		search: await search('Node.js', { quantity: 40 })
 	};

@@ -1,4 +1,4 @@
-const { defaultOptions } = require('./utils/utils.js');
+const Utils = require('./utils/utils.js');
 const search = require('./methods/search.js'),
 	getPlaylist = require('./methods/playlist.js'),
 	getVideo = require('./methods/video.js');
@@ -13,9 +13,10 @@ module.exports = {
 	getPlaylist,
 	search,
 	setDefaultOptions(options){
-		Object.assign(defaultOptions, options);
+		Object.assign(Utils.defaultOptions, options);
 
 		return this;
 	},
-	defaultOptions,
+	defaultOptions: Utils.defaultOptions,
+	_Utils: Utils
 };

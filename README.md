@@ -34,11 +34,11 @@ search('Node.js')
 # Methods:
 
 ## `getVideo(URLorID, options)`
-  * returns a promise
+  * returns a `Promise`
 ## `getPlaylist(URLorID, options)`
-  * returns a promise
+  * returns a `Promise`
 ## `search(searchString, options)`
-  * returns a promise
+  * returns a `Promise`
 ## `setDefaultConfig(options)`
   * returns `this` (the same as doing `require('@fabricio-191/youtube')`)
 
@@ -64,7 +64,7 @@ You can also set the default values, so you dont need to be setting the options 
 
 # Structures:
   * Thumbnails
-    An array of thumbnails, the first will always be the bigger
+    An array of thumbnails, the first will always be the bigger  
     The method `toString()` will return the URL of the bigger thumbnail
 
   * Views

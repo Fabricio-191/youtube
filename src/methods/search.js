@@ -14,7 +14,7 @@ async function search(searchString, options){
 	);
 
 	let body = await requests.fetch(
-		'https://www.youtube.com/results?search_query=' + search_query, 
+		`https://www.youtube.com/results?search_query=${search_query}`, 
 		options
 	);
 	let data = requests.getData(body, 1), ytcfg = requests.getData(body, 3);
