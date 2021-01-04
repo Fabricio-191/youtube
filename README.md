@@ -1,5 +1,7 @@
 ![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg?color=white&style=for-the-badge)
 
+The module may be unstable, it is not recommended to use in production
+
 ## Use example:
 ```js
 const { getVideo, getPlaylist, search } = require('@fabricio-191/youtube')
