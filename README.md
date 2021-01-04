@@ -42,7 +42,7 @@ search('Node.js', { quantity: 40 })
   * returns a `Promise`
 ### `search(searchString, options)`
   * returns a `Promise`
-### `setDefaultConfig(options)`
+### `setDefaultOptions(options)`
   * returns `this` (the same as doing `require('@fabricio-191/youtube')`)
 
 # Options:
