@@ -5,7 +5,7 @@ The module may be unstable, it is not recommended to use in production
 ## Use example:
 ```js
 const { getVideo, getPlaylist, search } = require('@fabricio-191/youtube')
-  .setDefaultConfig({
+  .setDefaultOptions({
     location: 'AR',
     language: 'es-419'
   });
