@@ -16,20 +16,22 @@ getVideo('https://www.youtube.com/watch?v=H2wCwdHk-ao&list=PLDS0dpumEOi0pu_0pCGq
   })  
   .catch(console.error);
 
-getPlaylist('https://www.youtube.com/watch?v=H2wCwdHk-ao&list=PLDS0dpumEOi0pu_0pCGqvcaRkxg-o1gqg')
+getPlaylist('https://www.youtube.com/watch?v=H2wCwdHk-ao&list=PLDS0dpumEOi0pu_0pCGqvcaRkxg-o1gqg', { quantity: 'all' })
   .then(data => {
     console.log(data);
     //do something...
   })  
   .catch(console.error);
 
-search('Node.js')
+search('Node.js', { quantity: 40 })
   .then(data => {
-    console.log(data);
+    let videos = data.results.filter(x => x.type === 'video');
     //do something...
   })  
   .catch(console.error);
 ``` 
+
+[here](https://github.com/Fabricio-191/youtube/blob/main/test/results.json) you can see a JSON that shows the information that each method gives (I do not put it here, because it is a lot)
 
 # Methods:
 
