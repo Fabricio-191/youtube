@@ -411,7 +411,7 @@ function parse(obj){
 
 	let parser = parsers[key];
 	if(!parser){
-		console.warn(`Cannot parse: ${key}`);
+		//console.warn(`Cannot parse: ${key}`);
 		//require('fs').writeFileSync(`./${key}.json`, JSON.stringify(obj, null, '\t'));
 		if(global['@Fabricio-191{ debugging }']) debugger;
 		return null;
