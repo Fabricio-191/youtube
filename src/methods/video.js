@@ -54,18 +54,6 @@ async function getVideo(URLorID, options){
 	}
 	if(playlist) info.playlist = parse(info.playlist);
 
-	/*
-	if(playerResponse.streamingData.dashManifestUrl || playerResponse.streamingData.hlsManifestUrl){
-		// eslint-disable-next-line no-console
-		console.log({
-			dash: playerResponse.streamingData.dashManifestUrl,
-			hls: info.player_response.streamingData.hlsManifestUrl
-		});
-	}
-	*/
-
-	//info.formats = await makeDownload(playerResponse.streamingData);
-
 	return info;
 }
 
