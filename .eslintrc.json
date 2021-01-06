@@ -11,6 +11,7 @@
         "ecmaVersion": 12
     },
     "rules": {
+        "no-console": "error",
         "no-debugger": "off",
         "linebreak-style": [ "error", "windows" ],
         "semi": [ "error", "always" ],
@@ -24,5 +25,6 @@
         "no-mixed-spaces-and-tabs": ["error", "smart-tabs"],
 
         "no-empty": ["error", { "allowEmptyCatch": true }]
-    }
+    },
+    "ignorePatterns": ["**/temp"]
 }

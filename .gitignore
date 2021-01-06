@@ -1,4 +1,8 @@
 node_modules/
-test/others.js
+api/
+test/temp
+download/
 
+*.mp3
+*.mp4
 package-lock.json

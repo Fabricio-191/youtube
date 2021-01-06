@@ -54,8 +54,8 @@ const defaultOptions = {
 	language: 'en',
 	location: 'US',
 	quantity: 'all',
+	requestsOptions: {},
 	raw: false,
-	requestsOptions: {}
 };
 
 function parseOptions(options = {}, type){
@@ -63,10 +63,17 @@ function parseOptions(options = {}, type){
 	if(options === 'all' || typeof options === 'number'){
 		options = { quantity: options };
 	}
-	
+
 	if(typeof options !== 'object'){
-		throw new Error('The options should be an object');
+		throw new Error("The 'options' should be an object");
 	}
+	
+	try{
+		JSON.stringify(options);
+	}catch(e){
+		throw new Error("the 'options' cannot contain a circular structure");
+	}
+
 
 	if(type === 3 && !options.quantity){
 		options.quantity = 20;
@@ -75,6 +82,7 @@ function parseOptions(options = {}, type){
 	options = Object.assign({}, defaultOptions, options);
 	
 	if(type === 3 && options.quantity === 'all'){
+		// eslint-disable-next-line no-console
 		console.warn('I hope you know what you are doing when trying to get all the results of a search on youtube');
 	}
 

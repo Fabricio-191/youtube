@@ -1,6 +1,7 @@
 const { getID, parseOptions, requests } = require('../utils/utils.js');
 const parse = require('../parser/main.js');
 const { Thumbnails } = require('../parser/structures.js');
+//const makeDownload = require('../download/download.js');
 
 async function getVideo(URLorID, options){
 	options = parseOptions(options, 1);
@@ -8,22 +9,18 @@ async function getVideo(URLorID, options){
 	let body = await requests.fetch(
 		`https://www.youtube.com/watch?v=${getID(URLorID, 1)}`, 
 		options
-	);
+	).text();
 	let data = requests.getData(body, 1), playerResponse = requests.getData(body, 2);
 
 	if(!playerResponse.videoDetails) return null;
 	if(options.raw){
 		return { initialData: data, playerResponse, ytcfg: requests.getData(body, 3) };
 	}
-	
 
 	let { 
 		secondaryResults, playlist, results 
 	} = data.contents.twoColumnWatchNextResults;
-
 	secondaryResults = secondaryResults.secondaryResults.results;
-	if(secondaryResults[secondaryResults.length -1].continuationItemRenderer) secondaryResults.pop();
-
 
 	let [
 		videoPrimaryInfoRenderer, videoSecondaryInfoRenderer
@@ -31,18 +28,43 @@ async function getVideo(URLorID, options){
 
 	let info = Object.assign({
 		ID: playerResponse.videoDetails.videoId,
-		URL: `https://www.youtube.com/watch?v=${  playerResponse.videoDetails.videoId}`
+		URL: `https://www.youtube.com/watch?v=${playerResponse.videoDetails.videoId}`
 	}, 
 	parse(videoPrimaryInfoRenderer), 
 	parse(videoSecondaryInfoRenderer), 
 	{
 		thumbnails: new Thumbnails(playerResponse.videoDetails.thumbnail),
-		keywords: playerResponse.videoDetails.keywords,
-		secondaryResults: secondaryResults.filter(a => !a.compactAutoplayRenderer).map(parse),
-		endScreen: parse(data.playerOverlays.playerOverlayRenderer.endScreen),
+		keywords: playerResponse.videoDetails.keywords
 	});
 
+
+	let endScreen = data.playerOverlays.playerOverlayRenderer.endScreen;
+	if(
+		endScreen &&
+		endScreen.watchNextEndScreenRenderer &&
+		endScreen.watchNextEndScreenRenderer.results
+	){
+		info.endScreen = parse(data.playerOverlays.playerOverlayRenderer.endScreen);
+	}
+
+	if(secondaryResults){
+		if(secondaryResults[secondaryResults.length -1].continuationItemRenderer) secondaryResults.pop();
+
+		info.relatedVideos = secondaryResults.filter(a => !a.compactAutoplayRenderer).map(parse);
+	}
 	if(playlist) info.playlist = parse(info.playlist);
+
+	/*
+	if(playerResponse.streamingData.dashManifestUrl || playerResponse.streamingData.hlsManifestUrl){
+		// eslint-disable-next-line no-console
+		console.log({
+			dash: playerResponse.streamingData.dashManifestUrl,
+			hls: info.player_response.streamingData.hlsManifestUrl
+		});
+	}
+	*/
+
+	//info.formats = await makeDownload(playerResponse.streamingData);
 
 	return info;
 }

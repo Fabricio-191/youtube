@@ -6,7 +6,7 @@ const {
 //#region video
 function videoPrimaryInfoRenderer({ videoPrimaryInfoRenderer }){
 	const [likes, dislikes] = videoPrimaryInfoRenderer.sentimentBar
-		.sentimentBarRenderer.tooltip.split(' / ').map(Number);
+		.sentimentBarRenderer.tooltip.split(' / ').map(extractInt);
 
 	return {
 		name: parseText(videoPrimaryInfoRenderer.title),
@@ -61,6 +61,8 @@ function compactRadioRenderer({ compactRadioRenderer }){
 }
 
 function watchNextEndScreenRenderer({ watchNextEndScreenRenderer }){
+	if(!watchNextEndScreenRenderer.results) return null;
+
 	return {
 		title: parseText(watchNextEndScreenRenderer.title),
 		items: watchNextEndScreenRenderer.results.map(parse)

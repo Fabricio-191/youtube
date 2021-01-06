@@ -1,33 +1,50 @@
 const http = require('http'), https = require('https');
 
-function fetch(url, options){
+function fetch(url, options = {}){
 	const parsedURL = new URL(url);
 
-	parsedURL.searchParams.set('hl', options.language);
-	parsedURL.searchParams.set('gl', options.location);
+	if(options.language && options.location){
+		parsedURL.searchParams.set('hl', options.language);
+		parsedURL.searchParams.set('gl', options.location);
+	}
 
-	return new Promise((resolve, reject) => {
+	if(!options.requestsOptions) options = {
+		requestsOptions: options
+	};
+
+	let request; 
+	let body = new Promise((resolve, reject) => {
+		request = (parsedURL.protocol === 'https:' ? https : http)
+			.request(
+				parsedURL, options.requestsOptions, cb
+			) 
+			//https://nodejs.org/api/http.html#http_http_request_options_callback
+			.on('error', reject)
+			.end(options.requestsOptions.body || '');
+
 		function cb(response){
 			const chunks = [];
-
+	
 			response
 				.on('data', chunk => {
 					chunks.push(chunk);
 				})
 				.on('end', () => {
-					let body = Buffer.concat(chunks).toString();
-					
-					resolve(body);
+					resolve(Buffer.concat(chunks));
 				})
 				.on('error', reject);
 		}
-
-		(parsedURL.protocol === 'https:' ? https : http)
-			.request(parsedURL, options.requestsOptions, cb) 
-			//https://nodejs.org/api/http.html#http_http_request_options_callback
-			.on('error', reject)
-			.end(options.requestsOptions.body || '');
 	});
+
+	Object.assign(request, {
+		buffer: () => body,
+		text: async () => (await body).toString(),
+		json: async () => JSON.parse(
+			(await body).toString()
+		)
+	});
+
+	return request;
 }
 
 async function getContinuation(continuationItem, ytcfg, options){
@@ -50,9 +67,7 @@ async function getContinuation(continuationItem, ytcfg, options){
 		}
 	);
 
-	const body = await fetch(URL, optionsCopy);
-
-	return JSON.parse(body);
+	return await fetch(URL, optionsCopy).json();
 }
 
 module.exports = {
@@ -65,7 +80,7 @@ function getData(body, type){
 		2: 'var ytInitialPlayerResponse = {',
 		3: 'ytcfg.set({'
 	}[type];
-	
+
 	const offset = body.indexOf(start);
 	if(offset === -1) throw new Error('Error getting data from youtube');
 

@@ -1,6 +1,6 @@
 {
   "name": "@fabricio-191/youtube",
-  "version": "0.0.1-0",
+  "version": "0.0.1-2",
   "main": "./src/index.js",
   "license": "Apache License 2.0",
   "description": "Get info from youtube videos/playlists easy, and search videos from youtube",
@@ -14,10 +14,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/Fabricio-191"
+    "url": "https://github.com/Fabricio-191/youtube"
   },
   "bugs": {
-    "url": "https://github.com/Fabricio-191/issues"
+    "url": "https://github.com/Fabricio-191/youtube/issues"
   },
   "author": "Fabricio-191",
   "scripts": {

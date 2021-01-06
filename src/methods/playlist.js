@@ -7,15 +7,14 @@ async function getPlaylist(URLorID, options){
 	let body = await requests.fetch(
 		`https://www.youtube.com/playlist?list=${getID(URLorID, 2)}`, 
 		options
-	);
+	).text();
 	let data = requests.getData(body, 1), ytcfg = requests.getData(body, 3);
-
 
 	if(
 		!data.contents
 			.twoColumnBrowseResultsRenderer.tabs[0]
 			.tabRenderer.content.sectionListRenderer
-	)return null;
+	) return null;
 
 
 	let videos = data.contents
