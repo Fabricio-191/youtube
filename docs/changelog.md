@@ -6,6 +6,7 @@
     * The `isLive`, `isUnlisted`, `isFamilySafe`, `availableCountries`, `category`, `uploadDate`, `publishDate` properties were added
 * `getPlaylist()`
     * Now when trying to access private or non-existent playlist it shows the youtube message
+    * The `isUnlisted` was added
 
 ## 0.0.1-2
 * Changed `secondaryResults` for `relatedVideos` in `getVideo()` result

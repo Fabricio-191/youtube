@@ -24,7 +24,7 @@ const { getVideo, getPlaylist, search } = require('../')
 	);
 
 	console.log('Searching...');
-	data.search = await search('Node.js', { quantity: 40 });
+	data.search = await search('Node.js', { quantity: 100 });
 
 	console.log('Works well :D');
 	if(fs.existsSync('./test')) return;
