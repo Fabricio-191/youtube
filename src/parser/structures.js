@@ -1,36 +1,65 @@
 function parseText(obj = ''){
-	if(obj.simpleText){
-		return obj.simpleText;
-	}
+	if(obj.simpleText) return obj.simpleText;
 
-	if(obj.accessibilityData){
-		return obj.accessibilityData.label;
-	}
+	if(obj.accessibilityData) return obj.accessibilityData.label;
 	
-	let str = '';
 	if(obj.runs){
-		obj.runs.map(t => str += t.text);
+		let runs = obj.runs.map(x => {
+			let data = {
+				text: x.text
+			};
+
+			if(x.bold) data.bold = true;
+			if(x.navigationEndpoint){
+				if(x.navigationEndpoint.commandMetadata){
+					x.url = `https://www.youtube.com${
+						x.navigationEndpoint.commandMetadata.webCommandMetadata.url
+					}`;
+				}
+			}
+
+			return data;
+		});
+		
+		runs.toString = function(md){
+			return runs.reduce((acc, run) => {
+				let text = run.text;
+				if(md){
+					if(run.bold) text = `**${text}**`;
+					if(run.url) text = `[${text}](${run.url})`;
+				}
+
+				return acc + text;
+			}, '');
+		};
+
+		return runs;
 	}
 
-	return str;
+	return '';
 }
 
+
 function extractInt(str){
-	if(typeof str === 'object') {
+	if(typeof str === 'object' && !Array.isArray(str)) {
 		str = parseText(str);
 	}
 
 	return Number(
-		str.match(/\d/g).join('')
+		str.toString().match(/\d/g).join('')
 	);
 }
 
 class Thumbnails extends Array{
 	constructor({ thumbnails }){
+		thumbnails.map(img => {
+			if(!img.url.startsWith('http')){
+				img.url = `https:${img.url}`;
+			}
+		});
 		super(...thumbnails);
 
 		this.sort((a, b) => b.width - a.width);
-
 		/*
 		{
 			//if returned number is less than zero, a will be in a lower index than b

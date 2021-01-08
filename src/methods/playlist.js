@@ -11,11 +11,19 @@ async function getPlaylist(URLorID, options){
 	let data = requests.getData(body, 1), ytcfg = requests.getData(body, 3);
 
 	if(
+		!data.contents || 
 		!data.contents
 			.twoColumnBrowseResultsRenderer.tabs[0]
 			.tabRenderer.content.sectionListRenderer
-	) return null;
-
+	){ 
+		if(options.raw) return { initialData: data, ytcfg };
+		if(data.alerts?.[0]?.alertRenderer){
+			return {
+				error: parse(data.alerts[0])
+			};
+		}
+		return null;
+	}
 
 	let videos = data.contents
 		.twoColumnBrowseResultsRenderer.tabs[0]
@@ -45,6 +53,7 @@ async function getPlaylist(URLorID, options){
 
 	let results = parse(data.sidebar);
 	results.videos = videos.map(parse);
+	results.isUnlisted = data.microformat.unlisted;
 
 	return results;
 }

@@ -1,4 +1,3 @@
-
 # List of locations
 
 ```js
@@ -38,7 +37,6 @@
 'GR' => 'Greece'                        'NO' => 'Norway'                        'ZA' => 'South Africa'                  
 'GT' => 'Guatemala'                     'NP' => 'Nepal'                         'ZW' => 'Zimbabwe'                      
 'HK' => 'Hong Kong'                     'NZ' => 'New Zealand'                                                           
-
 ```
 	
 # List of languages
@@ -72,5 +70,4 @@
 'fr' => 'French'                        'ne' => 'Nepali'                        'zh-TW' => 'Chinese (Taiwan)'           
 'fr-CA' => 'French (Canada)'            'nl' => 'Dutch'                         'zu' => 'Zulu'                          
 'gl' => 'Galician'                      'no' => 'Norwegian'                                                             
-
 ```	

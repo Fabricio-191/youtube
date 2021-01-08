@@ -14,7 +14,7 @@ function videoPrimaryInfoRenderer({ videoPrimaryInfoRenderer }){
 
 		likes, dislikes,
 
-		uploadDate: parseText(videoPrimaryInfoRenderer.dateText),
+		uploadDateLabel: parseText(videoPrimaryInfoRenderer.dateText),
 	};
 }
 
@@ -254,12 +254,6 @@ function shelfRenderer({ shelfRenderer }){
 }
 
 function searchRefinementCardRenderer({ searchRefinementCardRenderer }){
-	searchRefinementCardRenderer.thumbnail.thumbnails.map(img => {
-		if(!img.url.startsWith('http')){
-			img.url = `https:${img.url}`;
-		}
-	});
-
 	return {
 		title: parseText(searchRefinementCardRenderer.query),
 		thumbnails: new Thumbnails(searchRefinementCardRenderer.thumbnail)
@@ -325,7 +319,7 @@ function searchPyvRenderer({ searchPyvRenderer }){
 //#region others
 function videoOwnerRenderer({ videoOwnerRenderer }){
 	let { browseId, canonicalBaseUrl } = videoOwnerRenderer.navigationEndpoint.browseEndpoint;
-	
+
 	let data = {
 		name: parseText(videoOwnerRenderer.title),
 		thumbnails: new Thumbnails(videoOwnerRenderer.thumbnail),
@@ -336,10 +330,15 @@ function videoOwnerRenderer({ videoOwnerRenderer }){
 		},
 
 		user: {
-			originalName: canonicalBaseUrl.slice(6),
 			URL: `https://www.youtube.com${canonicalBaseUrl}`
 		}
 	};
+	if(canonicalBaseUrl.startsWith('/user/')){
+		data.user.name = canonicalBaseUrl.slice(6);
+	}	
+	if(canonicalBaseUrl.startsWith('/channel/')){
+		data.user.id = canonicalBaseUrl.slice(9);
+	}
 
 	if(videoOwnerRenderer.subscriberCountText){
 		let normal = parseText(videoOwnerRenderer.subscriberCountText);
@@ -380,6 +379,38 @@ function bylineText({ longBylineText, shortBylineText }){//channel/owner
 
 	return data;
 }
+
+function alertRenderer({ alertRenderer }){
+	return {
+		type: alertRenderer.type,
+		reason: parseText(alertRenderer.text)
+	};
+}
+
+function playerErrorMessageRenderer({ playerErrorMessageRenderer }){
+	let data = {
+		reason: parseText(playerErrorMessageRenderer.reason),
+		thumbnails: new Thumbnails(playerErrorMessageRenderer.thumbnail)
+	};
+	if(playerErrorMessageRenderer.subreason){
+		data.subreason = parseText(playerErrorMessageRenderer.subreason);
+	}
+
+	return data;
+}
+
+function playerMicroformatRenderer({ playerMicroformatRenderer }){
+	return [
+		'isFamilySafe', 'isUnlisted', 'availableCountries', 
+		'uploadDate', 'publishDate'
+	].reduce((acc, key) => {
+		if(playerMicroformatRenderer[key]){
+			acc[key] = playerMicroformatRenderer[key];
+		}
+
+		return acc;
+	}, {});
+}
 //#endregion
 
 const parsers = {
@@ -392,6 +423,7 @@ const parsers = {
 	endScreenVideoRenderer,
 	endScreenPlaylistRenderer,
 	playlist,
+	playerMicroformatRenderer,
 
 	playlistSidebarRenderer,
 	playlistSidebarPrimaryInfoRenderer,  
@@ -405,7 +437,9 @@ const parsers = {
 	searchPyvRenderer,
 	promotedVideoRenderer,
 
-	videoOwnerRenderer
+	videoOwnerRenderer,
+	playerErrorMessageRenderer,
+	alertRenderer
 };
 
 function parse(obj){

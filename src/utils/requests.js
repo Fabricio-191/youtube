@@ -12,9 +12,8 @@ function fetch(url, options = {}){
 		requestsOptions: options
 	};
 
-	let request; 
-	let body = new Promise((resolve, reject) => {
-		request = (parsedURL.protocol === 'https:' ? https : http)
+	let promise = new Promise((resolve, reject) => {
+		(parsedURL.protocol === 'https:' ? https : http)
 			.request(
 				parsedURL, options.requestsOptions, cb
 			) 
@@ -22,30 +21,45 @@ function fetch(url, options = {}){
 			.on('error', reject)
 			.end(options.requestsOptions.body || '');
 
-		function cb(response){
-			const chunks = [];
-	
-			response
-				.on('data', chunk => {
-					chunks.push(chunk);
-				})
-				.on('end', () => {
-					resolve(Buffer.concat(chunks));
-				})
-				.on('error', reject);
+		function cb(response){	
+			let body = new Promise((resolve, reject) => {
+				const chunks = [];
+				
+				response
+					.on('data', chunks.push.bind(chunks))
+					.on('end', () => resolve(Buffer.concat(chunks)))
+					.on('error', reject);
+			});
+
+			Object.assign(response, {
+				buffer: () => body,
+				text: async () => (await body).toString(),
+				json: async () => JSON.parse(
+					(await body).toString()
+				)
+			});
+
+			resolve(response);
 		}
 	});
 
-	Object.assign(request, {
-		buffer: () => body,
-		text: async () => (await body).toString(),
-		json: async () => JSON.parse(
-			(await body).toString()
-		)
+	Object.assign(promise, {
+		buffer: async () => (await promise).buffer(),
+		text: async () => (await promise).text(),
+		json: async () => (await promise).json(),
 	});
 
-	return request;
+	return promise;
 }
+
+/*
+let response = await fetch(url);
+let body = await response.text();
+
+//or
+
+let body = await fetch(url).text();
+*/
 
 async function getContinuation(continuationItem, ytcfg, options){
 	const continuationEndpoint = continuationItem.continuationItemRenderer.continuationEndpoint;

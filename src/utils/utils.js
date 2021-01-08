@@ -94,8 +94,8 @@ function parseOptions(options = {}, type){
 		throw new Error('Language option must be a string');
 	}else if(typeof options.location !== 'string'){
 		throw new Error('Location option must be a string');
-	}else if(Math.sign(options.quantity) !== 1){
-		throw new Error("Quantity must be an non-zero positive number or 'all'");
+	}else if(options.quantity < 1){
+		throw new Error("Quantity must be higher than one or 'all'");
 	}else if(typeof options.raw !== 'boolean'){
 		throw new Error("The 'raw' option must be a boolean");
 	}else if(typeof options.requestsOptions !== 'object'){

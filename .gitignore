@@ -1,8 +1,7 @@
 node_modules/
 api/
 test/temp
-download/
+src/download
+docs/download.md
 
-*.mp3
-*.mp4
 package-lock.json

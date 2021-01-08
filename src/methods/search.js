@@ -22,13 +22,15 @@ async function search(searchString, options){
 	const contents = data.contents
 		.twoColumnSearchResultsRenderer
 		.primaryContents.sectionListRenderer.contents;
-
 		
 	if(
 		contents.length === 1 && 
 		contents[0].itemSectionRenderer && 
 		contents[0].itemSectionRenderer.contents[0].backgroundPromoRenderer
-	) return null;
+	){
+		if(options.raw) return { initialData: data, ytcfg };
+		return null;
+	}
 
 
 	let continuationItem = contents.pop();
@@ -49,9 +51,7 @@ async function search(searchString, options){
 	}
 	
 
-	if(options.raw){
-		return { initialData: data, ytcfg, items: results };
-	}
+	if(options.raw) return { initialData: data, ytcfg, items: results };
 
 	return {
 		searchQuery: search_query.trim(),
