@@ -1,54 +1,69 @@
-const { getID, parseOptions, requests } = require('../utils/utils.js');
-const parse = require('../parser/main.js');
-const { Thumbnails } = require('../parser/structures.js');
+const { getProp, getID, parseOptions, requests } = require('../utils/utils.js');
+const { parse, Utils } = require('../parser/main.js');
 //const parseStreamingData = require('../download/formats.js');
 
 async function getVideo(URLorID, options){
 	options = parseOptions(options, 1);
 
-	let response = await requests.fetch(
+	const body = await requests.fetch(
 		`https://www.youtube.com/watch?v=${getID(URLorID, 1)}`, 
 		options
-	);
-	let body = await response.text();
-	let data = requests.getData(body, 1), playerResponse = requests.getData(body, 2);
+	).text();
+	const data = requests.getData(body, 1), playerResponse = requests.getData(body, 2);
 
-	if(options.raw) return { 
-		initialData: data, playerResponse, ytcfg: requests.getData(body, 3) 
-	};
-	if(!playerResponse.videoDetails) return playabilityStatus(playerResponse);
+	if(!playerResponse.videoDetails) return null;
+	
+	return videoInfo(data, playerResponse);
+}
 
-	let { 
-		secondaryResults, playlist, results 
-	} = data.contents.twoColumnWatchNextResults;
+module.exports = getVideo;
 
-	let [
-		videoPrimaryInfoRenderer, videoSecondaryInfoRenderer
-	] = results.results.contents;
+function videoInfo(data, playerResponse){
+	let { secondaryResults, playlist, results } = data.contents.twoColumnWatchNextResults;
+	const [ { videoPrimaryInfoRenderer }, { videoSecondaryInfoRenderer } ] = results.results.contents;
 
-	let info = Object.assign({
+	const [likes, dislikes] = videoPrimaryInfoRenderer.sentimentBar
+		.sentimentBarRenderer.tooltip.split(' / ').map(Utils.extractInt);
+
+	const info = {
 		ID: playerResponse.videoDetails.videoId,
 		URL: `https://www.youtube.com/watch?v=${playerResponse.videoDetails.videoId}`,
+		name: Utils.parseText(videoPrimaryInfoRenderer.title).toString(),
+
+		likes, dislikes,
+
+		views: new Utils.Views(videoPrimaryInfoRenderer.viewCount),
+		owner: parse(videoSecondaryInfoRenderer.owner),
+
+		description: Utils.parseText(videoSecondaryInfoRenderer.description),
+		thumbnails: new Utils.Thumbnails(playerResponse.videoDetails.thumbnail),
+		keywords: playerResponse.videoDetails.keywords,
+		uploadDateLabel: Utils.parseText(videoPrimaryInfoRenderer.dateText).toString(),
 		isLive: playerResponse.videoDetails.isLiveContent,
-	}, 
-	parse(videoPrimaryInfoRenderer), 
-	parse(videoSecondaryInfoRenderer), 
-	parse(playerResponse.microformat.playerMicroformatRenderer),
-	{
-		thumbnails: new Thumbnails(playerResponse.videoDetails.thumbnail),
-		keywords: playerResponse.videoDetails.keywords
-	});
+		...parse(playerResponse.microformat),
+	};
 
-
-	let endScreen = data.playerOverlays.playerOverlayRenderer.endScreen;
-	if(endScreen?.watchNextEndScreenRenderer?.results){
-		info.endScreen = parse(data.playerOverlays.playerOverlayRenderer.endScreen);
-	}
+	const endScreen = getProp(data, 'playerOverlays.playerOverlayRenderer.endScren.watchNextEndScreenRenderer');
+	if(endScreen && endScreen.results) info.endScreen = {
+		title: Utils.parseText(endScreen.title).toString(),
+		items: endScreen.results.map(parse),
+	};
 
 	if(secondaryResults){
-		info.relatedVideos = parseSecondaryResults(secondaryResults);
+		secondaryResults = secondaryResults.secondaryResults.results;
+		if(secondaryResults[secondaryResults.length -1].continuationItemRenderer){
+			secondaryResults.pop();
+		}
+	
+		info.related = secondaryResults.filter(a => !a.compactAutoplayRenderer).map(parse);
 	}
-	if(playlist) info.playlist = parse(info.playlist);
+	if(playlist) info.playlist = {
+		ID: playlist.playlistId,
+		title: Utils.parseText(playlist.titleText).toString(),
+		owner: Utils.bylineText(playlist),
+		videoQuantity: playlist.totalVideos,
+		videos: playlist.videos.map(playlistVideo),
+	};
 
 	if(playerResponse.streamingData){
 		//Object.assign(info, parseStreamingData(playerResponse.streamingData));
@@ -57,26 +72,19 @@ async function getVideo(URLorID, options){
 	return info;
 }
 
-module.exports = getVideo;
+function playlistVideo({ playlistPanelVideoRenderer }){
+	return {
+		name: Utils.parseText(playlistPanelVideoRenderer.title).toString(),
+		ID: playlistPanelVideoRenderer.videoId,
+		playlistID: playlistPanelVideoRenderer.navigationEndpoint.watchEndpoint.playlistId,
+		URL: `https://www.youtube.com${playlistPanelVideoRenderer.navigationEndpoint.commandMetadata.webCommandMetadata.url}`,
 
-function parseSecondaryResults(results){
-	results = results.secondaryResults.results;
-	if(results[results.length -1].continuationItemRenderer) results.pop();
+		duration: new Utils.Duration(playlistPanelVideoRenderer),
+		views: new Utils.Views(playlistPanelVideoRenderer),
+		thumbnails: new Utils.Thumbnails(playlistPanelVideoRenderer.thumbnail),
 
-	return results.filter(a => !a.compactAutoplayRenderer).map(parse);
-}
+		publishedDate: Utils.parseText(playlistPanelVideoRenderer.publishedTimeText).toString(),
 
-function playabilityStatus({ playabilityStatus }){
-	let data = {
-		status: playabilityStatus.status,
-	};		
-	if(playabilityStatus.messages){
-		data.messages = playabilityStatus.messages;
-	}
-
-	return { 
-		error: Object.assign(data, 
-			parse(playabilityStatus.errorScreen)
-		)
+		owner: Utils.bylineText(playlistPanelVideoRenderer),
 	};
 }

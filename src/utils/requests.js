@@ -9,14 +9,12 @@ function fetch(url, options = {}){
 	}
 
 	if(!options.requestsOptions) options = {
-		requestsOptions: options
+		requestsOptions: options,
 	};
 
 	let promise = new Promise((resolve, reject) => {
-		(parsedURL.protocol === 'https:' ? https : http)
-			.request(
-				parsedURL, options.requestsOptions, cb
-			) 
+		(parsedURL.protocol === 'htts:' ? http : https)
+			.request(parsedURL, options.requestsOptions, cb) 
 			//https://nodejs.org/api/http.html#http_http_request_options_callback
 			.on('error', reject)
 			.end(options.requestsOptions.body || '');
@@ -24,7 +22,7 @@ function fetch(url, options = {}){
 		function cb(response){	
 			let body = new Promise((resolve, reject) => {
 				const chunks = [];
-				
+
 				response
 					.on('data', chunks.push.bind(chunks))
 					.on('end', () => resolve(Buffer.concat(chunks)))
@@ -36,7 +34,7 @@ function fetch(url, options = {}){
 				text: async () => (await body).toString(),
 				json: async () => JSON.parse(
 					(await body).toString()
-				)
+				),
 			});
 
 			resolve(response);
@@ -66,7 +64,7 @@ async function getContinuation(continuationItem, ytcfg, options){
 	
 	const POST_BODY = {
 		context: ytcfg.INNERTUBE_CONTEXT, 
-		continuation: continuationEndpoint.continuationCommand.token
+		continuation: continuationEndpoint.continuationCommand.token,
 	};
 
 	const endpoint = continuationEndpoint.commandMetadata.webCommandMetadata.apiUrl;
@@ -77,7 +75,7 @@ async function getContinuation(continuationItem, ytcfg, options){
 	optionsCopy.requestsOptions = Object.assign(
 		{}, options.requestsOptions, {
 			method: 'POST',
-			body: JSON.stringify(POST_BODY)
+			body: JSON.stringify(POST_BODY),
 		}
 	);
 
@@ -85,14 +83,14 @@ async function getContinuation(continuationItem, ytcfg, options){
 }
 
 module.exports = {
-	fetch, getData, getContinuation
+	fetch, getData, getContinuation,
 };
 
 function getData(body, type){
 	const start = {
 		1: 'var ytInitialData = {',
 		2: 'var ytInitialPlayerResponse = {',
-		3: 'ytcfg.set({'
+		3: 'ytcfg.set({',
 	}[type];
 
 	const offset = body.indexOf(start);

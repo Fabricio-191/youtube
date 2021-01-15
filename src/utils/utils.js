@@ -1,11 +1,36 @@
-const REGEX = [
+const PARSER = [
 	null,
 	{
-		URL: /(?:youtube\.com\/(?:[^/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?/\s]{11})/i,
+		URL(url){
+			let matches = url.match(
+				/(?:youtube\.com\/(?:[^/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?/\s]{9,11})/i
+			);
+
+			return matches[1] || matches[0];
+		},
 		ID: /^[A-Za-z0-9-_]{9,11}$/,
 	}, {
-		URL: /[?&]list=([^#&?]+)/,
+		URL(url){
+			url = new URL(url);
+
+			return url.searchParams.get('list');
+		},
 		ID: /^[A-Za-z0-9-_]{16,43}$/,
+	},
+	null,
+	{
+		URL(url){
+			url = new URL(url);
+			let pathname = url.pathname;
+
+			['/channel/', '/user/'].map(str => {
+				if(!pathname.startsWith(str)) return;
+				pathname = pathname.slice(str.length);
+			});
+
+			return pathname;
+		},
+		ID: /^[a-zA-Z0-9-_]{22,34}$|/,
 	}
 ];
 
@@ -24,30 +49,24 @@ function getID(string, type){
 		throw new Error('The URL or ID must be a string');
 	}
 
-	if(isURL(string)){
-		let matches = string.match(REGEX[type].URL);
-		if(!matches){
-			throw Error("Canno't get a valid ID from the URL");
-		}
-		string = matches[1] || matches[0];
+	let isURL = false;
+
+	try{
+		new URL(string);
+		isURL = true;
+	}catch(e){}
+
+	if(isURL){
+		string = PARSER[type].URL(string);
 		
-		if(!REGEX[type].ID.test(string)){
+		if(!PARSER[type].ID.test(string)){
 			throw Error("Canno't get a valid ID from the URL");
 		}
-	}else if(!REGEX[type].ID.test(string)){
+	}else if(!PARSER[type].ID.test(string)){
 		throw Error('Introduced ID is not valid');
 	}
 
 	return string;
-}
-
-function isURL(string){
-	try{
-		new URL(string);
-		return true;
-	}catch(e){
-		return false;
-	}
 }
 
 const defaultOptions = {
@@ -55,11 +74,9 @@ const defaultOptions = {
 	location: 'US',
 	quantity: 'all',
 	requestsOptions: {},
-	raw: false,
 };
 
 function parseOptions(options = {}, type){
-	//types: 1 = video, 2 = playlist, 3 = search
 	if(options === 'all' || typeof options === 'number'){
 		options = { quantity: options };
 	}
@@ -96,8 +113,6 @@ function parseOptions(options = {}, type){
 		throw new Error('Location option must be a string');
 	}else if(options.quantity < 1){
 		throw new Error("Quantity must be higher than one or 'all'");
-	}else if(typeof options.raw !== 'boolean'){
-		throw new Error("The 'raw' option must be a boolean");
 	}else if(typeof options.requestsOptions !== 'object'){
 		throw new Error('Request options must be an object');
 	}
@@ -105,9 +120,20 @@ function parseOptions(options = {}, type){
 	return options;
 }
 
+function getProp(obj, key) {
+	return key
+		.split('.')
+		.map(k => k.trim())
+		.reduce((acc, prop) => {
+			if(acc == undefined) return null;
+			
+			return acc[prop.trim()] || null;
+		}, obj);
+}
+
 module.exports = {
 	requests: require('./requests.js'),
 
 	defaultOptions, parseOptions,
-	getID
+	getID, getProp,
 };

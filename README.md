@@ -1,7 +1,7 @@
 ![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg?color=white&style=for-the-badge)
 
-## **This module is still under strong changes, development, features not implemented, which can make it difficult to use.**
-## **It's not intended for use in production, at the moment.**
+**This module is still under strong changes and development, which can make it difficult to use.**
+**It's not intended for use in production, at the moment.**
 
 You can see the changelog [here](https://github.com/Fabricio-191/youtube/blob/main/docs/changelog.md)
 
@@ -14,14 +14,15 @@ const { getVideo, getPlaylist, search } = require('@fabricio-191/youtube')
   });
 ``` 
 
-# Methods:
+
 [here](https://github.com/Fabricio-191/youtube/blob/main/test/results.json) you can see a JSON that shows the information that each method gives (I do not put it here, because it is a lot)
+
+# Methods:
 ### `getVideo(URLorID, options)`
   * returns a `Promise`
 ```js
 getVideo('https://www.youtube.com/watch?v=H2wCwdHk-ao&list=PLDS0dpumEOi0pu_0pCGqvcaRkxg-o1gqg')
   .then(data => {
-    if(data.error) console.log(data.error.message.toString());
     console.log(data);
     //do something...
   })  
@@ -48,7 +49,7 @@ search('Node.js', { quantity: 40 })
   .catch(console.error);
 ```
 ### `setDefaultOptions(options)`
-  * returns `this` (the same as doing `require('@fabricio-191/youtube')`)
+  * returns `this`
 
 # Options:
 The default options are: 
@@ -71,15 +72,15 @@ When you pass options to a method, the options without value, will be taken from
 
 # Notes:
   * In an array of Thumbnails, the first will always be the bigger
+  * Some structures have a `toString()` method that returns the clear text in it, for others is an URL, like in an array of thumbnails
   
 # To-do
   * A method to download videos
-  * Make typings and JSDoc
-  * Improve error handling
+  * ~~Make typings and JSDoc~~
+  * ~~Improve error handling~~
   * A method to get info and videos from a channel
   * Get comments from a video
     
 # Credits
   * [ytpl](https://www.npmjs.com/package/ytpl) for the bases and the how-to
   * [This](https://stackoverflow.com/questions/6903823/regex-for-youtube-id) stack overflow post for the regex to get videos ID's from URL's
-  * [This](https://stackoverflow.com/questions/16868181/how-to-retrieve-a-youtube-playlist-id-using-regex-and-js) stack overflow post for the regex to get playlists ID's from URL's

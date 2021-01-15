@@ -5,9 +5,7 @@ function parseText(obj = ''){
 	
 	if(obj.runs){
 		let runs = obj.runs.map(x => {
-			let data = {
-				text: x.text
-			};
+			let data = { text: x.text };
 
 			if(x.bold) data.bold = true;
 			if(x.navigationEndpoint){
@@ -45,9 +43,12 @@ function extractInt(str){
 		str = parseText(str);
 	}
 
-	return Number(
-		str.toString().match(/\d/g).join('')
-	);
+	str = str.toString();
+
+	let result = str.match(/\d/g);
+	if(result === null) return str;
+
+	return Number(result.join(''));
 }
 
 class Thumbnails extends Array{
@@ -185,5 +186,5 @@ class Views{
 
 module.exports = {
 	Thumbnails, Duration, Views,
-	parseText, extractInt
+	parseText, extractInt,
 };

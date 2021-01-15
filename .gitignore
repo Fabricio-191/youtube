@@ -1,7 +1,8 @@
 node_modules/
-api/
 test/temp
-src/download
+src/methods/download
 docs/download.md
 
-package-lock.json
+*.json
+!package.json
+!test/results.json

@@ -1,5 +1,11 @@
+## 0.0.2-0
+* Added typings
+* Changed half of the parsing system
+* Improved error handling a little
+* the `getVideo`, `getPlaylist` and `search` methods will resolve as `null` when there is no results or the item does not exist
+
 ## 0.0.1-5  
-* Improved text parsing to show URL's and bold text
+* Improved text parsing to show URL's and bold text in some cases
 * `getVideo()`
     * Now when trying to access private or non-existent videos it shows the youtube message
     * `uploadDate` property was changed to `uploadDateLabel`

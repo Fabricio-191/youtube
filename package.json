@@ -1,17 +1,27 @@
 {
   "name": "@fabricio-191/youtube",
-  "version": "0.0.1-5",
+  "version": "0.0.2-0",
   "main": "./src/index.js",
+  "types": "./typings/index.d.ts",
   "license": "Apache License 2.0",
   "description": "Get info/download from youtube videos/playlists easy, and search videos from youtube",
   "deprecated": false,
-  "keywords": [
-    "youtube",
-    "info",
-    "video",
-    "playlist",
-    "search"
-  ],
+  "scripts": {
+    "eslint": "npx eslint src --fix && npx eslint test --fix",
+    "dtslint": "npx eslint typings/index.d.ts --fix",
+    "test": "node test/test.js",
+    "git": "git add . && git commit -m - && git push",
+    "all": "npm run eslint && npm run dtslint && npm run test"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "4.13.0",
+    "@typescript-eslint/parser": "4.13.0",
+    "babel-eslint": "10.1.0",
+    "eslint": "7.17.0",
+    "typescript": "4.1.3"
+  },
+  "author": "Fabricio-191",
   "repository": {
     "type": "git",
     "url": "https://github.com/Fabricio-191/youtube"
@@ -19,19 +29,11 @@
   "bugs": {
     "url": "https://github.com/Fabricio-191/youtube/issues"
   },
-  "author": "Fabricio-191",
-  "scripts": {
-    "test": "node test/test.js",
-    "eslint": "npx eslint src --ext .js --fix",
-    "git": "git add . && git commit -m - && git push",
-    "all": "npm run eslint && npm run test && npm run git && npm publish"
-  },
-  "dependencies": {},
-  "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "4.2.0",
-    "@typescript-eslint/parser": "4.2.0",
-    "babel-eslint": "10.1.0",
-    "eslint": "7.9.0",
-    "typescript": "4.0.3"
-  }
+  "keywords": [
+    "youtube",
+    "info",
+    "video",
+    "playlist",
+    "search"
+  ]
 }
