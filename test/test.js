@@ -32,6 +32,15 @@ const { getVideo, getPlaylist, search } = require('../')
 		fs.existsSync('./test') ? './test/results.json' : './results.json', 
 		JSON.stringify(data, null, '\t')
 	);
+
+	/*
+	fs.writeFileSync(
+		fs.existsSync('./test') ? './test/results.js' : './results.js', 
+		require('util').inspect(x, {
+			depth: Infinity,
+		})
+	);
+	*/
 })();
 
 /*

@@ -19,6 +19,7 @@ async function search(searchString, options){
 
 	const data = requests.getData(body, 1);
 	let results = getProp(data, 'contents.twoColumnSearchResultsRenderer.primaryContents.sectionListRenderer.contents');
+	if(!results) return null;
 
 	let continuationItem = results.pop(); 
 	results = getProp(results.pop(), 'itemSectionRenderer.contents');
@@ -42,7 +43,7 @@ async function search(searchString, options){
 	return {
 		searchQuery: searchString.trim(),
 		estimatedResults: Number(data.estimatedResults),
-		refinements: data.refinements,
+		refinements: data.refinements || null,
 		results: results.map(parse).filter(x => x),
 	};
 }

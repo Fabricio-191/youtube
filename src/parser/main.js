@@ -214,16 +214,13 @@ function bylineText({ longBylineText, shortBylineText }){//channel/owner
 }
 
 function playerMicroformatRenderer({ playerMicroformatRenderer }){
-	return [
-		'isFamilySafe', 'isUnlisted', 'availableCountries', 
-		'uploadDate', 'publishDate'
-	].reduce((acc, key) => {
-		if(playerMicroformatRenderer[key]){
-			acc[key] = playerMicroformatRenderer[key];
-		}
-
-		return acc;
-	}, {});
+	return {
+		isFamilySafe: playerMicroformatRenderer.isFamilySafe || true,
+		isUnlisted: playerMicroformatRenderer.isUnlisted || false,
+		availableCountries: playerMicroformatRenderer.availableCountries || [],
+		uploadDate: playerMicroformatRenderer.uploadDate || null,
+		publishDate: playerMicroformatRenderer.publishDate || null,
+	};
 }
 //#endregion
 
