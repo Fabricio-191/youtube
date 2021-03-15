@@ -1,3 +1,36 @@
+# List of languages
+	
+```js
+'af' => 'Afrikaans'                     'gu' => 'Gujarati'                      'or' => 'Odia'                          
+'am' => 'Amharic'                       'hi' => 'Hindi'                         'pa' => 'Punjabi'                       
+'ar' => 'Arabic'                        'hr' => 'Croatian'                      'pl' => 'Polish'                        
+'as' => 'Assamese'                      'hu' => 'Hungarian'                     'pt' => 'Portuguese (Brazil)'           
+'az' => 'Azerbaijani'                   'hy' => 'Armenian'                      'pt-PT' => 'Portuguese (Portugal)'      
+'be' => 'Belarusian'                    'id' => 'Indonesian'                    'ro' => 'Romanian'                      
+'bg' => 'Bulgarian'                     'is' => 'Icelandic'                     'ru' => 'Russian'                       
+'bn' => 'Bangla'                        'it' => 'Italian'                       'si' => 'Sinhala'                       
+'bs' => 'Bosnian'                       'iw' => 'Hebrew'                        'sk' => 'Slovak'                        
+'ca' => 'Catalan'                       'ja' => 'Japanese'                      'sl' => 'Slovenian'                     
+'cs' => 'Czech'                         'ka' => 'Georgian'                      'sq' => 'Albanian'                      
+'da' => 'Danish'                        'kk' => 'Kazakh'                        'sr' => 'Serbian'                       
+'de' => 'German'                        'km' => 'Khmer'                         'sr-Latn' => 'Serbian (Latin)'          
+'el' => 'Greek'                         'kn' => 'Kannada'                       'sv' => 'Swedish'                       
+'en' => 'English'                       'ko' => 'Korean'                        'sw' => 'Swahili'                       
+'en-GB' => 'English (United Kingdom)'   'ky' => 'Kyrgyz'                        'ta' => 'Tamil'                         
+'en-IN' => 'English (India)'            'lo' => 'Lao'                           'te' => 'Telugu'                        
+'es' => 'Spanish (Spain)'               'lt' => 'Lithuanian'                    'th' => 'Thai'                          
+'es-419' => 'Spanish (Latin America)'   'lv' => 'Latvian'                       'tr' => 'Turkish'                       
+'es-US' => 'Spanish (United States)'    'mk' => 'Macedonian'                    'uk' => 'Ukrainian'                     
+'et' => 'Estonian'                      'ml' => 'Malayalam'                     'ur' => 'Urdu'                          
+'eu' => 'Basque'                        'mn' => 'Mongolian'                     'uz' => 'Uzbek'                         
+'fa' => 'Persian'                       'mr' => 'Marathi'                       'vi' => 'Vietnamese'                    
+'fi' => 'Finnish'                       'ms' => 'Malay'                         'zh-CN' => 'Chinese'                    
+'fil' => 'Filipino'                     'my' => 'Myanmar (Burmese)'             'zh-HK' => 'Chinese (Hong Kong)'        
+'fr' => 'French'                        'ne' => 'Nepali'                        'zh-TW' => 'Chinese (Taiwan)'           
+'fr-CA' => 'French (Canada)'            'nl' => 'Dutch'                         'zu' => 'Zulu'                          
+'gl' => 'Galician'                      'no' => 'Norwegian'                                                             
+```	
+
 # List of locations
 
 ```js
@@ -38,36 +71,3 @@
 'GT' => 'Guatemala'                     'NP' => 'Nepal'                         'ZW' => 'Zimbabwe'                      
 'HK' => 'Hong Kong'                     'NZ' => 'New Zealand'                                                           
 ```
-	
-# List of languages
-	
-```js
-'af' => 'Afrikaans'                     'gu' => 'Gujarati'                      'or' => 'Odia'                          
-'am' => 'Amharic'                       'hi' => 'Hindi'                         'pa' => 'Punjabi'                       
-'ar' => 'Arabic'                        'hr' => 'Croatian'                      'pl' => 'Polish'                        
-'as' => 'Assamese'                      'hu' => 'Hungarian'                     'pt' => 'Portuguese (Brazil)'           
-'az' => 'Azerbaijani'                   'hy' => 'Armenian'                      'pt-PT' => 'Portuguese (Portugal)'      
-'be' => 'Belarusian'                    'id' => 'Indonesian'                    'ro' => 'Romanian'                      
-'bg' => 'Bulgarian'                     'is' => 'Icelandic'                     'ru' => 'Russian'                       
-'bn' => 'Bangla'                        'it' => 'Italian'                       'si' => 'Sinhala'                       
-'bs' => 'Bosnian'                       'iw' => 'Hebrew'                        'sk' => 'Slovak'                        
-'ca' => 'Catalan'                       'ja' => 'Japanese'                      'sl' => 'Slovenian'                     
-'cs' => 'Czech'                         'ka' => 'Georgian'                      'sq' => 'Albanian'                      
-'da' => 'Danish'                        'kk' => 'Kazakh'                        'sr' => 'Serbian'                       
-'de' => 'German'                        'km' => 'Khmer'                         'sr-Latn' => 'Serbian (Latin)'          
-'el' => 'Greek'                         'kn' => 'Kannada'                       'sv' => 'Swedish'                       
-'en' => 'English'                       'ko' => 'Korean'                        'sw' => 'Swahili'                       
-'en-GB' => 'English (United Kingdom)'   'ky' => 'Kyrgyz'                        'ta' => 'Tamil'                         
-'en-IN' => 'English (India)'            'lo' => 'Lao'                           'te' => 'Telugu'                        
-'es' => 'Spanish (Spain)'               'lt' => 'Lithuanian'                    'th' => 'Thai'                          
-'es-419' => 'Spanish (Latin America)'   'lv' => 'Latvian'                       'tr' => 'Turkish'                       
-'es-US' => 'Spanish (United States)'    'mk' => 'Macedonian'                    'uk' => 'Ukrainian'                     
-'et' => 'Estonian'                      'ml' => 'Malayalam'                     'ur' => 'Urdu'                          
-'eu' => 'Basque'                        'mn' => 'Mongolian'                     'uz' => 'Uzbek'                         
-'fa' => 'Persian'                       'mr' => 'Marathi'                       'vi' => 'Vietnamese'                    
-'fi' => 'Finnish'                       'ms' => 'Malay'                         'zh-CN' => 'Chinese'                    
-'fil' => 'Filipino'                     'my' => 'Myanmar (Burmese)'             'zh-HK' => 'Chinese (Hong Kong)'        
-'fr' => 'French'                        'ne' => 'Nepali'                        'zh-TW' => 'Chinese (Taiwan)'           
-'fr-CA' => 'French (Canada)'            'nl' => 'Dutch'                         'zu' => 'Zulu'                          
-'gl' => 'Galician'                      'no' => 'Norwegian'                                                             
-```	
