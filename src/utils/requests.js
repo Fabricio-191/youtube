@@ -1,6 +1,7 @@
 const http = require('http'), https = require('https');
 
 function fetch(url, options = {}){
+	// @ts-ignore
 	const parsedURL = new URL(url);
 
 	if(options.language && options.location){
@@ -79,6 +80,7 @@ async function getContinuation(continuationItem, ytcfg, options){
 		}
 	);
 
+	// @ts-ignore
 	return await fetch(URL, optionsCopy).json();
 }
 

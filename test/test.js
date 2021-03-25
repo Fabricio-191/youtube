@@ -10,6 +10,7 @@ const { getVideo, getPlaylist, search } = require('../')
 	});
 
 (async () => {
+	return;
 	let data = {};
 
 	console.log('Getting video info');

@@ -1,5 +1,5 @@
 const { getProp, getID, parseOptions, requests } = require('../utils/utils.js');
-const { parse, Utils } = require('../parser/main.js');
+const { parse, Utils, parsers } = require('../parser/main.js');
 //const parseStreamingData = require('../download/formats.js');
 
 async function getVideo(URLorID, options){
@@ -8,6 +8,7 @@ async function getVideo(URLorID, options){
 	const body = await requests.fetch(
 		`https://www.youtube.com/watch?v=${getID(URLorID, 1)}`, 
 		options
+	// @ts-ignore
 	).text();
 	const data = requests.getData(body, 1), playerResponse = requests.getData(body, 2);
 
@@ -37,7 +38,7 @@ function videoInfo(data, playerResponse){
 
 		description: Utils.parseText(videoSecondaryInfoRenderer.description),
 		thumbnails: new Utils.Thumbnails(playerResponse.videoDetails.thumbnail),
-		keywords: playerResponse.videoDetails.keywords,
+		keywords: playerResponse.videoDetails.keywords || null,
 		uploadDateLabel: Utils.parseText(videoPrimaryInfoRenderer.dateText).toString(),
 		isLive: playerResponse.videoDetails.isLiveContent,
 		...parse(playerResponse.microformat),
@@ -60,7 +61,7 @@ function videoInfo(data, playerResponse){
 	if(playlist) info.playlist = {
 		ID: playlist.playlistId,
 		title: Utils.parseText(playlist.titleText).toString(),
-		owner: Utils.bylineText(playlist),
+		owner: parsers.bylineText(playlist),
 		videoQuantity: playlist.totalVideos,
 		videos: playlist.videos.map(playlistVideo),
 	};
@@ -85,6 +86,6 @@ function playlistVideo({ playlistPanelVideoRenderer }){
 
 		publishedDate: Utils.parseText(playlistPanelVideoRenderer.publishedTimeText).toString(),
 
-		owner: Utils.bylineText(playlistPanelVideoRenderer),
+		owner: parsers.bylineText(playlistPanelVideoRenderer),
 	};
 }

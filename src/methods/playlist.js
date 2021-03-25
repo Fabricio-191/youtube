@@ -7,6 +7,7 @@ async function getPlaylist(URLorID, options){
 	const body = await requests.fetch(
 		`https://www.youtube.com/playlist?list=${getID(URLorID, 2)}`, 
 		options
+	// @ts-ignore
 	).text();
 	const data = requests.getData(body, 1);
 

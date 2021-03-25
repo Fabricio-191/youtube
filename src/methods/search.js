@@ -15,6 +15,7 @@ async function search(searchString, options){
 	const body = await requests.fetch(
 		`https://www.youtube.com/results?search_query=${search_query}`, 
 		options
+	// @ts-ignore
 	).text();
 
 	const data = requests.getData(body, 1);

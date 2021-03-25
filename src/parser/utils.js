@@ -1,4 +1,4 @@
-function parseText(obj = ''){
+function parseText(obj = {}){
 	if(obj.simpleText) return obj.simpleText;
 
 	if(obj.accessibilityData) return obj.accessibilityData.label;
@@ -37,7 +37,6 @@ function parseText(obj = ''){
 	return '';
 }
 
-
 function extractInt(str){
 	if(typeof str === 'object' && !Array.isArray(str)) {
 		str = parseText(str);
@@ -53,12 +52,13 @@ function extractInt(str){
 
 class Thumbnails extends Array{
 	constructor({ thumbnails }){
-		thumbnails.map(img => {
+		super(...thumbnails.map(img => {
 			if(!img.url.startsWith('http')){
 				img.url = `https:${img.url}`;
 			}
-		});
-		super(...thumbnails);
+
+			return img;
+		}));
 
 		this.sort((a, b) => b.width - a.width);
 		/*
@@ -129,7 +129,7 @@ class Duration{
 
 			let hours = Math.floor(this.number / 3600), 
 				mins = Math.floor(this.number / 60) - hours * 60, 
-				seconds = this.number - this.mins * 60 - this.hours * 3600;
+				seconds = this.number - mins * 60 - hours * 3600;
 
 			this.normal = `${hours ? `${hours}:` : ''}${mins}:${seconds}`;
 		}else{

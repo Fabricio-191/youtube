@@ -7,13 +7,11 @@
   "description": "Get info/download from youtube videos/playlists easy, and search videos from youtube",
   "deprecated": false,
   "scripts": {
-    "eslint": "npx eslint src --fix && npx eslint test --fix",
-    "dtslint": "npx eslint typings/index.d.ts --fix",
+    "lint": "npx eslint src --fix && npx eslint test --fix && npx eslint typings/index.d.ts --fix",
     "test": "node test/test.js",
     "git": "git add . && git commit -m - && git push",
-    "all": "npm run eslint && npm run dtslint && npm run test"
+    "all": "npm run lint && npm run test"
   },
-  "dependencies": {},
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "4.13.0",
     "@typescript-eslint/parser": "4.13.0",

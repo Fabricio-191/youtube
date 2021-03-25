@@ -11,6 +11,7 @@ const PARSER = [
 		ID: /^[A-Za-z0-9-_]{9,11}$/,
 	}, {
 		URL(url){
+			// @ts-ignore
 			url = new URL(url);
 
 			return url.searchParams.get('list');
@@ -20,6 +21,7 @@ const PARSER = [
 	null,
 	{
 		URL(url){
+			// @ts-ignore
 			url = new URL(url);
 			let pathname = url.pathname;
 
@@ -52,6 +54,7 @@ function getID(string, type){
 	let isURL = false;
 
 	try{
+		// @ts-ignore
 		new URL(string);
 		isURL = true;
 	}catch(e){}
