@@ -1,3 +1,8 @@
+## 0.0.2-2
+* Solved [this](https://github.com/Fabricio-191/youtube/issues/1) issue
+* Added more rules to ESLint
+* Some minor changes to the code
+
 ## 0.0.2-0
 * Added typings
 * Changed half of the parsing system
