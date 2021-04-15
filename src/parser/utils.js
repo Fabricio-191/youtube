@@ -2,10 +2,10 @@ function parseText(obj = {}){
 	if(obj.simpleText) return obj.simpleText;
 
 	if(obj.accessibilityData) return obj.accessibilityData.label;
-	
+
 	if(obj.runs){
-		let runs = obj.runs.map(x => {
-			let data = { text: x.text };
+		const runs = obj.runs.map(x => {
+			const data = { text: x.text };
 
 			if(x.bold) data.bold = true;
 			if(x.navigationEndpoint){
@@ -18,10 +18,10 @@ function parseText(obj = {}){
 
 			return data;
 		});
-		
+
 		runs.toString = function(md){
 			return runs.reduce((acc, run) => {
-				let text = run.text;
+				let { text } = run;
 				if(md){
 					if(run.bold) text = `**${text}**`;
 					if(run.url) text = `[${text}](${run.url})`;
@@ -38,13 +38,13 @@ function parseText(obj = {}){
 }
 
 function extractInt(str){
-	if(typeof str === 'object' && !Array.isArray(str)) {
+	if(typeof str === 'object' && !Array.isArray(str)){
 		str = parseText(str);
 	}
 
 	str = str.toString();
 
-	let result = str.match(/\d/g);
+	const result = str.match(/\d/g);
 	if(result === null) return str;
 
 	return Number(result.join(''));
@@ -98,25 +98,25 @@ class Thumbnails extends Array{
 	get bigger(){
 		if(!this[0]) return null;
 		let biggerW = this.reduce(
-			(acc, value) => (value.width > acc.width) ? value : acc, 
+			(acc, value) => (value.width > acc.width) ? value : acc,
 			this[0]
 		);
 
 		let biggerH = this.reduce(
-			(acc, value) => (value.height > acc.height) ? value : acc, 
+			(acc, value) => (value.height > acc.height) ? value : acc,
 			this[0]
 		);
 
 		if(biggerH === biggerW) return biggerW;
 		let ratio = biggerH.width / biggerW.height;
 
-		return ratio > 1 ? 
+		return ratio > 1 ?
 			biggerH : biggerW;
 	}
 	*/
 
-	toString = function(){
-		let bigger = this[0];
+	toString(){
+		const [bigger] = this;
 		return bigger ? bigger.url : '';
 	}
 }
@@ -127,8 +127,8 @@ class Duration{
 			this.number = Number(data);
 			delete this.long;
 
-			let hours = Math.floor(this.number / 3600), 
-				mins = Math.floor(this.number / 60) - hours * 60, 
+			const hours = Math.floor(this.number / 3600),
+				mins = Math.floor(this.number / 60) - hours * 60,
 				seconds = this.number - mins * 60 - hours * 3600;
 
 			this.normal = `${hours ? `${hours}:` : ''}${mins}:${seconds}`;
@@ -139,10 +139,10 @@ class Duration{
 			if(data.lengthSeconds || data.lengthInSeconds){
 				this.number = Number(data.lengthSeconds || data.lengthInSeconds);
 			}else{
-				let [
+				const [
 					seconds = 0, minutes = 0, hours = 0
 				] = this.normal.split(':').reverse().map(Number);
-	
+
 				this.number = hours * 3600 + minutes * 60 + seconds;
 			}
 		}
@@ -152,18 +152,18 @@ class Duration{
 
 	number = 0;
 
-	toString = function(){
+	toString(){
 		return this.normal;
 	}
 }
 
 class Views{
 	constructor(data){
-		if(data.videoViewCountRenderer){ //video
-			let { viewCount, shortViewCount } = data.videoViewCountRenderer;
+		if(data.videoViewCountRenderer){ // video
+			const { viewCount, shortViewCount } = data.videoViewCountRenderer;
 			this.normal = parseText(viewCount);
 			this.short = parseText(shortViewCount);
-		}else{ //search, playlist
+		}else{ // search, playlist
 			this.normal = parseText(data.viewCountText);
 			this.short = parseText(data.shortViewCountText);
 		}
@@ -179,7 +179,7 @@ class Views{
 
 	number = 0;
 
-	toString = function(){
+	toString(){
 		return this.short || this.normal;
 	}
 }

@@ -13,21 +13,21 @@ function fetch(url, options = {}){
 		requestsOptions: options,
 	};
 
-	let promise = new Promise((resolve, reject) => {
+	const promise = new Promise((resolve, reject) => {
 		(parsedURL.protocol === 'htts:' ? http : https)
-			.request(parsedURL, options.requestsOptions, cb) 
-			//https://nodejs.org/api/http.html#http_http_request_options_callback
+			.request(parsedURL, options.requestsOptions, cb)
+			// https://nodejs.org/api/http.html#http_http_request_options_callback
 			.on('error', reject)
 			.end(options.requestsOptions.body || '');
 
-		function cb(response){	
-			let body = new Promise((resolve, reject) => {
+		function cb(response){
+			const body = new Promise((res, rej) => {
 				const chunks = [];
 
 				response
 					.on('data', chunks.push.bind(chunks))
-					.on('end', () => resolve(Buffer.concat(chunks)))
-					.on('error', reject);
+					.on('end', () => res(Buffer.concat(chunks)))
+					.on('error', rej);
 			});
 
 			Object.assign(response, {
@@ -61,17 +61,17 @@ let body = await fetch(url).text();
 */
 
 async function getContinuation(continuationItem, ytcfg, options){
-	const continuationEndpoint = continuationItem.continuationItemRenderer.continuationEndpoint;
-	
+	const { continuationEndpoint } = continuationItem.continuationItemRenderer;
+
 	const POST_BODY = {
-		context: ytcfg.INNERTUBE_CONTEXT, 
+		context: ytcfg.INNERTUBE_CONTEXT,
 		continuation: continuationEndpoint.continuationCommand.token,
 	};
 
 	const endpoint = continuationEndpoint.commandMetadata.webCommandMetadata.apiUrl;
-	const URL = `https://www.youtube.com${endpoint}?key=${ytcfg.INNERTUBE_API_KEY}`;
+	const url = `https://www.youtube.com${endpoint}?key=${ytcfg.INNERTUBE_API_KEY}`;
 
-	let optionsCopy = JSON.parse(JSON.stringify(options));
+	const optionsCopy = JSON.parse(JSON.stringify(options));
 
 	optionsCopy.requestsOptions = Object.assign(
 		{}, options.requestsOptions, {
@@ -81,7 +81,7 @@ async function getContinuation(continuationItem, ytcfg, options){
 	);
 
 	// @ts-ignore
-	return await fetch(URL, optionsCopy).json();
+	return await fetch(url, optionsCopy).json();
 }
 
 module.exports = {
@@ -103,14 +103,14 @@ function getData(body, type){
 	let counter = 0;
 	let inString = false;
 	for(let i = 0; i < body.length; i++){
-		let char = body[i];
+		const char = body[i];
 
 		if(char === '"'){
 			let count = 0;
 			while(body[i - 1 - count] === '\\') count++;
 			if(count % 2 === 1) continue;
-			
-			inString = !inString; 
+
+			inString = !inString;
 			continue;
 		}
 		if(inString) continue;

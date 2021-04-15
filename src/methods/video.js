@@ -1,37 +1,34 @@
 const { getProp, getID, parseOptions, requests } = require('../utils/utils.js');
 const { parse, Utils, parsers } = require('../parser/main.js');
-//const parseStreamingData = require('../download/formats.js');
+// const parseStreamingData = require('../download/formats.js');
 
 async function getVideo(URLorID, options){
 	options = parseOptions(options, 1);
 
 	const body = await requests.fetch(
-		`https://www.youtube.com/watch?v=${getID(URLorID, 1)}`, 
+		`https://www.youtube.com/watch?v=${getID(URLorID, 1)}`,
 		options
 	// @ts-ignore
 	).text();
 	const data = requests.getData(body, 1), playerResponse = requests.getData(body, 2);
 
 	if(!playerResponse.videoDetails) return null;
-	
+
 	return videoInfo(data, playerResponse);
 }
 
 module.exports = getVideo;
 
 function videoInfo(data, playerResponse){
-	let { secondaryResults, playlist, results } = data.contents.twoColumnWatchNextResults;
+	const { secondaryResults, playlist, results } = data.contents.twoColumnWatchNextResults;
 	const [ { videoPrimaryInfoRenderer }, { videoSecondaryInfoRenderer } ] = results.results.contents;
-
-	const [likes, dislikes] = videoPrimaryInfoRenderer.sentimentBar
-		.sentimentBarRenderer.tooltip.split(' / ').map(Utils.extractInt);
 
 	const info = {
 		ID: playerResponse.videoDetails.videoId,
 		URL: `https://www.youtube.com/watch?v=${playerResponse.videoDetails.videoId}`,
 		name: Utils.parseText(videoPrimaryInfoRenderer.title).toString(),
 
-		likes, dislikes,
+		...getLikes(videoPrimaryInfoRenderer),
 
 		views: new Utils.Views(videoPrimaryInfoRenderer.viewCount),
 		owner: parse(videoSecondaryInfoRenderer.owner),
@@ -51,12 +48,12 @@ function videoInfo(data, playerResponse){
 	};
 
 	if(secondaryResults){
-		secondaryResults = secondaryResults.secondaryResults.results;
-		if(secondaryResults[secondaryResults.length -1].continuationItemRenderer){
-			secondaryResults.pop();
+		const secondaryResults2 = secondaryResults.secondaryResults.results;
+		if(secondaryResults2[secondaryResults2.length -1].continuationItemRenderer){
+			secondaryResults2.pop();
 		}
-	
-		info.related = secondaryResults.filter(a => !a.compactAutoplayRenderer).map(parse);
+
+		info.related = secondaryResults2.filter(a => !a.compactAutoplayRenderer).map(parse);
 	}
 	if(playlist) info.playlist = {
 		ID: playlist.playlistId,
@@ -67,7 +64,7 @@ function videoInfo(data, playerResponse){
 	};
 
 	if(playerResponse.streamingData){
-		//Object.assign(info, parseStreamingData(playerResponse.streamingData));
+		// Object.assign(info, parseStreamingData(playerResponse.streamingData));
 	}
 
 	return info;
@@ -88,4 +85,14 @@ function playlistVideo({ playlistPanelVideoRenderer }){
 
 		owner: parsers.bylineText(playlistPanelVideoRenderer),
 	};
+}
+
+function getLikes(videoPrimaryInfoRenderer){
+	const tooltip = getProp(videoPrimaryInfoRenderer, 'sentimentBar.sentimentBarRenderer.tooltip');
+
+	if(!tooltip) return { likes: 0, dislikes: 0 };
+
+	const [likes, dislikes] = tooltip.split(' / ').map(Utils.extractInt);
+
+	return { likes, dislikes };
 }

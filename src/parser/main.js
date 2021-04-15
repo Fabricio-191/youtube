@@ -1,10 +1,11 @@
+/* eslint-disable no-shadow */
 const Utils = require('./utils.js');
 
-//#region video
+// #region video
 function compactVideoRenderer({ compactVideoRenderer, endScreenVideoRenderer }){
-	let videoData = compactVideoRenderer || endScreenVideoRenderer;
+	const videoData = compactVideoRenderer || endScreenVideoRenderer;
 
-	let data = {
+	const data = {
 		name: Utils.parseText(videoData.title).toString(),
 		ID: videoData.videoId,
 		URL: `https://www.youtube.com/watch?v=${videoData.videoId}`,
@@ -24,7 +25,7 @@ function compactVideoRenderer({ compactVideoRenderer, endScreenVideoRenderer }){
 }
 
 function compactRadioRenderer({ compactRadioRenderer, endScreenPlaylistRenderer }){
-	let data = compactRadioRenderer || endScreenPlaylistRenderer;
+	const data = compactRadioRenderer || endScreenPlaylistRenderer;
 
 	return {
 		name: Utils.parseText(data.title).toString(),
@@ -37,17 +38,17 @@ function compactRadioRenderer({ compactRadioRenderer, endScreenPlaylistRenderer 
 		owner: bylineText(data),
 	};
 }
-//#endregion
+// #endregion
 
-//#region search
+// #region search
 function videoRenderer({ videoRenderer, promotedVideoRenderer }){
-	let videoData = videoRenderer || promotedVideoRenderer;
+	const videoData = videoRenderer || promotedVideoRenderer;
 
-	let data = {
+	const data = {
 		ID: videoData.videoId,
 		URL: `https://www.youtube.com/watch?v=${videoData.videoId}`,
 		type: 'video',
-		
+
 		title: Utils.parseText(videoData.title).toString(),
 		description: Utils.parseText(
 			videoData.descriptionSnippet
@@ -119,7 +120,7 @@ function channelRenderer({ channelRenderer }){
 		name: Utils.parseText(channelRenderer.title).toString(),
 
 		description: Utils.parseText(channelRenderer.descriptionSnippet),
-		
+
 		thumbnails: new Utils.Thumbnails(channelRenderer.thumbnail),
 		videoCount: Utils.extractInt(channelRenderer.videoCountText),
 		subscribers: Utils.extractInt(channelRenderer.subscriberCountText),
@@ -127,7 +128,7 @@ function channelRenderer({ channelRenderer }){
 }
 
 function shelfRenderer({ shelfRenderer }){
-	let { 
+	const {
 		items, collapsedStateButtonText,
 	} = shelfRenderer.content.verticalListRenderer;
 
@@ -161,13 +162,13 @@ function searchPyvRenderer({ searchPyvRenderer }){
 		items: searchPyvRenderer.ads.map(videoRenderer),
 	};
 }
-//#endregion
+// #endregion
 
-//#region others
+// #region others
 function videoOwnerRenderer({ videoOwnerRenderer }){
-	let { browseId, canonicalBaseUrl } = videoOwnerRenderer.navigationEndpoint.browseEndpoint;
+	const { browseId, canonicalBaseUrl } = videoOwnerRenderer.navigationEndpoint.browseEndpoint;
 
-	let data = {
+	const data = {
 		name: Utils.parseText(videoOwnerRenderer.title).toString(),
 		ID: browseId,
 		URL: `https://www.youtube.com/channel/${browseId}`,
@@ -176,7 +177,7 @@ function videoOwnerRenderer({ videoOwnerRenderer }){
 	};
 
 	if(videoOwnerRenderer.subscriberCountText){
-		let normal = Utils.parseText(videoOwnerRenderer.subscriberCountText).toString();
+		const normal = Utils.parseText(videoOwnerRenderer.subscriberCountText).toString();
 
 		data.subscribers = {
 			normal,
@@ -190,17 +191,17 @@ function videoOwnerRenderer({ videoOwnerRenderer }){
 	return data;
 }
 
-function bylineText({ longBylineText, shortBylineText }){//channel/owner
-	let obj = longBylineText || shortBylineText;
+function bylineText({ longBylineText, shortBylineText }){// channel/owner
+	const obj = longBylineText || shortBylineText;
 
-	let text = Utils.parseText(obj);
+	const text = Utils.parseText(obj);
 	if(!obj.runs) return text;
 	let endpoint = obj.runs.find(obj => obj.navigationEndpoint);
 
 	if(!endpoint) return text.toString();
 	endpoint = endpoint.navigationEndpoint.browseEndpoint;
 
-	let data = {
+	const data = {
 		name: text.toString(),
 		ID: endpoint.browseId,
 		URL: `https://www.youtube.com/channel/${endpoint.browseId}`,
@@ -222,11 +223,11 @@ function playerMicroformatRenderer({ playerMicroformatRenderer }){
 		publishDate: playerMicroformatRenderer.publishDate || null,
 	};
 }
-//#endregion
+// #endregion
 
 const parsers = {
-	compactVideoRenderer, 
-	compactRadioRenderer, 
+	compactVideoRenderer,
+	compactRadioRenderer,
 	endScreenVideoRenderer: compactVideoRenderer,
 	endScreenPlaylistRenderer: compactRadioRenderer,
 
@@ -234,7 +235,7 @@ const parsers = {
 	shelfRenderer,
 	videoRenderer,
 	playlistRenderer,
-	
+
 	horizontalCardListRenderer,
 	searchPyvRenderer,
 
@@ -244,10 +245,10 @@ const parsers = {
 };
 
 function parse(obj){
-	let key = Object.keys(obj)[0];
+	const [key] = Object.keys(obj);
 
 	if(!parsers[key]){
-		//require('fs').writeFileSync(`./${key}.json`, JSON.stringify(obj, null, '\t'));
+		// require('fs').writeFileSync(`./${key}.json`, JSON.stringify(obj, null, '\t'));
 		return null;
 	}
 

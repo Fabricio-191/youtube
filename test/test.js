@@ -3,15 +3,14 @@
 const fs = require('fs');
 
 const { getVideo, getPlaylist, search } = require('../')
-	.setDefaultOptions({ 
+	.setDefaultOptions({
 		location: 'US',
 		language: 'es-419',
 		quantity: 120,
 	});
 
 (async () => {
-	return;
-	let data = {};
+	const data = {};
 
 	console.log('Getting video info');
 	data.video = await getVideo(
@@ -20,7 +19,7 @@ const { getVideo, getPlaylist, search } = require('../')
 
 	console.log('Getting playlist');
 	data.playlist = await getPlaylist(
-		'https://www.youtube.com/watch?v=H2wCwdHk-ao&list=PLDS0dpumEOi0pu_0pCGqvcaRkxg-o1gqg' 
+		'https://www.youtube.com/watch?v=H2wCwdHk-ao&list=PLDS0dpumEOi0pu_0pCGqvcaRkxg-o1gqg'
 	).catch(err => { throw err; });
 
 	console.log('Searching...');
@@ -28,15 +27,15 @@ const { getVideo, getPlaylist, search } = require('../')
 		.catch(err => { throw err; });
 
 	console.log('Works well :D');
-	
+
 	fs.writeFileSync(
-		fs.existsSync('./test') ? './test/results.json' : './results.json', 
+		fs.existsSync('./test') ? './test/results.json' : './results.json',
 		JSON.stringify(data, null, '\t')
 	);
 
 	/*
 	fs.writeFileSync(
-		fs.existsSync('./test') ? './test/results.js' : './results.js', 
+		fs.existsSync('./test') ? './test/results.js' : './results.js',
 		require('util').inspect(x, {
 			depth: Infinity,
 		})

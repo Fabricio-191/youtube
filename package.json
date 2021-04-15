@@ -1,13 +1,13 @@
 {
   "name": "@fabricio-191/youtube",
-  "version": "0.0.2-1",
+  "version": "0.0.2-2",
   "main": "./src/index.js",
   "types": "./typings/index.d.ts",
   "license": "Apache License 2.0",
   "description": "Get info/download from youtube videos/playlists easy, and search videos from youtube",
   "deprecated": false,
   "scripts": {
-    "lint": "npx eslint src --fix && npx eslint test --fix && npx eslint typings/index.d.ts --fix",
+    "lint": "npx eslint src --fix || npx eslint test --fix || npx eslint typings/index.d.ts --fix",
     "test": "node test/test.js",
     "git": "git add . && git commit -m - && git push",
     "all": "npm run lint && npm run test"

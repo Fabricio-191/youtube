@@ -1,8 +1,9 @@
+/* eslint-disable new-cap */
 const PARSER = [
 	null,
 	{
 		URL(url){
-			let matches = url.match(
+			const matches = url.match(
 				/(?:youtube\.com\/(?:[^/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?/\s]{9,11})/i
 			);
 
@@ -23,12 +24,12 @@ const PARSER = [
 		URL(url){
 			// @ts-ignore
 			url = new URL(url);
-			let pathname = url.pathname;
+			let { pathname } = url;
 
-			['/channel/', '/user/'].map(str => {
-				if(!pathname.startsWith(str)) return;
+			for(const str of ['/channel/', '/user/']){
+				if(pathname.startsWith(str)) continue;
 				pathname = pathname.slice(str.length);
-			});
+			}
 
 			return pathname;
 		},
@@ -55,13 +56,14 @@ function getID(string, type){
 
 	try{
 		// @ts-ignore
+		// eslint-disable-next-line no-new
 		new URL(string);
 		isURL = true;
 	}catch(e){}
 
 	if(isURL){
 		string = PARSER[type].URL(string);
-		
+
 		if(!PARSER[type].ID.test(string)){
 			throw Error("Canno't get a valid ID from the URL");
 		}
@@ -79,7 +81,7 @@ const defaultOptions = {
 	requestsOptions: {},
 };
 
-function parseOptions(options = {}, type){
+function parseOptions(options = {}, type = 0){
 	if(options === 'all' || typeof options === 'number'){
 		options = { quantity: options };
 	}
@@ -87,7 +89,7 @@ function parseOptions(options = {}, type){
 	if(typeof options !== 'object'){
 		throw new Error("The 'options' should be an object");
 	}
-	
+
 	try{
 		JSON.stringify(options);
 	}catch(e){
@@ -100,7 +102,7 @@ function parseOptions(options = {}, type){
 	}
 
 	options = Object.assign({}, defaultOptions, options);
-	
+
 	if(type === 3 && options.quantity === 'all'){
 		// eslint-disable-next-line no-console
 		console.warn('I hope you know what you are doing when trying to get all the results of a search on youtube');
@@ -123,13 +125,13 @@ function parseOptions(options = {}, type){
 	return options;
 }
 
-function getProp(obj, key) {
+function getProp(obj, key){
 	return key
 		.split('.')
 		.map(k => k.trim())
 		.reduce((acc, prop) => {
-			if(acc == undefined) return null;
-			
+			if(typeof acc === 'undefined' || acc === null) return null;
+
 			return acc[prop.trim()] || null;
 		}, obj);
 }

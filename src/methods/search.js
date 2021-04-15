@@ -13,7 +13,7 @@ async function search(searchString, options){
 		searchString.trim().split(/\s+/).join('+')
 	);
 	const body = await requests.fetch(
-		`https://www.youtube.com/results?search_query=${search_query}`, 
+		`https://www.youtube.com/results?search_query=${search_query}`,
 		options
 	// @ts-ignore
 	).text();
@@ -22,7 +22,7 @@ async function search(searchString, options){
 	let results = getProp(data, 'contents.twoColumnSearchResultsRenderer.primaryContents.sectionListRenderer.contents');
 	if(!results) return null;
 
-	let continuationItem = results.pop(); 
+	let continuationItem = results.pop();
 	results = getProp(results.pop(), 'itemSectionRenderer.contents');
 
 	if(!results) return null;
@@ -31,11 +31,12 @@ async function search(searchString, options){
 		const ytcfg = requests.getData(body, 3);
 
 		while(results.length < options.quantity){
-			let continuation = await requests.getContinuation(continuationItem, ytcfg, options);
-			let items = getProp(continuation, 'onResponseReceivedCommands.0.appendContinuationItemsAction.continuationItems');
+			const continuation = await requests.getContinuation(continuationItem, ytcfg, options);
+			const items = getProp(continuation, 'onResponseReceivedCommands.0.appendContinuationItemsAction.continuationItems');
 
 			results.push(...items[0].itemSectionRenderer.contents);
-			
+
+			// eslint-disable-next-line prefer-destructuring
 			continuationItem = items[1];
 			if(!continuation) break;
 		}
@@ -48,5 +49,5 @@ async function search(searchString, options){
 		results: results.map(parse).filter(x => x),
 	};
 }
-	
+
 module.exports = search;

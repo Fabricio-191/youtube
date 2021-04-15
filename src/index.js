@@ -3,7 +3,7 @@ const search = require('./methods/search.js'),
 	getPlaylist = require('./methods/playlist.js'),
 	getVideo = require('./methods/video.js');
 
-//types:
+// types:
 //	1 = video
 //	2 = playlist
 //	3 = search

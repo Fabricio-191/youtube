@@ -1,6 +1,168 @@
+/* eslint-disable no-shadow */
 import { RequestOptions } from 'http';
 
-//#region Video
+// #region Structures
+
+/** A line of text */
+interface TextLine {
+	/** The raw text in this line*/
+	text: string;
+	/** The url embedded in this line of text */
+	url?: string;
+	/** Whether this line is bold or not */
+	bold?: boolean;
+}
+
+/** A youtube text in the form of the array */
+declare class TextArray<TextLine> extends Array<TextLine>{
+	/**
+	 * Returns a string with all the text from all the lines.
+	 * Ignoring URL's and bold text
+	 */
+	toString(): string;
+}
+
+/** An string or a interface that represent a text from youtube */
+type Text = string | TextArray<TextLine>;
+
+/** An image, that is a thumbnail to a video/channel/playlist, whatever */
+interface Thumbnail {
+	/** Width of this image */
+	width: number;
+	/** Heigth of this image */
+	heigth: number;
+	/** URL to this image */
+	url: string;
+}
+
+/** Remember: the first thumnbail is always the best */
+declare class Thumbnails<Thumbnail> extends Array<Thumbnail>{
+	/** URL of the best image */
+	toString(): string;
+}
+
+/** Partial info from the owner of a video/playlist/whatever */
+type PartialOwner = 'YouTube' | string | {
+	/** Name of the user/channel */
+	name: Text,
+	/** ID of the user/channel */
+	ID: string,
+	/** URL of the user/channel */
+	URL: string,
+	/** URL to the user, owner of the channel also a URL to the channel, that never changes */
+	canonicalURL?: string
+};
+
+/** An object representing a channel/user, owner of a playlist or video */
+interface Owner {
+	/** Name of the channel/user */
+	name: string;
+	/** ID of the channel/user */
+	ID: string;
+	/** Direct URL to the channel/user */
+	URL: string;
+	/** URL to the user, owner of the channel also a URL to the channel, that never changes */
+	canonicalURL: string;
+	/** Thumbnails of the channel/user */
+	thumbnails?: Thumbnails<Thumbnail>;
+
+	/** Subscribers of the channel/user */
+	subscribers?: {
+		/**
+		 * An string showing the subscribers, like:
+		 * 414,000 subscribers
+		 * 2.2 M subscribers
+		 */
+		normal: string,
+		/**
+		 * An number showing the subscribers, like:
+		 * 414000
+		 * 22 (i am working on this)
+		 */
+		number: number,
+		/** This will return the normal form */
+		toString(): string
+	};
+}
+
+/** Interface showing the views from a video */
+interface Views {
+	/**
+	 * An string showing the subscribers, like:
+	 * 2,200,000 views
+	 */
+	normal: string;
+	/**
+	 * An string showing the subscribers in a short form, like:
+	 * 2.2 M views
+	 */
+	short: string;
+	/**
+	 * An number showing the subscribers, like:
+	 * 2200000
+	 */
+	number?: number;
+	/** This will return the short form */
+	toString(): string;
+}
+
+/** Interface showing the duration from a video */
+interface Duration {
+	/** An string showing the duration, like: `3:16` */
+	normal: string;
+	/**
+	 * An string showing the subscribers in a short form, like:
+	 * `3 minutes and 16 seconds`
+	 */
+	long?: string;
+	/** An number that is the length of the video in seconds, like: `196` */
+	number: number;
+	/** This will return the normal form */
+	toString(): string;
+}
+// #endregion
+
+// #region Video
+/** Partial info from a video */
+interface PartialVideo {
+	/** Name/titles of the video */
+	name: string;
+	/** ID of the video */
+	ID: string;
+	/** ID of the playlist to which the video belongs */
+	playlistID?: string;
+	/** Direct URL to the video */
+	URL: string;
+	/** The type of this */
+	type: 'video';
+	/** Views of the video */
+	views: Views;
+	/** Thumbnails of the video */
+	thumbnails: Thumbnails<Thumbnail>;
+	/** A text indicating the date the video was published */
+	publishedDate: string;
+	/** Owner of this video */
+	owner: Owner;
+	/** Duration of this video */
+	duration?: Duration;
+}
+
+/** Partial info from a playlist */
+interface PartialPlaylist {
+	/** Name of the playlist */
+	name: string;
+	/** ID of the playlist */
+	ID: string;
+	/** Direct URL to the playlist */
+	URL: string;
+	/** The type of this */
+	type: 'playlist';
+	/** Thumbnails of the playlist (normally thumbnails of the first video) */
+	thumbnails: Thumbnails<Thumbnail>;
+	/** Partial data of the owner of the playlist */
+	owner: PartialOwner;
+}
+
 /** A video from youtube */
 interface Video {
 	/** ID of the video */
@@ -58,49 +220,27 @@ interface Video {
 		videos: PartialVideo[];
 	};
 }
+// #endregion
 
-/** Partial info from a video */
-interface PartialVideo {
-	/** Name/titles of the video */
-	name: string;
+// #region Playlist
+/** Info from a video in a playlist */
+interface PlaylistVideo {
+	/** Title/name of the video */
+	title: string;
 	/** ID of the video */
 	ID: string;
-	/** ID of the playlist to which the video belongs */
-	playlistID?: string;
 	/** Direct URL to the video */
 	URL: string;
-	/** The type of this */
-	type: 'video';
-	/** Views of the video */
-	views: Views;
+	/** Index of the video in this his playlist */
+	index: number;
 	/** Thumbnails of the video */
 	thumbnails: Thumbnails<Thumbnail>;
-	/** A text indicating the date the video was published */
-	publishedDate: string;
-	/** Owner of this video */
-	owner: Owner;
-	/** Duration of this video */
-	duration?: Duration;
-}
-
-/** Partial info from a playlist */
-interface PartialPlaylist {
-	/** Name of the playlist */
-	name: string;
-	/** ID of the playlist */
-	ID: string;
-	/** Direct URL to the playlist */
-	URL: string;
-	/** The type of this */
-	type: 'playlist';
-	/** Thumbnails of the playlist (normally thumbnails of the first video) */
-	thumbnails: Thumbnails<Thumbnail>;
-	/** Partial data of the owner of the playlist */
+	/** Duration of the video */
+	duration: Duration;
+	/** Owner of the video */
 	owner: PartialOwner;
 }
-//#endregion
 
-//#region Playlist
 /** Full info from a playlist */
 interface Playlist {
 	/** ID of the playlist */
@@ -126,25 +266,7 @@ interface Playlist {
 	/** A list of videos of the playlist */
 	videos: PlaylistVideo[];
 }
-
-/** Info from a video in a playlist */
-interface PlaylistVideo {
-	/** Title/name of the video */
-	title: string;
-	/** ID of the video */
-	ID: string;
-	/** Direct URL to the video */
-	URL: string;
-	/** Index of the video in this his playlist */
-	index: number;
-	/** Thumbnails of the video */
-	thumbnails: Thumbnails<Thumbnail>;
-	/** Duration of the video */
-	duration: Duration;
-	/** Owner of the video */
-	owner: PartialOwner;
-}
-//#endregion
+// #endregion
 
 declare namespace Search {
 	/** Data of a video, result of a search */
@@ -269,127 +391,7 @@ declare namespace Search {
 	}
 }
 
-//#region Structures
-/** A line of text */
-interface TextLine {
-	/** The raw text in this line*/
-	text: string;
-	/** The url embedded in this line of text */
-	url?: string;
-	/** Whether this line is bold or not */
-	bold?: boolean;
-}
-
-/** A youtube text in the form of the array */
-declare class TextArray<TextLine> extends Array<TextLine> {
-	/**
-	 * Returns a string with all the text from all the lines.
-	 * Ignoring URL's and bold text
-	 */
-	toString(): string;
-}
-
-/** An string or a interface that represent a text from youtube */
-type Text = string | TextArray<TextLine>;
-
-/** An image, that is a thumbnail to a video/channel/playlist, whatever */
-interface Thumbnail {
-	/** Width of this image */
-	width: number;
-	/** Heigth of this image */
-	heigth: number;
-	/** URL to this image */
-	url: string;
-}
-
-/** Remember: the first thumnbail is always the best */
-declare class Thumbnails<Thumbnail> extends Array<Thumbnail> {
-	/** URL of the best image */
-	toString(): string;
-}
-
-/** Partial info from the owner of a video/playlist/whatever */
-type PartialOwner = 'YouTube' | string | {
-	/** Name of the user/channel */
-	name: Text,
-	/** ID of the user/channel */
-	ID: string,
-	/** URL of the user/channel */
-	URL: string,
-	/** URL to the user, owner of the channel also a URL to the channel, that never changes */
-	canonicalURL?: string
-};
-
-/** An object representing a channel/user, owner of a playlist or video */
-interface Owner {
-	/** Name of the channel/user */
-	name: string;
-	/** ID of the channel/user */
-	ID: string;
-	/** Direct URL to the channel/user */
-	URL: string;
-	/** URL to the user, owner of the channel also a URL to the channel, that never changes */
-	canonicalURL: string;
-	/** Thumbnails of the channel/user */
-	thumbnails?: Thumbnails<Thumbnail>;
-
-	/** Subscribers of the channel/user */
-	subscribers?: {
-		/** 
-		 * An string showing the subscribers, like:
-		 * 414,000 subscribers
-		 * 2.2 M subscribers
-		 */
-		normal: string,
-		/** 
-		 * An number showing the subscribers, like:
-		 * 414000
-		 * 22 (i am working on this)
-		 */
-		number: number,
-		/** This will return the normal form */
-		toString(): string
-	};
-}
-
-/** Interface showing the views from a video */
-interface Views {
-	/** 
-	 * An string showing the subscribers, like:
-	 * 2,200,000 views
-	 */
-	normal: string;
-	/** 
-	 * An string showing the subscribers in a short form, like:
-	 * 2.2 M views
-	 */
-	short: string;
-	/** 
-	 * An number showing the subscribers, like:
-	 * 2200000
-	 */
-	number?: number;
-	/** This will return the short form */
-	toString(): string;
-}
-
-/** Interface showing the duration from a video */
-interface Duration {
-	/** An string showing the duration, like: `3:16` */
-	normal: string;
-	/** 
-	 * An string showing the subscribers in a short form, like:
-	 * `3 minutes and 16 seconds`
-	 */
-	long?: string;
-	/** An number that is the length of the video in seconds, like: `196` */
-	number: number;
-	/** This will return the normal form */
-	toString(): string;
-}
-//#endregion
-
-//#region
+// #region options
 /** URL to a video/playlist on youtube or directly the ID */
 type URLorID = string;
 
@@ -409,7 +411,6 @@ type Location = 'AE' | 'AR' | 'AT' | 'AU' | 'AZ' | 'BA' | 'BD' | 'BE' | 'BG' | '
 	'MK' | 'MT' | 'MX' | 'MY' | 'NG' | 'NI' | 'NL' | 'NO' | 'NP' | 'NZ' | 'OM' | 'PA' | 'PE' | 'PG' | 'PH' | 'PK' |
 	'PL' | 'PR' | 'PT' | 'PY' | 'QA' | 'RO' | 'RS' | 'RU' | 'SA' | 'SE' | 'SG' | 'SI' | 'SK' | 'SN' | 'SV' | 'TH' |
 	'TN' | 'TR' | 'TW' | 'TZ' | 'UA' | 'UG' | 'US' | 'UY' | 'VE' | 'VN' | 'YE' | 'ZA' | 'ZW';
-//#endregion
 
 /** Options to the methods */
 interface Options {
@@ -422,44 +423,22 @@ interface Options {
 	/** http/https options to use in each request */
 	requestsOptions?: RequestOptions;
 }
-
-/** 
- * Function to get info from a video in youtube
- * @param URLorID The URL or ID of the video
- * @param options Options to use while going to get the info
- */
-declare function getVideo(URLorID: URLorID, options?: Options): Promise<Video | null>;
-/** 
- * Function to get info from a playlist in youtube
- * @param URLorID The URL or ID of the playlist
- * @param options Options to use while going to get the info
- */
-declare function getPlaylist(URLorID: URLorID, options?: Options): Promise<Playlist | null>;
-/** 
- * Function to search whatever on youtube
- * @param searchString The string to search
- * @param options Options to use while going to get the info
- */
-declare function search(searchString: string, options?: Options): Promise<Search.Search | null>;
-
-declare const defaultOptions: Options;
-/** Function to set default options to all methods */
-declare function setDefaultOptions(options?: Options): Exports;
+// #endregion
 
 interface Exports {
-	/** 
+	/**
 	 * Function to get info from a video in youtube
 	 * @param URLorID The URL or ID of the video.
 	 * @param options Options to use while going to get the info
 	 */
 	getVideo(URLorID: URLorID, options?: Options): Promise<Video>;
-	/** 
+	/**
 	 * Function to get info from a playlist in youtube
 	 * @param URLorID The URL or ID of the playlist
 	 * @param options Options to use while going to get the info
 	 */
 	getPlaylist(URLorID: URLorID, options?: Options): Promise<Playlist>;
-	/** 
+	/**
 	 * Function to search whatever on youtube
 	 * @param searchString The string to search
 	 * @param options Options to use while going to get the info
@@ -468,14 +447,6 @@ interface Exports {
 	/** Function to set default options to all methods */
 	setDefaultOptions(options?: Options): this;
 	defaultOptions: Options;
-}	
+}
 
-export {
-	getVideo,
-	getPlaylist,
-	search,
-	setDefaultOptions,
-	defaultOptions,
-};
-
-
+export = Exports;
