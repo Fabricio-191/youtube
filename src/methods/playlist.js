@@ -1,5 +1,6 @@
-const { getProp, getID, parseOptions, requests } = require('../utils/utils.js');
+const { getID, parseOptions, requests } = require('../utils/utils.js');
 const { parse, parsers: { bylineText }, Utils } = require('../parser/main.js');
+const { getProp } = require('../parser/utils.js');
 
 async function getPlaylist(URLorID, options){
 	options = parseOptions(options, 2);
@@ -11,7 +12,7 @@ async function getPlaylist(URLorID, options){
 	).text();
 	const data = requests.getData(body, 1);
 
-	const videos = getProp(data, `contents.twoColumnBrowseResultsRenderer.tabs.0.tabRenderer.content
+	const videos = Utils.getProp(data, `contents.twoColumnBrowseResultsRenderer.tabs.0.tabRenderer.content
 		.sectionListRenderer.contents.0.itemSectionRenderer.contents.0.playlistVideoListRenderer.contents`);
 
 	if(!videos) return null;
@@ -39,12 +40,12 @@ module.exports = getPlaylist;
 function parsePlaylist(data, videos){
 	const [
 		{ playlistSidebarPrimaryInfoRenderer: info },
-		{ playlistSidebarSecondaryInfoRenderer: { videoOwner: ownerInfo } }
+		item2
 	] = data.sidebar.playlistSidebarRenderer.items;
 
-	const ID = info.navigationEndpoint.watchEndpoint.playlistId;
 
-	return {
+	const ID = info.navigationEndpoint.watchEndpoint.playlistId;
+	const result = {
 		ID,
 		URL: `https://www.youtube.com/playlist?list=${ID}`,
 		name: Utils.parseText(info.title).toString(),
@@ -55,14 +56,18 @@ function parsePlaylist(data, videos){
 
 		description: Utils.parseText(info.description),
 
-		thumbnails: new Utils.Thumbnails(
-			info.thumbnailRenderer
-				.playlistVideoThumbnailRenderer.thumbnail
-		),
-		owner: parse(ownerInfo), // videoOwnerRenderer
-		isUnlisted: data.microformat.unlisted,
+
+		isUnlisted: data.microformat.unlisted || false,
 		videos: videos.map(playlistVideo),
 	};
+
+	const ownerInfo = getProp(item2, 'playlistSidebarSecondaryInfoRenderer');
+	if(ownerInfo) data.owner = parse(ownerInfo); // videoOwnerRenderer
+
+	const thumbnails = getProp(info.thumbnailRenderer, 'playlistVideoThumbnailRenderer', 'playlistCustomThumbnailRenderer');
+	if(thumbnails) result.thumbnails = new Utils.Thumbnails(thumbnails.thumbnail);
+
+	return result;
 }
 
 function playlistVideo({ playlistVideoRenderer }){

@@ -1,3 +1,8 @@
+## 0.0.2-3
+* Solved [this](https://github.com/Fabricio-191/youtube/issues/3) issue
+* Now when playlist (`getPlaylist` and `search`) have custom thumbnails renderer it will not throw an error
+* Solved `null` values in `getVideo` related videos (added support for `compactPlaylistRenderer`)
+
 ## 0.0.2-2
 * Solved [this](https://github.com/Fabricio-191/youtube/issues/1) issue
 * Added more rules to ESLint

@@ -125,20 +125,9 @@ function parseOptions(options = {}, type = 0){
 	return options;
 }
 
-function getProp(obj, key){
-	return key
-		.split('.')
-		.map(k => k.trim())
-		.reduce((acc, prop) => {
-			if(typeof acc === 'undefined' || acc === null) return null;
-
-			return acc[prop.trim()] || null;
-		}, obj);
-}
-
 module.exports = {
 	requests: require('./requests.js'),
 
 	defaultOptions, parseOptions,
-	getID, getProp,
+	getID,
 };

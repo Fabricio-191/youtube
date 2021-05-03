@@ -184,7 +184,25 @@ class Views{
 	}
 }
 
+function getProp(obj, ...keys){
+	for(const key of keys){
+		const result = key
+			.split('.')
+			.map(k => k.trim())
+			.reduce((acc, prop) => {
+				if(typeof acc === 'undefined' || acc === null) return null;
+
+				return acc[prop.trim()] || null;
+			}, obj);
+
+		if(result !== null && typeof result !== 'undefined') return result;
+	}
+
+	return null;
+}
+
+
 module.exports = {
 	Thumbnails, Duration, Views,
-	parseText, extractInt,
+	parseText, extractInt, getProp,
 };

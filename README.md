@@ -1,9 +1,10 @@
-![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg?color=white&style=for-the-badge)
-
-**This module is still under strong changes and development, which can make it difficult to use.**
-**It's not intended for use in production, at the moment.**
+[![Issues](https://img.shields.io/github/issues/Fabricio-191/youtube?style=for-the-badge)](https://github.com/Fabricio-191/youtube/issues)
+[![Donate](https://img.shields.io/badge/donate-patreon-F96854.svg?style=for-the-badge)](https://www.patreon.com/fabricio_191)
+[![Discord](https://img.shields.io/discord/555535212461948936?style=for-the-badge&color=7289da)](https://discord.gg/zrESMn6) 
 
 You can see the changelog [here](https://github.com/Fabricio-191/youtube/blob/main/docs/changelog.md)
+
+You have to bear in mind that this does not use an official youtube api, there is no documentation and a change could cause it to throw an error, besides that there are things that I do not know, such as different privacy settings or rendering 
 
 ## Use example:
 ```js
@@ -13,7 +14,6 @@ const { getVideo, getPlaylist, search } = require('@fabricio-191/youtube')
     language: 'es-419'
   });
 ``` 
-
 
 [here](https://github.com/Fabricio-191/youtube/blob/main/test/results.json) you can see a JSON that shows the information that each method gives (I do not put it here, because it is a lot)
 
@@ -43,7 +43,7 @@ getPlaylist('https://www.youtube.com/watch?v=H2wCwdHk-ao&list=PLDS0dpumEOi0pu_0p
 ```js
 search('Node.js', { quantity: 40 })
   .then(data => {
-    let videos = data.results.filter(x => x.type === 'video');
+    const videos = data.results.filter(x => x.type === 'video');
     //do something...
   })  
   .catch(console.error);

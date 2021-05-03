@@ -1,4 +1,4 @@
-const { getProp, getID, parseOptions, requests } = require('../utils/utils.js');
+const { getID, parseOptions, requests } = require('../utils/utils.js');
 const { parse, Utils, parsers } = require('../parser/main.js');
 // const parseStreamingData = require('../download/formats.js');
 
@@ -41,7 +41,7 @@ function videoInfo(data, playerResponse){
 		...parse(playerResponse.microformat),
 	};
 
-	const endScreen = getProp(data, 'playerOverlays.playerOverlayRenderer.endScren.watchNextEndScreenRenderer');
+	const endScreen = Utils.getProp(data, 'playerOverlays.playerOverlayRenderer.endScren.watchNextEndScreenRenderer');
 	if(endScreen && endScreen.results) info.endScreen = {
 		title: Utils.parseText(endScreen.title).toString(),
 		items: endScreen.results.map(parse),
@@ -88,7 +88,7 @@ function playlistVideo({ playlistPanelVideoRenderer }){
 }
 
 function getLikes(videoPrimaryInfoRenderer){
-	const tooltip = getProp(videoPrimaryInfoRenderer, 'sentimentBar.sentimentBarRenderer.tooltip');
+	const tooltip = Utils.getProp(videoPrimaryInfoRenderer, 'sentimentBar.sentimentBarRenderer.tooltip');
 
 	if(!tooltip) return { likes: 0, dislikes: 0 };
 

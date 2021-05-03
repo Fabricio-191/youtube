@@ -38,6 +38,24 @@ function compactRadioRenderer({ compactRadioRenderer, endScreenPlaylistRenderer 
 		owner: bylineText(data),
 	};
 }
+
+function compactPlaylistRenderer({ compactPlaylistRenderer }){
+	// @ts-ignore
+	const data = {
+		name: Utils.parseText(compactPlaylistRenderer.title).toString(),
+		ID: compactPlaylistRenderer.playlistId,
+		URL: compactPlaylistRenderer.shareUrl || `https://www.youtube.com/playlist?list=${compactPlaylistRenderer.playlistId}`,
+		type: 'playlist',
+
+		thumbnails: new Utils.Thumbnails(compactPlaylistRenderer.thumbnail),
+
+		owner: bylineText(compactPlaylistRenderer),
+		publishDate: Utils.parseText(compactPlaylistRenderer.publishedTimeText).toString(),
+		videoCount: Utils.extractInt(compactPlaylistRenderer.videoCountShortText),
+	};
+
+	return data;
+}
 // #endregion
 
 // #region search
@@ -93,7 +111,7 @@ function childVideoRenderer({ childVideoRenderer }){
 }
 
 function playlistRenderer({ playlistRenderer }){
-	return {
+	const data = {
 		ID: playlistRenderer.playlistId,
 		URL: `https://www.youtube.com/playlist?list=${playlistRenderer.playlistId}`,
 		title: Utils.parseText(playlistRenderer.title).toString(),
@@ -104,11 +122,13 @@ function playlistRenderer({ playlistRenderer }){
 		showedVideos: playlistRenderer.videos.map(childVideoRenderer),
 
 		owner: bylineText(playlistRenderer),
-
-		thumbnails: new Utils.Thumbnails(
-			playlistRenderer.thumbnailRenderer.playlistVideoThumbnailRenderer.thumbnail
-		),
 	};
+
+	const thumbnails = Utils.getProp(playlistRenderer.thumbnailRenderer, 'playlistVideoThumbnailRenderer', 'playlistCustomThumbnailRenderer');
+
+	if(thumbnails) data.thumbnails = new Utils.Thumbnails(thumbnails.thumbnail);
+
+	return data;
 }
 
 function channelRenderer({ channelRenderer }){
@@ -230,6 +250,7 @@ const parsers = {
 	compactRadioRenderer,
 	endScreenVideoRenderer: compactVideoRenderer,
 	endScreenPlaylistRenderer: compactRadioRenderer,
+	compactPlaylistRenderer,
 
 	channelRenderer,
 	shelfRenderer,

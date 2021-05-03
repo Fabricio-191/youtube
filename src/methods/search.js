@@ -1,5 +1,5 @@
-const { getProp, parseOptions, requests } = require('../utils/utils.js');
-const { parse } = require('../parser/main.js');
+const { parseOptions, requests } = require('../utils/utils.js');
+const { parse, Utils: { getProp } } = require('../parser/main.js');
 
 async function search(searchString, options){
 	if(!searchString){
