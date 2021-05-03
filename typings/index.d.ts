@@ -161,6 +161,10 @@ interface PartialPlaylist {
 	thumbnails: Thumbnails<Thumbnail>;
 	/** Partial data of the owner of the playlist */
 	owner: PartialOwner;
+	/** The date when the playlist was uploaded */
+	publishDate?: string;
+	/** How many videos the playlist has */
+	videoCount?: number;
 }
 
 /** A video from youtube */
@@ -256,9 +260,9 @@ interface Playlist {
 	/** The description in the video */
 	description: Text;
 	/** Thumbnails of the playlist (normally thumbnails of the first video) */
-	thumbnails: Thumbnails<Thumbnail>;
+	thumbnails?: Thumbnails<Thumbnail>;
 	/** Data of the owner of the playlist */
-	owner: Owner;
+	owner?: Owner;
 	/** Whether the playlist is unlisted or not */
 	isUnlisted: boolean;
 	/** The number of total videos in the playlist */
@@ -323,7 +327,7 @@ declare namespace Search {
 		/** Data of the owner of the playlist */
         owner: Owner;
 		/** Thumbnails of the playlist (usually the thumbnails of the first video) */
-        thumbnails: Thumbnails<Thumbnail>;
+        thumbnails?: Thumbnails<Thumbnail>;
     }
 
 	/** Data of a channel, result of a search */

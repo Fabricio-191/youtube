@@ -28,20 +28,18 @@ const { getVideo, getPlaylist, search } = require('../')
 
 	console.log('Works well :D');
 
-	return;
 	fs.writeFileSync(
 		fs.existsSync('./test') ? './test/results.json' : './results.json',
 		JSON.stringify(data, null, '\t')
 	);
 
-	/*
+	return;
 	fs.writeFileSync(
 		fs.existsSync('./test') ? './test/results.js' : './results.js',
-		require('util').inspect(x, {
+		'module.exports = ' + require('util').inspect(data, {
 			depth: Infinity,
 		})
 	);
-	*/
 })();
 
 /*
