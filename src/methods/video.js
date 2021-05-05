@@ -3,11 +3,9 @@ const { parse, Utils, parsers } = require('../parser/main.js');
 // const parseStreamingData = require('../download/formats.js');
 
 async function getVideo(URLorID, options){
-	options = parseOptions(options, 1);
-
 	const body = await requests.fetch(
 		`https://www.youtube.com/watch?v=${getID(URLorID, 1)}`,
-		options
+		parseOptions(options, 1)
 	// @ts-ignore
 	).text();
 	const data = requests.getData(body, 1), playerResponse = requests.getData(body, 2);
@@ -20,8 +18,8 @@ async function getVideo(URLorID, options){
 module.exports = getVideo;
 
 function videoInfo(data, playerResponse){
-	const { secondaryResults, playlist, results } = data.contents.twoColumnWatchNextResults;
-	const [ { videoPrimaryInfoRenderer }, { videoSecondaryInfoRenderer } ] = results.results.contents;
+	data = data.contents.twoColumnWatchNextResults;
+	const [ { videoPrimaryInfoRenderer }, { videoSecondaryInfoRenderer } ] = data.results.results.contents;
 
 	const info = {
 		ID: playerResponse.videoDetails.videoId,
@@ -47,20 +45,21 @@ function videoInfo(data, playerResponse){
 		items: endScreen.results.map(parse),
 	};
 
+	const secondaryResults = Utils.getProp(data, 'secondaryResults.secondaryResults.results');
 	if(secondaryResults){
-		const secondaryResults2 = secondaryResults.secondaryResults.results;
-		if(secondaryResults2[secondaryResults2.length -1].continuationItemRenderer){
-			secondaryResults2.pop();
+		if(secondaryResults[secondaryResults.length -1].continuationItemRenderer){
+			secondaryResults.pop();
 		}
 
-		info.related = secondaryResults2.filter(a => !a.compactAutoplayRenderer).map(parse);
+		info.related = secondaryResults.filter(a => !a.compactAutoplayRenderer).map(parse);
 	}
-	if(playlist) info.playlist = {
-		ID: playlist.playlistId,
-		title: Utils.parseText(playlist.titleText).toString(),
-		owner: parsers.bylineText(playlist),
-		videoQuantity: playlist.totalVideos,
-		videos: playlist.videos.map(playlistVideo),
+
+	if(data.playlist) info.playlist = {
+		ID: data.playlist.playlistId,
+		title: Utils.parseText(data.playlist.titleText).toString(),
+		owner: parsers.bylineText(data.playlist),
+		videoQuantity: data.playlist.totalVideos,
+		videos: data.playlist.videos.map(playlistVideo),
 	};
 
 	if(playerResponse.streamingData){
