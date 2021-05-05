@@ -1,5 +1,5 @@
 ## 0.0.2-3
-* Solved error when there are'nt related videos (secondary results) in `getVideo` method
+* Solved [error](https://discord.com/channels/555535212461948936/838893219764502598/839394579303104522) when there are'nt related videos (secondary results) in `getVideo` method
 
 ## 0.0.2-3
 * Solved [this](https://github.com/Fabricio-191/youtube/issues/3) issue
