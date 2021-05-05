@@ -382,7 +382,7 @@ declare namespace Search {
 	}
 
 	/** An object with the data of the search */
-	interface Search {
+	interface Result {
 		/** The search query */
 		searchQuery: string;
 		/** A number of total results that youtube has to show */
@@ -447,7 +447,7 @@ interface Exports {
 	 * @param searchString The string to search
 	 * @param options Options to use while going to get the info
 	 */
-	search(searchString: string, options?: Options): Promise<Search.Search>;
+	search(searchString: string, options?: Options): Promise<Search.Result>;
 	/** Function to set default options to all methods */
 	setDefaultOptions(options?: Options): this;
 	defaultOptions: Options;

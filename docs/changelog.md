@@ -1,4 +1,7 @@
 ## 0.0.2-3
+* Solved error when there are'nt related videos (secondary results) in `getVideo` method
+
+## 0.0.2-3
 * Solved [this](https://github.com/Fabricio-191/youtube/issues/3) issue
 * Now when playlist (`getPlaylist` and `search`) have custom thumbnails renderer it will not throw an error
 * Solved `null` values in `getVideo` related videos (added support for `compactPlaylistRenderer`)
