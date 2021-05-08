@@ -88,17 +88,17 @@ interface Owner {
 /** Interface showing the views from a video */
 interface Views {
 	/**
-	 * An string showing the subscribers, like:
+	 * An string showing the views, like:
 	 * 2,200,000 views
 	 */
 	normal: string;
 	/**
-	 * An string showing the subscribers in a short form, like:
+	 * An string showing the views in a short form, like:
 	 * 2.2 M views
 	 */
 	short: string;
 	/**
-	 * An number showing the subscribers, like:
+	 * An number showing the views, like:
 	 * 2200000
 	 */
 	number?: number;
@@ -111,7 +111,7 @@ interface Duration {
 	/** An string showing the duration, like: `3:16` */
 	normal: string;
 	/**
-	 * An string showing the subscribers in a short form, like:
+	 * An string showing the duration in a short form, like:
 	 * `3 minutes and 16 seconds`
 	 */
 	long?: string;

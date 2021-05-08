@@ -132,7 +132,7 @@ function playlistRenderer({ playlistRenderer }){
 }
 
 function channelRenderer({ channelRenderer }){
-	return {
+	const data = {
 		ID: channelRenderer.channelId,
 		URL: `https://www.youtube.com/channel/${channelRenderer.channelId}`,
 		type: 'channel',
@@ -143,8 +143,13 @@ function channelRenderer({ channelRenderer }){
 
 		thumbnails: new Utils.Thumbnails(channelRenderer.thumbnail),
 		videoCount: Utils.extractInt(channelRenderer.videoCountText),
-		subscribers: Utils.extractInt(channelRenderer.subscriberCountText),
 	};
+
+	if(channelRenderer.subscriberCountText){
+		data.subscribers = Utils.extractInt(channelRenderer.subscriberCountText);
+	}
+
+	return data;
 }
 
 function shelfRenderer({ shelfRenderer }){

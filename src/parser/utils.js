@@ -41,6 +41,9 @@ function extractInt(str){
 	if(typeof str === 'object' && !Array.isArray(str)){
 		str = parseText(str);
 	}
+	if(typeof str !== 'string' && !str.toString){
+		return null;
+	}
 
 	str = str.toString();
 

@@ -1,3 +1,6 @@
+## 0.0.2-4
+* Solved [error](https://discord.com/channels/555535212461948936/838893219764502598/840643245167083540). In a search, when the uploader of a video has no subscriptions i will no longer throw an error
+
 ## 0.0.2-3
 * Solved [error](https://discord.com/channels/555535212461948936/838893219764502598/839394579303104522) when there are'nt related videos (secondary results) in `getVideo` method
 

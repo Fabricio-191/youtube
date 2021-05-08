@@ -46,7 +46,7 @@ function videoInfo(data, playerResponse){
 	};
 
 	const secondaryResults = Utils.getProp(data, 'secondaryResults.secondaryResults.results');
-	if(secondaryResults){
+	if(secondaryResults && secondaryResults.length > 1){
 		if(secondaryResults[secondaryResults.length -1].continuationItemRenderer){
 			secondaryResults.pop();
 		}
