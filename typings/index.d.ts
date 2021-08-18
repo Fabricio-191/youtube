@@ -345,9 +345,9 @@ declare namespace Search {
 		/** Thumbnails of the channel */
 		thumbnails: Thumbnails<Thumbnail>;
 		/** Quantity of all videos in the channel */
-		videoCount: number;
+		videoCount?: number;
 		/** Number of subscribers that the channel has */
-        subscribers: number;
+        subscribers?: number;
     }
 
 	/** Data of a shelf (mix), result of a search */

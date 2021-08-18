@@ -1,6 +1,6 @@
 const { getID, parseOptions, requests } = require('../utils/utils.js');
 const { parse, parsers: { bylineText }, Utils } = require('../parser/main.js');
-const { getProp } = require('../parser/utils.js');
+const { optionalChaining } = require('../parser/utils.js');
 
 async function getPlaylist(URLorID, options){
 	options = parseOptions(options, 2);
@@ -12,7 +12,7 @@ async function getPlaylist(URLorID, options){
 	).text();
 	const data = requests.getData(body, 1);
 
-	const videos = Utils.getProp(data, `contents.twoColumnBrowseResultsRenderer.tabs.0.tabRenderer.content
+	const videos = Utils.optionalChaining(data, `contents.twoColumnBrowseResultsRenderer.tabs.0.tabRenderer.content
 		.sectionListRenderer.contents.0.itemSectionRenderer.contents.0.playlistVideoListRenderer.contents`);
 
 	if(!videos) return null;
@@ -61,10 +61,10 @@ function parsePlaylist(data, videos){
 		videos: videos.map(playlistVideo),
 	};
 
-	const ownerInfo = getProp(item2, 'playlistSidebarSecondaryInfoRenderer');
+	const ownerInfo = optionalChaining(item2, 'playlistSidebarSecondaryInfoRenderer');
 	if(ownerInfo) data.owner = parse(ownerInfo); // videoOwnerRenderer
 
-	const thumbnails = getProp(info.thumbnailRenderer, 'playlistVideoThumbnailRenderer', 'playlistCustomThumbnailRenderer');
+	const thumbnails = optionalChaining(info.thumbnailRenderer, 'playlistVideoThumbnailRenderer', 'playlistCustomThumbnailRenderer');
 	if(thumbnails) result.thumbnails = new Utils.Thumbnails(thumbnails.thumbnail);
 
 	return result;

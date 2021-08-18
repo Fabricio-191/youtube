@@ -124,7 +124,7 @@ function playlistRenderer({ playlistRenderer }){
 		owner: bylineText(playlistRenderer),
 	};
 
-	const thumbnails = Utils.getProp(playlistRenderer.thumbnailRenderer, 'playlistVideoThumbnailRenderer', 'playlistCustomThumbnailRenderer');
+	const thumbnails = Utils.optionalChaining(playlistRenderer.thumbnailRenderer, 'playlistVideoThumbnailRenderer', 'playlistCustomThumbnailRenderer');
 
 	if(thumbnails) data.thumbnails = new Utils.Thumbnails(thumbnails.thumbnail);
 
@@ -142,11 +142,13 @@ function channelRenderer({ channelRenderer }){
 		description: Utils.parseText(channelRenderer.descriptionSnippet),
 
 		thumbnails: new Utils.Thumbnails(channelRenderer.thumbnail),
-		videoCount: Utils.extractInt(channelRenderer.videoCountText),
 	};
 
 	if(channelRenderer.subscriberCountText){
 		data.subscribers = Utils.extractInt(channelRenderer.subscriberCountText);
+	}
+	if(channelRenderer.videoCountText){
+		data.videoCount = Utils.extractInt(channelRenderer.videoCountText);
 	}
 
 	return data;

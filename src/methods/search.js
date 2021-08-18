@@ -1,5 +1,5 @@
 const { parseOptions, requests } = require('../utils/utils.js');
-const { parse, Utils: { getProp } } = require('../parser/main.js');
+const { parse, Utils: { optionalChaining } } = require('../parser/main.js');
 
 async function search(searchString, options){
 	if(!searchString){
@@ -19,11 +19,11 @@ async function search(searchString, options){
 	).text();
 
 	const data = requests.getData(body, 1);
-	let results = getProp(data, 'contents.twoColumnSearchResultsRenderer.primaryContents.sectionListRenderer.contents');
+	let results = optionalChaining(data, 'contents.twoColumnSearchResultsRenderer.primaryContents.sectionListRenderer.contents');
 	if(!results) return null;
 
 	let continuationItem = results.pop();
-	results = getProp(results.pop(), 'itemSectionRenderer.contents');
+	results = optionalChaining(results.pop(), 'itemSectionRenderer.contents');
 
 	if(!results) return null;
 
@@ -32,7 +32,7 @@ async function search(searchString, options){
 
 		while(results.length < options.quantity){
 			const continuation = await requests.getContinuation(continuationItem, ytcfg, options);
-			const items = getProp(continuation, 'onResponseReceivedCommands.0.appendContinuationItemsAction.continuationItems');
+			const items = optionalChaining(continuation, 'onResponseReceivedCommands.0.appendContinuationItemsAction.continuationItems');
 
 			results.push(...items[0].itemSectionRenderer.contents);
 

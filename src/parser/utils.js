@@ -41,7 +41,7 @@ function extractInt(str){
 	if(typeof str === 'object' && !Array.isArray(str)){
 		str = parseText(str);
 	}
-	if(typeof str !== 'string' && !str.toString){
+	if(!str || typeof str !== 'string' || !str.toString){
 		return null;
 	}
 
@@ -187,7 +187,7 @@ class Views{
 	}
 }
 
-function getProp(obj, ...keys){
+function optionalChaining(obj, ...keys){
 	for(const key of keys){
 		const result = key
 			.split('.')
@@ -207,5 +207,5 @@ function getProp(obj, ...keys){
 
 module.exports = {
 	Thumbnails, Duration, Views,
-	parseText, extractInt, getProp,
+	parseText, extractInt, optionalChaining,
 };

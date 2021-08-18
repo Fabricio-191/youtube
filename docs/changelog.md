@@ -1,3 +1,10 @@
+## 0.0.2-6
+* Solved [error](https://discord.com/channels/555535212461948936/838893219764502598/877492600121212978). Now when the string is undefined it will return null  
+In a search, when a channel does not have any videos or does not show the video count, it will not throw an error.
+
+## 0.0.2-5
+* Solved some error that i don't remember
+
 ## 0.0.2-4
 * Solved [error](https://discord.com/channels/555535212461948936/838893219764502598/840643245167083540). In a search, when the uploader of a video has no subscriptions i will no longer throw an error
 

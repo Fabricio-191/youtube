@@ -39,13 +39,13 @@ function videoInfo(data, playerResponse){
 		...parse(playerResponse.microformat),
 	};
 
-	const endScreen = Utils.getProp(data, 'playerOverlays.playerOverlayRenderer.endScren.watchNextEndScreenRenderer');
+	const endScreen = Utils.optionalChaining(data, 'playerOverlays.playerOverlayRenderer.endScren.watchNextEndScreenRenderer');
 	if(endScreen && endScreen.results) info.endScreen = {
 		title: Utils.parseText(endScreen.title).toString(),
 		items: endScreen.results.map(parse),
 	};
 
-	const secondaryResults = Utils.getProp(data, 'secondaryResults.secondaryResults.results');
+	const secondaryResults = Utils.optionalChaining(data, 'secondaryResults.secondaryResults.results');
 	if(secondaryResults && secondaryResults.length > 1){
 		if(secondaryResults[secondaryResults.length -1].continuationItemRenderer){
 			secondaryResults.pop();
@@ -87,7 +87,7 @@ function playlistVideo({ playlistPanelVideoRenderer }){
 }
 
 function getLikes(videoPrimaryInfoRenderer){
-	const tooltip = Utils.getProp(videoPrimaryInfoRenderer, 'sentimentBar.sentimentBarRenderer.tooltip');
+	const tooltip = Utils.optionalChaining(videoPrimaryInfoRenderer, 'sentimentBar.sentimentBarRenderer.tooltip');
 
 	if(!tooltip) return { likes: 0, dislikes: 0 };
 
