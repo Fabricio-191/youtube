@@ -1,6 +1,10 @@
+.eslintrc.js
+.gitignore
+.npmignore
+
 node_modules/
 test/temp
-src/methods/download
+lib/methods/download
 docs/download.md
 
 *.json

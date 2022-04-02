@@ -11,7 +11,6 @@ const { getVideo, getPlaylist, search } = require('../')
 (async () => {
 	const data = {};
 
-
 	console.log('Getting video info');
 	data.video = await getVideo(
 		'https://www.youtube.com/watch?v=pUxtpgREKjY'

@@ -49,7 +49,7 @@ type PartialOwner = 'YouTube' | string | {
 	ID: string,
 	/** URL of the user/channel */
 	URL: string,
-	/** URL to the user, owner of the channel also a URL to the channel, that never changes */
+	/** URL to the user/owner of the channel also a URL to the channel, that never changes */
 	canonicalURL?: string
 };
 
@@ -180,8 +180,6 @@ interface Video {
 	description: Text;
 	/** Likes of the video */
 	likes: number;
-	/** Disikes of the video */
-	dislikes: number;
 
 	/** Views of the video */
 	views: Views;
