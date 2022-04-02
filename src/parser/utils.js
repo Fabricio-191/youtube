@@ -134,7 +134,7 @@ class Duration{
 				mins = Math.floor(this.number / 60) - hours * 60,
 				seconds = this.number - mins * 60 - hours * 3600;
 
-			this.normal = `${hours ? `${hours}:` : ''}${mins}:${seconds}`;
+			this.normal = `${hours ? `${this.number2digits(hours)}:` : ''}${this.number2digits(mins)}:${this.number2digits(seconds)}`;
 		}else{
 			this.normal = parseText(data.lengthText);
 			this.long = parseText(data.lengthText.accessibility);
@@ -154,6 +154,10 @@ class Duration{
 	long = null;
 
 	number = 0;
+
+	number2digits(n) {
+		return (n < 10 ? '0' : '') + n
+	}
 
 	toString(){
 		return this.normal;

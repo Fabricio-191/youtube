@@ -20,11 +20,11 @@ module.exports = getVideo;
 function videoInfo(data, playerResponse){
 	data = data.contents.twoColumnWatchNextResults;
 	const [ { videoPrimaryInfoRenderer }, { videoSecondaryInfoRenderer } ] = data.results.results.contents;
-
 	const info = {
 		ID: playerResponse.videoDetails.videoId,
 		URL: `https://www.youtube.com/watch?v=${playerResponse.videoDetails.videoId}`,
 		name: Utils.parseText(videoPrimaryInfoRenderer.title).toString(),
+		duration: new Utils.Duration(playerResponse.videoDetails.lengthSeconds),
 
 		...getLikes(videoPrimaryInfoRenderer),
 
