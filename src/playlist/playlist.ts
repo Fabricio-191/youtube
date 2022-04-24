@@ -1,19 +1,17 @@
-const { getID, parseOptions, requests } = require('../utils/utils.js');
-const { parse, parsers: { bylineText }, Utils } = require('../parser/main.js');
-const { optionalChaining } = require('../parser/utils.js');
+import type { InitialData } from './types';
+import { getID, parseOptions, getData, fetch } from '../utils/utils.js';
 
-async function getPlaylist(URLorID, options){
+export default async function getPlaylist(URLorID, options): Promise<object> {
 	options = parseOptions(options, 2);
 
-	const body = await requests.fetch(
+	const body = await fetch(
 		`https://www.youtube.com/playlist?list=${getID(URLorID, 2)}`,
 		options
-	// @ts-ignore
-	).text();
-	const data = requests.getData(body, 1);
+	);
+	const data = getData(body, 1) as InitialData;
 
-	const videos = Utils.optionalChaining(data, `contents.twoColumnBrowseResultsRenderer.tabs.0.tabRenderer.content
-		.sectionListRenderer.contents.0.itemSectionRenderer.contents.0.playlistVideoListRenderer.contents`);
+	const videos = data.contents.twoColumnBrowseResultsRenderer.tabs[0].tabRenderer.content
+		.sectionListRenderer.contents[0].itemSectionRenderer.contents[0].playlistVideoListRenderer.contents;
 
 	if(!videos) return null;
 
@@ -21,7 +19,7 @@ async function getPlaylist(URLorID, options){
 		const ytcfg = requests.getData(body, 3);
 
 		while(videos.length < options.quantity){
-			if(!videos[videos.length -1].continuationItemRenderer) break;
+			if(!videos[videos.length - 1].continuationItemRenderer) break;
 			const continuationItem = videos.pop();
 
 			const continuation = await requests.getContinuation(continuationItem, ytcfg, options);
@@ -35,12 +33,10 @@ async function getPlaylist(URLorID, options){
 	return parsePlaylist(data, videos);
 }
 
-module.exports = getPlaylist;
-
 function parsePlaylist(data, videos){
 	const [
 		{ playlistSidebarPrimaryInfoRenderer: info },
-		item2
+		item2,
 	] = data.sidebar.playlistSidebarRenderer.items;
 
 

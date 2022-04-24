@@ -1,6 +1,6 @@
 {
   "name": "@fabricio-191/youtube",
-  "version": "0.0.2-6",
+  "version": "0.0.3",
   "main": "./lib/index.js",
   "types": "./typings/index.d.ts",
   "license": "Apache License 2.0",
@@ -12,11 +12,14 @@
     "git": "git pull && git add . && git commit -m - && git push"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "4.13.0",
-    "@typescript-eslint/parser": "4.13.0",
+    "@babel/eslint-parser": "^7.17.0",
+    "@types/mocha": "^9.1.0",
+    "@typescript-eslint/eslint-plugin": "^5.12.1",
+    "@typescript-eslint/parser": "^5.12.1",
     "babel-eslint": "10.1.0",
     "eslint": "7.17.0",
-    "typescript": "4.1.3"
+    "typescript": "^4.6.3",
+    "ts-node": "^10.5.0"
   },
   "author": "Fabricio-191",
   "repository": {

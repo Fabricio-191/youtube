@@ -1,8 +1,6 @@
 function parseText(obj = {}){
 	if(obj.simpleText) return obj.simpleText;
-
 	if(obj.accessibilityData) return obj.accessibilityData.label;
-
 	if(obj.runs){
 		const runs = obj.runs.map(x => {
 			const data = { text: x.text };
@@ -21,7 +19,7 @@ function parseText(obj = {}){
 
 		runs.toString = function(md){
 			return runs.reduce((acc, run) => {
-				let { text } = run;
+				let{ text } = run;
 				if(md){
 					if(run.bold) text = `**${text}**`;
 					if(run.url) text = `[${text}](${run.url})`;
@@ -53,7 +51,7 @@ function extractInt(str){
 	return Number(result.join(''));
 }
 
-class Thumbnails extends Array{
+class Thumbnails extends Array<Thumbnail>{
 	constructor({ thumbnails }){
 		super(...thumbnails.map(img => {
 			if(!img.url.startsWith('http')){
@@ -67,7 +65,7 @@ class Thumbnails extends Array{
 		/*
 		{
 			//if returned number is less than zero, a will be in a lower index than b
-			//if returned number is biffer than zero, b will be in a lower index than a
+			//if returned number is bigger than zero, b will be in a lower index than a
 			//ir returned nuber is zero, there will be no change
 			if(a.width > b.width && a.height > b.height){
 				return -1;
@@ -93,7 +91,7 @@ class Thumbnails extends Array{
 		*/
 	}
 
-	static get [Symbol.species](){
+	public static get [Symbol.species](): Array {
 		return Array;
 	}
 
@@ -124,7 +122,7 @@ class Thumbnails extends Array{
 	}
 }
 
-const pad2Digits = n => (n < 10 ? '0' : '') + n;
+const pad2Digits = (n: number): string => `${n < 10 ? '0' : ''}${n}`;
 
 class Duration{
 	constructor(data){
@@ -145,19 +143,19 @@ class Duration{
 				this.number = Number(data.lengthSeconds || data.lengthInSeconds);
 			}else{
 				const [
-					seconds = 0, minutes = 0, hours = 0
+					seconds = 0, minutes = 0, hours = 0,
 				] = this.normal.split(':').reverse().map(Number);
 
 				this.number = hours * 3600 + minutes * 60 + seconds;
 			}
 		}
 	}
-	normal = null;
-	long = null;
+	public normal: string;
+	public long?: string;
 
-	number = 0;
+	public number = 0;
 
-	toString(){
+	public toString(): string {
 		return this.normal;
 	}
 }
@@ -189,25 +187,90 @@ class Views{
 	}
 }
 
-function optionalChaining(obj, ...keys){
-	for(const key of keys){
-		const result = key
-			.split('.')
-			.map(k => k.trim())
-			.reduce((acc, prop) => {
-				if(typeof acc === 'undefined' || acc === null) return null;
-
-				return acc[prop.trim()] || null;
-			}, obj);
-
-		if(result !== null && typeof result !== 'undefined') return result;
-	}
-
-	return null;
+/** A line of text */
+interface TextLine {
+	/** The raw text in this line*/
+	text: string;
+	/** The url embedded in this line of text */
+	url?: string;
+	/** Whether this line is bold or not */
+	bold?: boolean;
 }
 
+/** An string or a interface that represent a text from youtube */
+type Text = TextArray<TextLine> | string;
 
-module.exports = {
-	Thumbnails, Duration, Views,
-	parseText, extractInt, optionalChaining,
+/** An image, that is a thumbnail to a video/channel/playlist, whatever */
+interface Thumbnail {
+	/** Width of this image */
+	width: number;
+	/** Heigth of this image */
+	heigth: number;
+	/** URL to this image */
+	url: string;
+}
+
+/** Partial info from the owner of a video/playlist/whatever */
+type PartialOwner = string | 'YouTube' | {
+	/** Name of the user/channel */
+	name: Text;
+	/** ID of the user/channel */
+	ID: string;
+	/** URL of the user/channel */
+	URL: string;
+	/** URL to the user/owner of the channel also a URL to the channel, that never changes */
+	canonicalURL?: string;
 };
+
+/** An object representing a channel/user, owner of a playlist or video */
+interface Owner {
+	/** Name of the channel/user */
+	name: string;
+	/** ID of the channel/user */
+	ID: string;
+	/** Direct URL to the channel/user */
+	URL: string;
+	/** URL to the user, owner of the channel also a URL to the channel, that never changes */
+	canonicalURL: string;
+	/** Thumbnails of the channel/user */
+	thumbnails?: Thumbnails<Thumbnail>;
+
+	/** Subscribers of the channel/user */
+	subscribers?: {
+		/**
+		 * An string showing the subscribers, like:
+		 * 414,000 subscribers
+		 * 2.2 M subscribers
+		 */
+		normal: string;
+		/**
+		 * An number showing the subscribers, like:
+		 * 414000
+		 * 22 (i am working on this)
+		 */
+		number: number;
+		/** This will return the normal form */
+		toString(): string;
+	};
+}
+
+/** Interface showing the views from a video */
+interface Views {
+	/**
+	 * An string showing the views, like:
+	 * 2,200,000 views
+	 */
+	normal: string;
+	/**
+	 * An string showing the views in a short form, like:
+	 * 2.2 M views
+	 */
+	short: string;
+	/**
+	 * An number showing the views, like:
+	 * 2200000
+	 */
+	number?: number;
+	/** This will return the short form */
+	toString(): string;
+}

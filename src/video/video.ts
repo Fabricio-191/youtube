@@ -2,11 +2,11 @@ const { getID, parseOptions, requests } = require('../utils/utils.js');
 const { parse, Utils, parsers } = require('../parser/main.js');
 // const parseStreamingData = require('../download/formats.js');
 
-async function getVideo(URLorID, options){
+export default async function getVideo(URLorID, options){
 	const body = await requests.fetch(
 		`https://www.youtube.com/watch?v=${getID(URLorID, 1)}`,
 		parseOptions(options, 1)
-	// @ts-ignore
+	// @ts-expect-error
 	).text();
 	const data = requests.getData(body, 1), playerResponse = requests.getData(body, 2);
 
@@ -14,8 +14,6 @@ async function getVideo(URLorID, options){
 
 	return videoInfo(data, playerResponse);
 }
-
-module.exports = getVideo;
 
 function videoInfo(data, playerResponse){
 	data = data.contents.twoColumnWatchNextResults;
@@ -48,7 +46,7 @@ function videoInfo(data, playerResponse){
 
 	const secondaryResults = Utils.optionalChaining(data, 'secondaryResults.secondaryResults.results');
 	if(secondaryResults && secondaryResults.length > 1){
-		if(secondaryResults[secondaryResults.length -1].continuationItemRenderer){
+		if(secondaryResults[secondaryResults.length - 1].continuationItemRenderer){
 			secondaryResults.pop();
 		}
 

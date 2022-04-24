@@ -4,7 +4,7 @@
 
 node_modules/
 test/temp
-lib/methods/download
+src/video/download
 docs/download.md
 
 *.json
