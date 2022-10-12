@@ -1,22 +1,25 @@
-import type { InitialData } from './types';
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+import type * as Types from './types';
 import { getID, parseOptions, getData, fetch } from '../utils/utils.js';
+import type { BaseOptions, RawBaseOptions } from '../utils/utils.js';
 
-export default async function getPlaylist(URLorID, options): Promise<object> {
+export default async function getPlaylist(URLorID, options: RawBaseOptions): Promise<object | null> {
 	options = parseOptions(options, 2);
 
 	const body = await fetch(
 		`https://www.youtube.com/playlist?list=${getID(URLorID, 2)}`,
 		options
 	);
-	const data = getData(body, 1) as InitialData;
+	const data = getData(body, 1) as Types.Raw.initialData;
 
-	const videos = data.contents.twoColumnBrowseResultsRenderer.tabs[0].tabRenderer.content
-		.sectionListRenderer.contents[0].itemSectionRenderer.contents[0].playlistVideoListRenderer.contents;
+	const videos = data.contents.twoColumnBrowseResultsRenderer.tabs[0]?.tabRenderer
+		.content.sectionListRenderer.contents[0]?.itemSectionRenderer
+		.contents[0]?.playlistVideoListRenderer.contents;
 
 	if(!videos) return null;
 
 	if(videos.length < options.quantity){
-		const ytcfg = requests.getData(body, 3);
+		const ytcfg = getData(body, 3);
 
 		while(videos.length < options.quantity){
 			if(!videos[videos.length - 1].continuationItemRenderer) break;
@@ -38,7 +41,6 @@ function parsePlaylist(data, videos){
 		{ playlistSidebarPrimaryInfoRenderer: info },
 		item2,
 	] = data.sidebar.playlistSidebarRenderer.items;
-
 
 	const ID = info.navigationEndpoint.watchEndpoint.playlistId;
 	const result = {

@@ -4,29 +4,26 @@ import { request as HTTPSrequest } from 'https';
 const PARSER = [
 	null,
 	{
-		URL(url){
-			const matches = url.match(
-				/(?:youtube\.com\/(?:[^/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?/\s]{9,11})/i
-			);
+		URL(url: string){
+			const matches = (/(?:youtube\.com\/(?:[^/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?/\s]{9,11})/i).exec(url);
 
-			return matches[1] || matches[0];
+			if(!matches){
+				return null;
+			}
+
+			return matches[1] ?? matches[0];
 		},
 		ID: /^[A-Za-z0-9-_]{9,11}$/,
 	}, {
-		URL(url){
-			// @ts-expect-error
-			url = new URL(url);
-
-			return url.searchParams.get('list');
+		URL(url: string){
+			return new URL(url).searchParams.get('list');
 		},
 		ID: /^[A-Za-z0-9-_]{16,43}$/,
 	},
 	null,
 	{
-		URL(url){
-			// @ts-expect-error
-			url = new URL(url);
-			let{ pathname } = url;
+		URL(url: string){
+			let { pathname } = new URL(url);
 
 			for(const str of ['/channel/', '/user/']){
 				if(pathname.startsWith(str)) continue;

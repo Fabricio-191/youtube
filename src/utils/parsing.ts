@@ -1,4 +1,4 @@
-function parseText(obj = {}){
+function parseText(obj = {}): string {
 	if(obj.simpleText) return obj.simpleText;
 	if(obj.accessibilityData) return obj.accessibilityData.label;
 	if(obj.runs){
@@ -35,11 +35,11 @@ function parseText(obj = {}){
 	return '';
 }
 
-function extractInt(str){
+function extractInt(str: string): number | null {
 	if(typeof str === 'object' && !Array.isArray(str)){
 		str = parseText(str);
 	}
-	if(!str || typeof str !== 'string' && !str.toString){
+	if(!str || typeof str !== 'string' && !('toString' in str)){
 		return null;
 	}
 

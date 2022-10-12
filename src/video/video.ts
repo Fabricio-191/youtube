@@ -1,5 +1,5 @@
-const { getID, parseOptions, requests } = require('../utils/utils.js');
-const { parse, Utils, parsers } = require('../parser/main.js');
+import { getID, parseOptions, requests } from '../utils/utils.js';
+import { parse, Utils, parsers } from '../parser/main.js';
 // const parseStreamingData = require('../download/formats.js');
 
 export default async function getVideo(URLorID, options){

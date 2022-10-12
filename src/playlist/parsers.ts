@@ -47,7 +47,15 @@ function bylineText({ longBylineText, shortBylineText }){// channel/owner
 	return data;
 }
 
-function playerMicroformatRenderer({ playerMicroformatRenderer }){
+interface playerMicroformatData {
+	isFamilySafe: boolean;
+	isUnlisted: boolean;
+	availableCountries: string[];
+	uploadDate: Date | null;
+	publishDate: Date | null;
+}
+
+function playerMicroformatRenderer({ playerMicroformatRenderer }): playerMicroformatData {
 	return {
 		isFamilySafe: playerMicroformatRenderer.isFamilySafe || true,
 		isUnlisted: playerMicroformatRenderer.isUnlisted || false,
