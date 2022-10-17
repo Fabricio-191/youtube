@@ -1,50 +1,56 @@
-import { getID, parseOptions, requests } from '../utils/utils.js';
-import { parse, Utils, parsers } from '../parser/main.js';
-// const parseStreamingData = require('../download/formats.js');
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+import * as utils from '../base/utils';
+import type { InitialData, video } from '../base/types';
+import parseStreamingData from './download/formats';
 
-export default async function getVideo(URLorID, options){
-	const body = await requests.fetch(
-		`https://www.youtube.com/watch?v=${getID(URLorID, 1)}`,
-		parseOptions(options, 1)
-	// @ts-expect-error
-	).text();
-	const data = requests.getData(body, 1), playerResponse = requests.getData(body, 2);
+export default async function getVideo(URLorID: string, options: RawOptions){
+	const body = await fetch(
+		`https://www.youtube.com/watch?v=${getID(URLorID, 'video')}`,
+		parseOptions(options, 'video')
+	);
+	const initialData = getData(body, 'initialData') as InitialData,
+		playerResponse = getData(body, 'initialPlayerResponse') as video.InitialPlayerResponse;
 
 	if(!playerResponse.videoDetails) return null;
 
-	return videoInfo(data, playerResponse);
+	return videoInfo(initialData, playerResponse);
 }
 
-function videoInfo(data, playerResponse){
-	data = data.contents.twoColumnWatchNextResults;
-	const [ { videoPrimaryInfoRenderer }, { videoSecondaryInfoRenderer } ] = data.results.results.contents;
+function videoInfo(initialData: InitialData, playerResponse: video.InitialPlayerResponse){
+	const data1 = initialData.contents.twoColumnWatchNextResults;
+	const data2 = data1.results.results.contents;
+	const videoPrimaryInfoRenderer = data2.find(x => 'videoPrimaryInfoRenderer' in x) as video.videoPrimaryInfoRenderer;
+	const videoSecondaryInfoRenderer = data2.find(x => 'videoSecondaryInfoRenderer' in x) as video.videoSecondaryInfoRenderer;
 
 	const info = {
 		ID: playerResponse.videoDetails.videoId,
 		URL: `https://www.youtube.com/watch?v=${playerResponse.videoDetails.videoId}`,
-		name: Utils.parseText(videoPrimaryInfoRenderer.title).toString(),
+		name: utils.parseText(videoPrimaryInfoRenderer.title),
 
 		likes: getLikes(videoPrimaryInfoRenderer),
 
-		views: new Utils.Views(videoPrimaryInfoRenderer.viewCount),
+		views: videoPrimaryInfoRenderer.viewCount,
 		owner: parse(videoSecondaryInfoRenderer.owner),
 
-		description: Utils.parseText(videoSecondaryInfoRenderer.description),
-		thumbnails: new Utils.Thumbnails(playerResponse.videoDetails.thumbnail),
+		description: utils.parseText(videoSecondaryInfoRenderer.description),
+		thumbnails: playerResponse.videoDetails.thumbnail,
 		keywords: playerResponse.videoDetails.keywords || null,
-		uploadDateLabel: Utils.parseText(videoPrimaryInfoRenderer.dateText).toString(),
+		uploadDateLabel: utils.parseText(videoPrimaryInfoRenderer.dateText),
 		isLive: playerResponse.videoDetails.isLiveContent,
 		...parse(playerResponse.microformat),
-		duration: new Utils.Duration(playerResponse.videoDetails.lengthSeconds),
+		duration: playerResponse.videoDetails.lengthSeconds,
 	};
 
-	const endScreen = Utils.optionalChaining(data, 'playerOverlays.playerOverlayRenderer.endScren.watchNextEndScreenRenderer');
+	const endScreen = data1.playerOverlays.playerOverlayRenderer.endScren.watchNextEndScreenRenderer
 	if(endScreen && endScreen.results) info.endScreen = {
 		title: Utils.parseText(endScreen.title).toString(),
 		items: endScreen.results.map(parse),
 	};
 
-	const secondaryResults = Utils.optionalChaining(data, 'secondaryResults.secondaryResults.results');
+	const secondaryResults = data1.secondaryResults.secondaryResults.results
 	if(secondaryResults && secondaryResults.length > 1){
 		if(secondaryResults[secondaryResults.length - 1].continuationItemRenderer){
 			secondaryResults.pop();
@@ -62,7 +68,7 @@ function videoInfo(data, playerResponse){
 	};
 
 	if(playerResponse.streamingData){
-		// Object.assign(info, parseStreamingData(playerResponse.streamingData));
+		Object.assign(info, parseStreamingData(playerResponse.streamingData));
 	}
 
 	return info;
@@ -86,7 +92,11 @@ function playlistVideo({ playlistPanelVideoRenderer }){
 }
 
 function getLikes(videoPrimaryInfoRenderer){
-	const likeButton = Utils.optionalChaining(videoPrimaryInfoRenderer, 'videoActions.menuRenderer.topLevelButtons.0.toggleButtonRenderer');
+	let likeButton = videoPrimaryInfoRenderer.videoActions.menuRenderer.topLevelButtons[0]
+	if(likeButton.segmentedLikeDislikeButtonRenderer){
+		// eslint-disable-next-line prefer-destructuring
+		likeButton = likeButton.segmentedLikeDislikeButtonRenderer.likeButton;
+	}
 
-	return Utils.extractInt(likeButton.defaultText) || 0;
+	return Utils.extractInt(likeButton.toggleButtonRenderer.defaultText) || 0;
 }

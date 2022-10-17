@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import type * as Types from './types';
 import { getID, parseOptions, getData, fetch } from '../utils/utils.js';
-import type { BaseOptions, RawBaseOptions } from '../utils/utils.js';
+import type { BaseOptions, RawBaseOptions } from '../utils/utils.ts';
 
-export default async function getPlaylist(URLorID, options: RawBaseOptions): Promise<object | null> {
+export default async function getPlaylist(URLorID: string, options: RawBaseOptions): Promise<object | null> {
 	options = parseOptions(options, 2);
 
 	const body = await fetch(

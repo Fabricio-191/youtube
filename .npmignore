@@ -3,9 +3,8 @@
 .npmignore
 
 node_modules/
-test/temp
-lib/methods/download
-docs/download.md
+temp/
 
 *.json
 !package.json
+!test/results.json

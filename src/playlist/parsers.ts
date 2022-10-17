@@ -55,7 +55,7 @@ interface playerMicroformatData {
 	publishDate: Date | null;
 }
 
-function playerMicroformatRenderer({ playerMicroformatRenderer }): playerMicroformatData {
+function playerMicroformatRenderer({ playerMicroformatRenderer }: object): playerMicroformatData {
 	return {
 		isFamilySafe: playerMicroformatRenderer.isFamilySafe || true,
 		isUnlisted: playerMicroformatRenderer.isUnlisted || false,

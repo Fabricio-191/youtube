@@ -1,33 +1,36 @@
-async function search(searchString, options){
+import { parseOptions, type RawOptions } from '../base/options';
+import { fetch, getData, getContinuation } from '../base/utils';
+
+export default async function search(searchString: string, options: RawOptions){
 	if(!searchString){
 		throw new Error("You didn't introduced a search query");
 	}else if(typeof searchString !== 'string'){
 		throw new Error('Search query must be a string');
 	}
 
-	options = parseOptions(options, 3);
-	const search_query = encodeURIComponent(
+	const parsedOptions = parseOptions(options, 'search');
+	const searchQuery = encodeURIComponent(
 		searchString.trim().split(/\s+/).join('+')
 	);
-	const body = await requests.fetch(
-		`https://www.youtube.com/results?search_query=${search_query}`,
-		options
-	).text();
+	const body = await fetch(
+		`https://www.youtube.com/results?search_query=${searchQuery}`,
+		parsedOptions
+	);
 
-	const data = requests.getData(body, 1);
-	let results = optionalChaining(data, 'contents.twoColumnSearchResultsRenderer.primaryContents.sectionListRenderer.contents');
+	const data = getData(body, 'initialData');
+	let results = data.contents.twoColumnSearchResultsRenderer.primaryContents.sectionListRenderer.contents;
 	if(!results) return null;
 
 	let continuationItem = results.pop();
-	results = optionalChaining(results.pop(), 'itemSectionRenderer.contents');
+	results = results.pop().itemSectionRenderer.contents;
 
 	if(!results) return null;
 
-	if(results.length < options.quantity){
-		const ytcfg = requests.getData(body, 3);
+	if(results.length < parsedOptions.quantity){
+		const ytcfg = getData(body, 'ytcfg');
 
-		while(results.length < options.quantity){
-			const continuation = await requests.getContinuation(continuationItem, ytcfg, options);
+		while(results.length < parsedOptions.quantity){
+			const continuation = await getContinuation(continuationItem, ytcfg, parsedOptions);
 			const items = continuation?.onResponseReceivedCommands?.[0]?.appendContinuationItemsAction.continuationItems;
 
 			results.push(...items[0].itemSectionRenderer.contents);

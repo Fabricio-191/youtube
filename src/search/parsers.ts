@@ -1,4 +1,5 @@
-// #region search
+import { parseText } from '../base/parsing';
+
 function videoRenderer({ videoRenderer, promotedVideoRenderer }){
 	const videoData = videoRenderer || promotedVideoRenderer;
 
@@ -7,25 +8,25 @@ function videoRenderer({ videoRenderer, promotedVideoRenderer }){
 		URL: `https://www.youtube.com/watch?v=${videoData.videoId}`,
 		type: 'video',
 
-		title: Utils.parseText(videoData.title).toString(),
-		description: Utils.parseText(
+		title: parseText(videoData.title).toString(),
+		description: parseText(
 			videoData.descriptionSnippet
 		),
 
-		thumbnails: new Utils.Thumbnails(videoData.thumbnail),
-		views: new Utils.Views(videoData),
+		thumbnails: videoData.thumbnail,
+		views: new Views(videoData),
 
 		owner: bylineText(videoData),
 
-		publishedTime: Utils.parseText(videoData.publishedTimeText).toString(),
+		publishedTime: parseText(videoData.publishedTimeText).toString(),
 	};
 
 	if(videoData.lengthText){
-		data.duration = new Utils.Duration(videoData);
+		data.duration = new Duration(videoData);
 	}
 
 	if(videoData.channelThumbnailSupportedRenderers){
-		data.owner.thumbnails = new Utils.Thumbnails(
+		data.owner.thumbnails = new Thumbnails(
 			videoData
 				.channelThumbnailSupportedRenderers
 				.channelThumbnailWithLinkRenderer
@@ -42,11 +43,11 @@ function videoRenderer({ videoRenderer, promotedVideoRenderer }){
 
 function childVideoRenderer({ childVideoRenderer }){
 	return {
-		title: Utils.parseText(childVideoRenderer.title).toString(),
+		title: parseText(childVideoRenderer.title).toString(),
 		ID: childVideoRenderer.videoId,
 		URL: `https://www.youtube.com/watch?v=${childVideoRenderer.videoId}`,
 
-		duration: new Utils.Duration(childVideoRenderer),
+		duration: new Duration(childVideoRenderer),
 	};
 }
 
@@ -54,7 +55,7 @@ function playlistRenderer({ playlistRenderer }){
 	const data = {
 		ID: playlistRenderer.playlistId,
 		URL: `https://www.youtube.com/playlist?list=${playlistRenderer.playlistId}`,
-		title: Utils.parseText(playlistRenderer.title).toString(),
+		title: parseText(playlistRenderer.title).toString(),
 
 		type: 'playlist',
 		videoCount: Number(playlistRenderer.videoCount),
@@ -64,9 +65,9 @@ function playlistRenderer({ playlistRenderer }){
 		owner: bylineText(playlistRenderer),
 	};
 
-	const thumbnails = Utils.optionalChaining(playlistRenderer.thumbnailRenderer, 'playlistVideoThumbnailRenderer', 'playlistCustomThumbnailRenderer');
+	const thumbnails = optionalChaining(playlistRenderer.thumbnailRenderer, 'playlistVideoThumbnailRenderer', 'playlistCustomThumbnailRenderer');
 
-	if(thumbnails) data.thumbnails = new Utils.Thumbnails(thumbnails.thumbnail);
+	if(thumbnails) data.thumbnails = new Thumbnails(thumbnails.thumbnail);
 
 	return data;
 }
@@ -77,18 +78,18 @@ function channelRenderer({ channelRenderer }){
 		URL: `https://www.youtube.com/channel/${channelRenderer.channelId}`,
 		type: 'channel',
 
-		name: Utils.parseText(channelRenderer.title).toString(),
+		name: parseText(channelRenderer.title).toString(),
 
-		description: Utils.parseText(channelRenderer.descriptionSnippet),
+		description: parseText(channelRenderer.descriptionSnippet),
 
-		thumbnails: new Utils.Thumbnails(channelRenderer.thumbnail),
+		thumbnails: new Thumbnails(channelRenderer.thumbnail),
 	};
 
 	if(channelRenderer.subscriberCountText){
-		data.subscribers = Utils.extractInt(channelRenderer.subscriberCountText);
+		data.subscribers = extractInt(channelRenderer.subscriberCountText);
 	}
 	if(channelRenderer.videoCountText){
-		data.videoCount = Utils.extractInt(channelRenderer.videoCountText);
+		data.videoCount = extractInt(channelRenderer.videoCountText);
 	}
 
 	return data;
@@ -100,8 +101,8 @@ function shelfRenderer({ shelfRenderer }){
 	} = shelfRenderer.content.verticalListRenderer;
 
 	return {
-		title: Utils.parseText(shelfRenderer.title).toString(),
-		label: Utils.parseText(collapsedStateButtonText).toString(),
+		title: parseText(shelfRenderer.title).toString(),
+		label: parseText(collapsedStateButtonText).toString(),
 		type: 'shelf',
 		items: items.map(parse),
 	};
@@ -109,15 +110,15 @@ function shelfRenderer({ shelfRenderer }){
 
 function horizontalCardListRenderer({ horizontalCardListRenderer }){
 	return {
-		title: Utils.parseText(
+		title: parseText(
 			horizontalCardListRenderer.header
 				.richListHeaderRenderer.title
 		).toString(),
 		type: 'horizontalCardList',
 		items: horizontalCardListRenderer.cards.map(
 			({ searchRefinementCardRenderer }) => ({
-				title: Utils.parseText(searchRefinementCardRenderer.query).toString(),
-				thumbnails: new Utils.Thumbnails(searchRefinementCardRenderer.thumbnail),
+				title: parseText(searchRefinementCardRenderer.query).toString(),
+				thumbnails: new Thumbnails(searchRefinementCardRenderer.thumbnail),
 			})
 		),
 	};
@@ -129,4 +130,3 @@ function searchPyvRenderer({ searchPyvRenderer }){
 		items: searchPyvRenderer.ads.map(videoRenderer),
 	};
 }
-// #endregion

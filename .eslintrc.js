@@ -812,6 +812,9 @@ module.exports = {
 							set: {
 								after: true,
 							},
+							let: {
+								after: true,
+							},
 							as: {
 								before: true,
 								after: true,

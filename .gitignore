@@ -3,9 +3,7 @@
 .npmignore
 
 node_modules/
-test/temp
-src/video/download
-docs/download.md
+temp/
 
 *.json
 !package.json
