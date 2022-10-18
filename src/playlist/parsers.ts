@@ -24,29 +24,6 @@ function videoOwnerRenderer({ videoOwnerRenderer }){
 	return data;
 }
 
-function bylineText({ longBylineText, shortBylineText }){// channel/owner
-	const obj = longBylineText || shortBylineText;
-
-	const text = Utils.parseText(obj);
-	if(!obj.runs) return text;
-	let endpoint = obj.runs.find(obj => obj.navigationEndpoint);
-
-	if(!endpoint) return text.toString();
-	endpoint = endpoint.navigationEndpoint.browseEndpoint;
-
-	const data = {
-		name: text.toString(),
-		ID: endpoint.browseId,
-		URL: `https://www.youtube.com/channel/${endpoint.browseId}`,
-	};
-
-	if(endpoint.canonicalBaseUrl){
-		data.canonicalURL = `https://www.youtube.com${endpoint.canonicalBaseUrl}`;
-	}
-
-	return data;
-}
-
 interface playerMicroformatData {
 	isFamilySafe: boolean;
 	isUnlisted: boolean;

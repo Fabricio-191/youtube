@@ -99,26 +99,25 @@ function extractActions(body: string): string[] {
 	return tokens;
 }
 
-export default async function decypher(signature: string): Promise<string> {
-	if(tokens instanceof Promise) await tokens;
+const actions = {
+	r(sig: string[]){ return sig.reverse() },
+	s(sig: string[], pos: number){ return sig.slice(pos) },
+	p(sig: string[], pos: number){ return sig.splice(0, pos) },
+	w(sig: string[], pos: number){
+		const first = sig[0] as string;
+		sig[0] = sig[pos % sig.length] as string;
+		sig[pos] = first;
 
+		return sig;
+	}
+}
+
+export default async function decypher(signature: string): Promise<string> {
 	let sig = signature.split('');
 
-	for(let token of tokens){
+	for(let token of (await tokens)){
 		const pos = ~~token.slice(1);
-		token = token[0];
-
-		if(token === 'r'){ // reverse
-			sig = sig.reverse();
-		}else if(token === 's'){ // slice
-			sig = sig.slice(pos);
-		}else if(token === 'p'){ // splice
-			sig.splice(0, pos);
-		}else if(token === 'w'){ // swap head with a position
-			const first = sig[0];
-			sig[0] = sig[pos % sig.length];
-			sig[pos] = first;
-		}
+		sig = actions[token[0] as string](sig, pos);
 	}
 
 	return sig.join('');

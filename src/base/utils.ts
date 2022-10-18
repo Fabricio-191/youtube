@@ -1,7 +1,7 @@
 import { request as HTTPrequest } from 'http';
 import { request as HTTPSrequest } from 'https';
 import type { Options } from './options';
-import type { Text, ContinuationItem, YTCFG } from './types';
+import type { Text, ContinuationItem, YTCFG, Thumbnail } from './rawTypes';
 
 export function parseText(thing: Text.Any): string {
 	if(!thing) throw new Error('Could not parse text');
@@ -13,6 +13,30 @@ export function parseText(thing: Text.Any): string {
 	}
 
 	throw new Error('Unknown text type');
+}
+
+// eslint-disable-next-line @typescript-eslint/sort-type-union-intersection-members
+type Channel = ({ name: string } | { name: string; ID: string; URL: string }) & {
+	canonicalURL?: string;
+	thumbnails?: Thumbnail[];
+};
+export function parseBylineText(byLineText: Text.Runs): Channel {
+	const text = parseText(byLineText);
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+	const endpoint = byLineText.runs.find(obj => 'navigationEndpoint' in obj)?.navigationEndpoint?.browseEndpoint;
+	if(!endpoint) return { name: text };
+
+	const data: Channel = {
+		name: text,
+		ID: endpoint.browseId,
+		URL: `https://www.youtube.com/channel/${endpoint.browseId}`,
+	};
+
+	if(endpoint.canonicalBaseUrl){
+		data.canonicalURL = `https://www.youtube.com${endpoint.canonicalBaseUrl}`;
+	}
+
+	return data;
 }
 
 export function parseNumber(str: string): number | null {
@@ -52,7 +76,7 @@ export async function getContinuation(
 	continuationItem: ContinuationItem,
 	ytcfg: YTCFG,
 	options: Options
-): Promise<object> {
+): Promise<unknown> {
 	const { continuationEndpoint } = continuationItem.continuationItemRenderer;
 
 	const POST_BODY = {

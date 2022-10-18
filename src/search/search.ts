@@ -1,5 +1,7 @@
 import { parseOptions, type RawOptions } from '../base/options';
 import { fetch, getData, getContinuation } from '../base/utils';
+import type * as Types from './types';
+import { parseSearchResult } from './parsers';
 
 export default async function search(searchString: string, options: RawOptions){
 	if(!searchString){
@@ -17,23 +19,24 @@ export default async function search(searchString: string, options: RawOptions){
 		parsedOptions
 	);
 
-	const data = getData(body, 'initialData');
-	let results = data.contents.twoColumnSearchResultsRenderer.primaryContents.sectionListRenderer.contents;
+	const data = getData(body, 'initialData') as Types.InitialData;
+	const results = data.contents.twoColumnSearchResultsRenderer.primaryContents.sectionListRenderer.contents;
 	if(!results) return null;
 
-	let continuationItem = results.pop();
-	results = results.pop().itemSectionRenderer.contents;
+	let continuationItem = results.find(x => 'continuationItemRenderer' in x) as Types.ContinuationItem;
+	const itemSectionRenderer = results.find(x => 'itemSectionRenderer' in x) as Types.ItemSectionRenderer;
+	if(!itemSectionRenderer) return null;
 
-	if(!results) return null;
+	const searchResults = itemSectionRenderer.itemSectionRenderer.contents;
 
-	if(results.length < parsedOptions.quantity){
-		const ytcfg = getData(body, 'ytcfg');
+	if(searchResults.length < parsedOptions.quantity){
+		const ytcfg = getData(body, 'ytcfg') as Types.YTCFG;
 
-		while(results.length < parsedOptions.quantity){
-			const continuation = await getContinuation(continuationItem, ytcfg, parsedOptions);
-			const items = continuation?.onResponseReceivedCommands?.[0]?.appendContinuationItemsAction.continuationItems;
+		while(searchResults.length < parsedOptions.quantity){
+			const continuation = await getContinuation(continuationItem, ytcfg, parsedOptions) as Types.ContinuationResponse;
+			const items = continuation.onResponseReceivedCommands[0].appendContinuationItemsAction.continuationItems;
 
-			results.push(...items[0].itemSectionRenderer.contents);
+			searchResults.push(...items[0].itemSectionRenderer.contents);
 
 			// eslint-disable-next-line prefer-destructuring
 			continuationItem = items[1];
@@ -44,8 +47,8 @@ export default async function search(searchString: string, options: RawOptions){
 	return {
 		searchQuery: searchString.trim(),
 		estimatedResults: Number(data.estimatedResults),
-		refinements: data.refinements || null,
-		results: results.map(parse).filter(x => x),
+		refinements: data.refinements ?? null,
+		results: searchResults.map(parseSearchResult),
 	};
 }
 

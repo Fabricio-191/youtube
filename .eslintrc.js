@@ -905,7 +905,6 @@ module.exports = {
 					},
 				],
 				'@typescript-eslint/consistent-type-exports': 'error',
-				'@typescript-eslint/explicit-module-boundary-types': 'error',
 				'@typescript-eslint/member-delimiter-style': 'error',
 				'@typescript-eslint/no-non-null-assertion': 'error',
 				'@typescript-eslint/prefer-as-const': 'error',
@@ -913,9 +912,8 @@ module.exports = {
 				'@typescript-eslint/prefer-optional-chain': 'error',
 				'@typescript-eslint/sort-type-union-intersection-members': 'error',
 				'@typescript-eslint/space-infix-ops': 'error',
-				'@typescript-eslint/explicit-function-return-type': ['error', {
-					allowExpressions: true,
-				}],
+				'@typescript-eslint/explicit-module-boundary-types': 'off',
+				'@typescript-eslint/explicit-function-return-type': 'off', // ['error', { allowExpressions: true, }],
 
 				/*
 				'@typescript-eslint/typedef': [

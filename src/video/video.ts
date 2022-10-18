@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import * as utils from '../base/utils';
-import type { InitialData, video } from '../base/types';
+import type { InitialData, video } from '../base/rawTypes';
 import parseStreamingData from './download/formats';
 
 export default async function getVideo(URLorID: string, options: RawOptions){
