@@ -1,7 +1,28 @@
 import { request as HTTPrequest } from 'http';
 import { request as HTTPSrequest } from 'https';
 import type { Options } from './options';
-import type { ContinuationItem, YTCFG } from './types';
+import type { Text, ContinuationItem, YTCFG } from './types';
+
+export function parseText(thing: Text.Any): string {
+	if(!thing) throw new Error('Could not parse text');
+
+	if('simpleText' in thing) return thing.simpleText;
+	if('accessibilityData' in thing) return thing.accessibilityData.label;
+	if('runs' in thing){
+		return thing.runs.map(run => run.text).join('');
+	}
+
+	throw new Error('Unknown text type');
+}
+
+export function parseNumber(str: string): number | null {
+	const result = str.match(/K|M|\.|,|\d/g);
+	if(result === null){
+		throw new Error("Couldn't parse number");
+	}
+
+	return Number(result.join(''));
+}
 
 export function fetch(url: string, options: Options): Promise<string> {
 	const parsedURL = new URL(url);

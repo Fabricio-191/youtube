@@ -20,7 +20,6 @@ const encodingRanks = [
 	'MP4a',
 ];
 
-
 export function parseMime(string: string){
 	let [content, codecs] = string.split('; ');
 	const [type, subtype] = content.split('/');

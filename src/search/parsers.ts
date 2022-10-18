@@ -1,3 +1,4 @@
+import type * as Types from './types';
 import { parseText } from '../base/parsing';
 
 function videoRenderer({ videoRenderer, promotedVideoRenderer }){
@@ -129,4 +130,29 @@ function searchPyvRenderer({ searchPyvRenderer }){
 		type: 'searchAds',
 		items: searchPyvRenderer.ads.map(videoRenderer),
 	};
+}
+
+// eslint-disable-next-line @typescript-eslint/sort-type-union-intersection-members
+type Owner = (
+	{ name: string } |
+	{ name: string; ID: string; URL: string }
+) & { canonicalURL?: string };
+
+function parseBylineText(bylineText: Text.Runs): Owner {// channel/owner
+	const text = parseText(bylineText);
+	const endpoint = bylineText.runs.find(obj => obj.navigationEndpoint)?.navigationEndpoint.browseEndpoint;
+
+	if(!endpoint) return { name: text };
+
+	const data: Owner = {
+		name: text,
+		ID: endpoint.browseId,
+		URL: `https://www.youtube.com/channel/${endpoint.browseId}`,
+	};
+
+	if(endpoint.canonicalBaseUrl){
+		data.canonicalURL = `https://www.youtube.com${endpoint.canonicalBaseUrl}`;
+	}
+
+	return data;
 }

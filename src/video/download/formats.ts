@@ -69,7 +69,6 @@ async function download({ url, sp, s }, expiresAt, asBuffer){
 	}
 	const signature = await decipher(s);
 
-	// @ts-expect-error
 	url = new URL(url);
 	url.searchParams.set(sp || 'signature', signature);
 	url.searchParams.set('ratebypass', 'yes');

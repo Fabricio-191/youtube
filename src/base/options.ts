@@ -76,7 +76,6 @@ export interface Options {
 	language: string;
 	location: string;
 	quantity: number;
-	raw: boolean;
 	requestsOptions: RequestOptions & { body?: string };
 }
 
@@ -84,7 +83,6 @@ export const defaultOptions: Options = {
 	language: 'en',
 	location: 'US',
 	quantity: 1,
-	raw: false,
 	requestsOptions: {},
 };
 
