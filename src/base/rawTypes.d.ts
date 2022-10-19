@@ -77,6 +77,16 @@ export interface YTCFG {
 	INNERTUBE_CONTEXT: unknown;
 }
 
+interface PlayerMicroformatRenderer {
+	playerMicroformatRenderer: {
+		publishDate?: string;
+		uploadDate?: string;
+		isFamilySafe?: boolean;
+		availableCountries?: string[];
+		isUnlisted?: boolean;
+	};
+}
+
 declare namespace Playlist {
 	interface PlaylistVideoRenderer {
 		playlistVideoRenderer: {
@@ -112,16 +122,6 @@ declare namespace Playlist {
 				};
 			};
 			subscriberCountText?: Text.Any;
-		};
-	}
-
-	interface PlayerMicroformatRenderer {
-		playerMicroformatRenderer: {
-			publishDate?: string;
-			uploadDate?: string;
-			isFamilySafe?: boolean;
-			availableCountries?: string[];
-			isUnlisted?: boolean;
 		};
 	}
 
@@ -473,33 +473,7 @@ declare namespace Video {
 			isPrivate: boolean;
 			isLiveContent: boolean;
 		};
-		microformat: {
-			playerMicroformatRenderer: {
-				thumbnail: {
-					thumbnails: Thumbnail[];
-				};
-				embed: {
-					iframeUrl: string;
-					flashUrl: string;
-					width: number;
-					height: number;
-					flashSecureUrl: string;
-				};
-				title: Text.Any;
-				description: Text.Any;
-				lengthSeconds: string;
-				ownerProfileUrl: string;
-				externalChannelId: string;
-				isFamilySafe: boolean;
-				availableCountries: string[];
-				isUnlisted: boolean;
-				viewCount: string;
-				category: string;
-				publishDate: string;
-				ownerChannelName: string;
-				uploadDate: string;
-			};
-		};
+		microformat: PlayerMicroformatRenderer;
 		streamingData: {
 			expiresInSeconds: string;
 			formats: VideoAndAudioFormat[];

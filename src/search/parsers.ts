@@ -171,4 +171,3 @@ export function parseSearchResult(rawData: Types.AnySearchResult) {
 	if('searchPyvRenderer' in rawData) return searchPyvRenderer(rawData);
 	throw new Error('Unknown search result type');
 }
-

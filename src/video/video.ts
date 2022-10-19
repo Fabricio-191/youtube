@@ -1,9 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-import * as utils from '../base/utils';
-import type { InitialData, video } from '../base/rawTypes';
+import { parseOptions, type RawOptions } from '../base/options';
+import { fetch, getData } from '../base/utils';
+import type { Video as Types } from '../base/rawTypes';
+import { parseText, parseNumber, parseBylineText, type Channel } from '../base/parsing';
+import { compactRadioRenderer, compactPlaylistRenderer, compactVideoRenderer, playlistVideo } from './parsers';
 import parseStreamingData from './download/formats';
 
 export default async function getVideo(URLorID: string, options: RawOptions){
@@ -19,34 +18,40 @@ export default async function getVideo(URLorID: string, options: RawOptions){
 	return videoInfo(initialData, playerResponse);
 }
 
-function videoInfo(initialData: InitialData, playerResponse: video.InitialPlayerResponse){
+function videoInfo(initialData: Types.InitialData, playerResponse: Types.InitialPlayerResponse){
 	const data1 = initialData.contents.twoColumnWatchNextResults;
 	const data2 = data1.results.results.contents;
-	const videoPrimaryInfoRenderer = data2.find(x => 'videoPrimaryInfoRenderer' in x) as video.videoPrimaryInfoRenderer;
-	const videoSecondaryInfoRenderer = data2.find(x => 'videoSecondaryInfoRenderer' in x) as video.videoSecondaryInfoRenderer;
+	const videoPrimaryInfoRenderer = data2.find(x => 'videoPrimaryInfoRenderer' in x) as Types.videoPrimaryInfoRenderer;
+	const videoSecondaryInfoRenderer = data2.find(x => 'videoSecondaryInfoRenderer' in x) as Types.videoSecondaryInfoRenderer;
+
+	const microformat = playerResponse.microformat.playerMicroformatRenderer;
 
 	const info = {
 		ID: playerResponse.videoDetails.videoId,
 		URL: `https://www.youtube.com/watch?v=${playerResponse.videoDetails.videoId}`,
-		name: utils.parseText(videoPrimaryInfoRenderer.title),
+		name: parseText(videoPrimaryInfoRenderer.title),
 
 		likes: getLikes(videoPrimaryInfoRenderer),
 
 		views: videoPrimaryInfoRenderer.viewCount,
 		owner: parse(videoSecondaryInfoRenderer.owner),
 
-		description: utils.parseText(videoSecondaryInfoRenderer.description),
+		description: parseText(videoSecondaryInfoRenderer.description),
 		thumbnails: playerResponse.videoDetails.thumbnail,
 		keywords: playerResponse.videoDetails.keywords || null,
-		uploadDateLabel: utils.parseText(videoPrimaryInfoRenderer.dateText),
+		uploadDateLabel: parseText(videoPrimaryInfoRenderer.dateText),
 		isLive: playerResponse.videoDetails.isLiveContent,
-		...parse(playerResponse.microformat),
+		isFamilySafe: microformat.isFamilySafe ?? true,
+		isUnlisted: microformat.isUnlisted ?? false,
+		availableCountries: microformat.availableCountries ?? [],
+		uploadDate: microformat.uploadDate ?? null,
+		publishDate: microformat.publishDate ?? null,
 		duration: playerResponse.videoDetails.lengthSeconds,
 	};
 
 	const endScreen = data1.playerOverlays.playerOverlayRenderer.endScren.watchNextEndScreenRenderer;
 	if(endScreen && endScreen.results) info.endScreen = {
-		title: Utils.parseText(endScreen.title).toString(),
+		title: parseText(endScreen.title).toString(),
 		items: endScreen.results.map(parse),
 	};
 
@@ -61,7 +66,7 @@ function videoInfo(initialData: InitialData, playerResponse: video.InitialPlayer
 
 	if(data.playlist) info.playlist = {
 		ID: data.playlist.playlistId,
-		title: Utils.parseText(data.playlist.titleText).toString(),
+		title: parseText(data.playlist.titleText).toString(),
 		owner: parsers.bylineText(data.playlist),
 		videoQuantity: data.playlist.totalVideos,
 		videos: data.playlist.videos.map(playlistVideo),
@@ -74,23 +79,6 @@ function videoInfo(initialData: InitialData, playerResponse: video.InitialPlayer
 	return info;
 }
 
-function playlistVideo({ playlistPanelVideoRenderer }){
-	return {
-		name: Utils.parseText(playlistPanelVideoRenderer.title).toString(),
-		ID: playlistPanelVideoRenderer.videoId,
-		playlistID: playlistPanelVideoRenderer.navigationEndpoint.watchEndpoint.playlistId,
-		URL: `https://www.youtube.com${playlistPanelVideoRenderer.navigationEndpoint.commandMetadata.webCommandMetadata.url}`,
-
-		duration: new Utils.Duration(playlistPanelVideoRenderer),
-		views: new Utils.Views(playlistPanelVideoRenderer),
-		thumbnails: new Utils.Thumbnails(playlistPanelVideoRenderer.thumbnail),
-
-		publishedDate: Utils.parseText(playlistPanelVideoRenderer.publishedTimeText).toString(),
-
-		owner: parsers.bylineText(playlistPanelVideoRenderer),
-	};
-}
-
 function getLikes(videoPrimaryInfoRenderer){
 	let likeButton = videoPrimaryInfoRenderer.videoActions.menuRenderer.topLevelButtons[0];
 	if(likeButton.segmentedLikeDislikeButtonRenderer){
@@ -98,5 +86,5 @@ function getLikes(videoPrimaryInfoRenderer){
 		likeButton = likeButton.segmentedLikeDislikeButtonRenderer.likeButton;
 	}
 
-	return Utils.extractInt(likeButton.toggleButtonRenderer.defaultText) || 0;
+	return parseNumber(likeButton.toggleButtonRenderer.defaultText) || 0;
 }

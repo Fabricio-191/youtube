@@ -28,16 +28,6 @@ export function parseVideoOwnerRenderer({ videoOwnerRenderer }: Types.VideoOwner
 	return data;
 }
 
-export function parsePlayerMicroformatRenderer({ playerMicroformatRenderer }: Types.PlayerMicroformatRenderer) {
-	return {
-		isFamilySafe: playerMicroformatRenderer.isFamilySafe ?? true,
-		isUnlisted: playerMicroformatRenderer.isUnlisted ?? false,
-		availableCountries: playerMicroformatRenderer.availableCountries ?? [],
-		uploadDate: playerMicroformatRenderer.uploadDate ?? null,
-		publishDate: playerMicroformatRenderer.publishDate ?? null,
-	};
-}
-
 export function parsePlaylistVideo({ playlistVideoRenderer }: Types.PlaylistVideoRenderer) {
 	return {
 		title: parseText(playlistVideoRenderer.title),
