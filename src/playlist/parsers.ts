@@ -1,5 +1,5 @@
 import type { Playlist as Types, Thumbnail } from '../base/rawTypes';
-import { parseBylineText, parseText } from '../base/utils';
+import { parseBylineText, parseNumber, parseText } from '../base/parsing';
 
 interface VideoOwner {
 	name: string;
@@ -7,7 +7,7 @@ interface VideoOwner {
 	URL: string;
 	canonicalURL: string;
 	thumbnails: Thumbnail[];
-	subscribers?: string;
+	subscribers?: number;
 }
 
 export function parseVideoOwnerRenderer({ videoOwnerRenderer }: Types.VideoOwnerRenderer) {
@@ -22,7 +22,7 @@ export function parseVideoOwnerRenderer({ videoOwnerRenderer }: Types.VideoOwner
 	};
 
 	if(videoOwnerRenderer.subscriberCountText){
-		data.subscribers = parseText(videoOwnerRenderer.subscriberCountText);
+		data.subscribers = parseNumber(videoOwnerRenderer.subscriberCountText);
 	}
 
 	return data;
@@ -45,7 +45,7 @@ export function parsePlaylistVideo({ playlistVideoRenderer }: Types.PlaylistVide
 		ID: playlistVideoRenderer.videoId,
 		URL: `https://www.youtube.com/watch?v=${playlistVideoRenderer.videoId}`,
 
-		index: Number(parseText(playlistVideoRenderer.index)),
+		index: parseNumber(playlistVideoRenderer.index),
 
 		thumbnails: playlistVideoRenderer.thumbnail.thumbnails,
 		duration: playlistVideoRenderer.lengthText,

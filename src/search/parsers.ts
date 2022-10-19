@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-shadow */
 import type { Search as Types, Thumbnail } from '../base/rawTypes';
-import { parseText, parseNumber, parseBylineText, type Channel } from '../base/utils';
+import { parseText, parseNumber, parseBylineText, type Channel } from '../base/parsing';
 
 interface VideoData {
 	ID: string;
@@ -39,12 +39,10 @@ function videoRenderer(rawData: Types.PromotedVideoRenderer | Types.VideoRendere
 	}
 
 	if(videoData.channelThumbnailSupportedRenderers){
-		data.owner.thumbnails = new Thumbnails(
-			videoData
-				.channelThumbnailSupportedRenderers
-				.channelThumbnailWithLinkRenderer
-				.thumbnail
-		);
+		data.owner.thumbnails = videoData
+			.channelThumbnailSupportedRenderers
+			.channelThumbnailWithLinkRenderer
+			.thumbnail.thumbnails;
 	}
 
 	if('promotedVideoRenderer' in rawData){
@@ -96,8 +94,19 @@ function playlistRenderer({ playlistRenderer }: Types.PlaylistRenderer){
 	return data;
 }
 
+interface ChannelData {
+	ID: string;
+	URL: string;
+	type: 'channel';
+	name: string;
+	description: string;
+	thumbnails: Thumbnail[];
+	subscribers?: number;
+	videoCount?: number;
+}
+
 function channelRenderer({ channelRenderer }: Types.ChannelRenderer){
-	const data = {
+	const data: ChannelData = {
 		ID: channelRenderer.channelId,
 		URL: `https://www.youtube.com/channel/${channelRenderer.channelId}`,
 		type: 'channel',

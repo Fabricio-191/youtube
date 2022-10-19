@@ -1,6 +1,7 @@
 import { getID, parseOptions, type RawOptions } from '../base/options';
-import { fetch, getData, getContinuation, parseText } from '../base/utils';
+import { fetch, getData, getContinuation } from '../base/utils';
 import type { Playlist as Types, YTCFG, ContinuationItem, Thumbnail } from '../base/rawTypes';
+import { parseText, parseNumber } from '../base/parsing';
 import { parsePlaylistVideo, parseVideoOwnerRenderer } from './parsers';
 
 export default async function getPlaylist(URLorID: string, options: RawOptions): Promise<object | null> {
@@ -44,8 +45,8 @@ interface PlaylistData {
 	ID: string;
 	URL: string;
 	name: string;
-	videoQuantity: string;
-	views: string;
+	videoQuantity: number;
+	views: number;
 	lastUpdate: string;
 	description?: string;
 	isUnlisted: boolean;
@@ -66,8 +67,8 @@ function parsePlaylist(data: Types.InitialData, videos: Types.PlaylistVideoRende
 		URL: `https://www.youtube.com/playlist?list=${ID}`,
 		name: parseText(info.title),
 
-		videoQuantity: parseText(info.stats[0]),
-		views: parseText(info.stats[1]),
+		videoQuantity: parseNumber(info.stats[0]),
+		views: parseNumber(info.stats[1]),
 		lastUpdate: parseText(info.stats[2]),
 
 		isUnlisted: data.microformat.playerMicroformatRenderer.isUnlisted ?? false,
