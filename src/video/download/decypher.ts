@@ -30,7 +30,7 @@ async function updateTokens(): Promise<void> {
 updateTokens();
 setInterval(updateTokens, 10000);
 
-// most of this is from https://www.npmjs.com/package/ytdl-core
+// this is from https://www.npmjs.com/package/ytdl-core
 // #region regex
 const jsVarStr = '[a-zA-Z_\\$][a-zA-Z_0-9]*';
 const jsSingleQuoteStr = '\'[^\'\\\\]*(:?\\\\[\\s\\S][^\'\\\\]*)*\'';

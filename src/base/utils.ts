@@ -15,11 +15,21 @@ export function parseText(thing: Text.Any): string {
 	throw new Error('Unknown text type');
 }
 
+export function parseNumber(str: string): number | null {
+	const result = str.match(/K|M|\.|,|\d/g);
+	if(result === null){
+		throw new Error("Couldn't parse number");
+	}
+
+	return Number(result.join(''));
+}
+
 // eslint-disable-next-line @typescript-eslint/sort-type-union-intersection-members
-type Channel = ({ name: string } | { name: string; ID: string; URL: string }) & {
+export type Channel = ({ name: string } | { name: string; ID: string; URL: string }) & {
 	canonicalURL?: string;
 	thumbnails?: Thumbnail[];
 };
+
 export function parseBylineText(byLineText: Text.Runs): Channel {
 	const text = parseText(byLineText);
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -38,16 +48,6 @@ export function parseBylineText(byLineText: Text.Runs): Channel {
 
 	return data;
 }
-
-export function parseNumber(str: string): number | null {
-	const result = str.match(/K|M|\.|,|\d/g);
-	if(result === null){
-		throw new Error("Couldn't parse number");
-	}
-
-	return Number(result.join(''));
-}
-
 export function fetch(url: string, options: Options): Promise<string> {
 	const parsedURL = new URL(url);
 

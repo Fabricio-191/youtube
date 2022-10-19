@@ -47,7 +47,7 @@ declare namespace Text {
 	type Any = Accessibility | Runs | RunsAndAccesibility | Simple | SimpleAndAccesibility;
 }
 
-interface Thumbnail {
+export interface Thumbnail {
 	url: string;
 	width: number;
 	height: number;
@@ -77,6 +77,135 @@ export interface YTCFG {
 	INNERTUBE_CONTEXT: unknown;
 }
 
+declare namespace Playlist {
+	interface PlaylistVideoRenderer {
+		playlistVideoRenderer: {
+			videoId: string;
+			title: Text.RunsAndAccesibility;
+			lengthText: Text.SimpleAndAccesibility;
+			index: Text.Simple;
+			thumbnail: {
+				thumbnails: Thumbnail[];
+			};
+			shortBylineText: Text.RunsAndAccesibility;
+			longBylineText: Text.RunsAndAccesibility;
+		};
+	}
+
+	interface VideoOwnerRenderer {
+		videoOwnerRenderer: {
+			thumbnail: {
+				thumbnails: Thumbnail[];
+			};
+			title: Text.Runs;
+			navigationEndpoint: {
+				commandMetadata: {
+					webCommandMetadata: {
+						url: string;
+						webPageType: string;
+						apiUrl: string;
+					};
+				};
+				browseEndpoint: {
+					browseId: string;
+					canonicalBaseUrl: string;
+				};
+			};
+			subscriberCountText?: Text.Any;
+		};
+	}
+
+	interface PlayerMicroformatRenderer {
+		playerMicroformatRenderer: {
+			publishDate?: string;
+			uploadDate?: string;
+			isFamilySafe?: boolean;
+			availableCountries?: string[];
+			isUnlisted?: boolean;
+		};
+	}
+
+	interface ContinuationResponse {
+		onResponseReceivedActions: [
+			{
+				appendContinuationItemsAction: {
+					continuationItems: Array<ContinuationItem | PlaylistVideoRenderer>;
+				};
+			}
+		];
+	}
+
+	interface InitialData {
+		microformat: PlayerMicroformatRenderer;
+		contents: {
+			twoColumnBrowseResultsRenderer: {
+				tabs: [
+					{
+						tabRenderer: {
+							content: {
+								sectionListRenderer: {
+									contents: [
+										{
+											itemSectionRenderer: {
+												contents: [
+													{
+														playlistVideoListRenderer: {
+															contents: Array<ContinuationItem | PlaylistVideoRenderer>;
+														};
+													}
+												];
+											};
+										}
+									];
+								};
+							};
+						};
+					}
+				];
+			};
+		};
+		sidebar: {
+			playlistSidebarRenderer: {
+				items: [
+					{
+						playlistSidebarPrimaryInfoRenderer: {
+							title: Text.Runs;
+							navigationEndpoint: {
+								watchEndpoint: {
+									playlistId: string;
+								};
+							};
+							stats: [
+								Text.Runs,
+								Text.Simple,
+								Text.Runs
+							];
+							description: Text.Runs;
+							thumbnailRenderer: {
+								playlistVideoThumbnailRenderer: {
+									thumbnail: {
+										thumbnails: Thumbnail[];
+									};
+								};
+								playlistCustomThumbnailRenderer: {
+									thumbnail: {
+										thumbnails: Thumbnail[];
+									};
+								};
+							};
+						};
+					},
+					{
+						playlistSidebarSecondaryInfoRenderer: {
+							videoOwner: VideoOwnerRenderer;
+						};
+					}
+				];
+			};
+		};
+	}
+}
+
 declare namespace Search {
 	interface VideoRenderer {
 		videoRenderer: {
@@ -95,6 +224,11 @@ declare namespace Search {
 					thumbnail: {
 						thumbnails: Thumbnail[];
 					};
+				};
+			};
+			navigationEndpoint: {
+				urlEndpoint: {
+					url: string;
 				};
 			};
 		};
@@ -121,8 +255,8 @@ declare namespace Search {
 			videoCount: string;
 			navigationEndpoint: navigationEndpoint;
 			viewPlaylistText: Text.Runs;
-			shortBylineText: unknown;
-			longBylineText: unknown;
+			shortBylineText: Text.Runs;
+			longBylineText: Text.Runs;
 			videos: ChildVideoRenderer[];
 			videoCountText: Text.Runs;
 			thumbnailRenderer: {
@@ -132,7 +266,15 @@ declare namespace Search {
 					};
 				};
 			};
+			playlistCustomThumbnailRenderer?: {
+				playlistVideoThumbnailRenderer: {
+					thumbnail: {
+						thumbnails: Thumbnail[];
+					};
+				};
+			};
 		};
+
 	}
 
 	interface SearchPyvRenderer {
@@ -142,19 +284,55 @@ declare namespace Search {
 	}
 
 	interface ShelfRenderer {
-		shelfRenderer: {};
+		shelfRenderer: {
+			title: Text.Simple;
+			content: {
+				verticalListRenderer: {
+					items: VideoRenderer[];
+					collapsedStateButtonText: Text.RunsAndAccesibility;
+				};
+			};
+		};
 	}
 
 	interface RadioRenderer {
-		radioRenderer: {};
+		radioRenderer: {
+			playlistId: string;
+			title: Text.Simple;
+			thumbnail: {
+				thumbnails: Thumbnail[];
+			};
+
+		};
 	}
 
 	interface HorizontalCardListRenderer {
-		horizontalCardListRenderer: {};
+		horizontalCardListRenderer: {
+			header: {
+				richListHeaderRenderer: {
+					title: Text.Simple;
+				};
+			};
+			cards: Array<{
+				searchRefinementCardRenderer: {
+					query: Text.Runs;
+					thumbnail: {
+						thumbnails: Thumbnail[];
+					};
+				};
+			}>;
+		};
 	}
 
 	interface ChannelRenderer {
-		channelRenderer: {};
+		channelRenderer: {
+			channelId: string;
+			title: unknown;
+			descriptionSnippet: unknown;
+			thumbnail: unknown;
+			subscriberCountText?: unknown;
+			videoCountText?: unknown;
+		};
 	}
 
 	type AnySearchResult = ChannelRenderer | HorizontalCardListRenderer | PlaylistRenderer | RadioRenderer | SearchPyvRenderer | ShelfRenderer | VideoRenderer;

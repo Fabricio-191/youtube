@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-shadow */
-import type * as Types from './types';
-import { parseText, parseBylineText } from '../base/utils';
+import type { Search as Types, Thumbnail } from '../base/rawTypes';
+import { parseText, parseNumber, parseBylineText, type Channel } from '../base/utils';
 
 interface VideoData {
 	ID: string;
@@ -8,15 +8,18 @@ interface VideoData {
 	type: 'video';
 	title: string;
 	description: string;
-	thumbnails: Types.Thumbnail[];
+	thumbnails: Thumbnail[];
 	views: Views;
-	owner: Types.Owner;
+	owner: Channel;
+	publishedTime: string;
+	duration?: Duration;
+	AD?: string;
 }
 
 function videoRenderer(rawData: Types.PromotedVideoRenderer | Types.VideoRenderer){
 	const videoData = 'videoRenderer' in rawData ? rawData.videoRenderer : rawData.promotedVideoRenderer;
 
-	const data = {
+	const data: VideoData = {
 		ID: videoData.videoId,
 		URL: `https://www.youtube.com/watch?v=${videoData.videoId}`,
 		type: 'video',
@@ -24,7 +27,7 @@ function videoRenderer(rawData: Types.PromotedVideoRenderer | Types.VideoRendere
 		title: parseText(videoData.title).toString(),
 		description: parseText(videoData.descriptionSnippet),
 
-		thumbnails: videoData.thumbnail,
+		thumbnails: videoData.thumbnail.thumbnails,
 		views: new Views(videoData),
 		owner: parseBylineText(videoData.longBylineText), // shortBylineText
 
@@ -61,8 +64,20 @@ function childVideoRenderer({ childVideoRenderer }: Types.ChildVideoRenderer){
 	};
 }
 
+interface Playlist {
+	ID: string;
+	URL: string;
+	title: string;
+
+	type: 'playlist';
+	videoCount: number;
+	showedVideos: ReturnType<typeof childVideoRenderer>[];
+	owner: Channel;
+	thumbnails?: Thumbnail[];
+}
+
 function playlistRenderer({ playlistRenderer }: Types.PlaylistRenderer){
-	const data = {
+	const data: Playlist = {
 		ID: playlistRenderer.playlistId,
 		URL: `https://www.youtube.com/playlist?list=${playlistRenderer.playlistId}`,
 		title: parseText(playlistRenderer.title),
@@ -71,12 +86,12 @@ function playlistRenderer({ playlistRenderer }: Types.PlaylistRenderer){
 		videoCount: Number(playlistRenderer.videoCount),
 		showedVideos: playlistRenderer.videos.map(childVideoRenderer),
 
-		owner: parseBylineText(playlistRenderer.),
+		owner: parseBylineText(playlistRenderer.longBylineText || playlistRenderer.shortBylineText),
 	};
 
 	const thumbnails = playlistRenderer.thumbnailRenderer.playlistVideoThumbnailRenderer || playlistRenderer.thumbnailRenderer.playlistCustomThumbnailRenderer;
 
-	if(thumbnails) data.thumbnails = new Thumbnails(thumbnails.thumbnail);
+	if(thumbnails) data.thumbnails = thumbnails.thumbnail.thumbnails;
 
 	return data;
 }
@@ -87,33 +102,31 @@ function channelRenderer({ channelRenderer }: Types.ChannelRenderer){
 		URL: `https://www.youtube.com/channel/${channelRenderer.channelId}`,
 		type: 'channel',
 
-		name: parseText(channelRenderer.title).toString(),
+		name: parseText(channelRenderer.title),
 
 		description: parseText(channelRenderer.descriptionSnippet),
 
-		thumbnails: new Thumbnails(channelRenderer.thumbnail),
+		thumbnails: channelRenderer.thumbnail,
 	};
 
 	if(channelRenderer.subscriberCountText){
-		data.subscribers = extractInt(channelRenderer.subscriberCountText);
+		data.subscribers = parseNumber(channelRenderer.subscriberCountText);
 	}
 	if(channelRenderer.videoCountText){
-		data.videoCount = extractInt(channelRenderer.videoCountText);
+		data.videoCount = parseNumber(channelRenderer.videoCountText);
 	}
 
 	return data;
 }
 
 function shelfRenderer({ shelfRenderer }: Types.ShelfRenderer){
-	const {
-		items, collapsedStateButtonText,
-	} = shelfRenderer.content.verticalListRenderer;
+	const { items, collapsedStateButtonText } = shelfRenderer.content.verticalListRenderer;
 
 	return {
-		title: parseText(shelfRenderer.title).toString(),
-		label: parseText(collapsedStateButtonText).toString(),
+		title: parseText(shelfRenderer.title),
+		label: parseText(collapsedStateButtonText),
 		type: 'shelf',
-		items: items.map(parse),
+		items: items.map(videoRenderer),
 	};
 }
 
@@ -126,8 +139,8 @@ function horizontalCardListRenderer({ horizontalCardListRenderer }: Types.Horizo
 		type: 'horizontalCardList',
 		items: horizontalCardListRenderer.cards.map(
 			({ searchRefinementCardRenderer }) => ({
-				title: parseText(searchRefinementCardRenderer.query).toString(),
-				thumbnails: new Thumbnails(searchRefinementCardRenderer.thumbnail),
+				title: parseText(searchRefinementCardRenderer.query),
+				thumbnails: searchRefinementCardRenderer.thumbnail.thumbnails,
 			})
 		),
 	};
@@ -149,5 +162,4 @@ export function parseSearchResult(rawData: Types.AnySearchResult) {
 	if('searchPyvRenderer' in rawData) return searchPyvRenderer(rawData);
 	throw new Error('Unknown search result type');
 }
-
 

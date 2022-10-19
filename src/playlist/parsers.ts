@@ -1,43 +1,55 @@
-function videoOwnerRenderer({ videoOwnerRenderer }){
+import type { Playlist as Types, Thumbnail } from '../base/rawTypes';
+import { parseBylineText, parseText } from '../base/utils';
+
+interface VideoOwner {
+	name: string;
+	ID: string;
+	URL: string;
+	canonicalURL: string;
+	thumbnails: Thumbnail[];
+	subscribers?: string;
+}
+
+export function parseVideoOwnerRenderer({ videoOwnerRenderer }: Types.VideoOwnerRenderer) {
 	const { browseId, canonicalBaseUrl } = videoOwnerRenderer.navigationEndpoint.browseEndpoint;
 
-	const data = {
-		name: Utils.parseText(videoOwnerRenderer.title).toString(),
+	const data: VideoOwner = {
+		name: parseText(videoOwnerRenderer.title).toString(),
 		ID: browseId,
 		URL: `https://www.youtube.com/channel/${browseId}`,
 		canonicalURL: `https://www.youtube.com${canonicalBaseUrl}`,
-		thumbnails: new Utils.Thumbnails(videoOwnerRenderer.thumbnail),
+		thumbnails: videoOwnerRenderer.thumbnail.thumbnails,
 	};
 
 	if(videoOwnerRenderer.subscriberCountText){
-		const normal = Utils.parseText(videoOwnerRenderer.subscriberCountText).toString();
-
-		data.subscribers = {
-			normal,
-			number: Utils.extractInt(normal),
-			toString(){
-				return normal;
-			},
-		};
+		data.subscribers = parseText(videoOwnerRenderer.subscriberCountText);
 	}
 
 	return data;
 }
 
-interface playerMicroformatData {
-	isFamilySafe: boolean;
-	isUnlisted: boolean;
-	availableCountries: string[];
-	uploadDate: Date | null;
-	publishDate: Date | null;
+export function parsePlayerMicroformatRenderer({ playerMicroformatRenderer }: Types.PlayerMicroformatRenderer) {
+	return {
+		isFamilySafe: playerMicroformatRenderer.isFamilySafe ?? true,
+		isUnlisted: playerMicroformatRenderer.isUnlisted ?? false,
+		availableCountries: playerMicroformatRenderer.availableCountries ?? [],
+		uploadDate: playerMicroformatRenderer.uploadDate ?? null,
+		publishDate: playerMicroformatRenderer.publishDate ?? null,
+	};
 }
 
-function playerMicroformatRenderer({ playerMicroformatRenderer }: object): playerMicroformatData {
+export function parsePlaylistVideo({ playlistVideoRenderer }: Types.PlaylistVideoRenderer) {
 	return {
-		isFamilySafe: playerMicroformatRenderer.isFamilySafe || true,
-		isUnlisted: playerMicroformatRenderer.isUnlisted || false,
-		availableCountries: playerMicroformatRenderer.availableCountries || [],
-		uploadDate: playerMicroformatRenderer.uploadDate || null,
-		publishDate: playerMicroformatRenderer.publishDate || null,
+		title: parseText(playlistVideoRenderer.title),
+
+		ID: playlistVideoRenderer.videoId,
+		URL: `https://www.youtube.com/watch?v=${playlistVideoRenderer.videoId}`,
+
+		index: Number(parseText(playlistVideoRenderer.index)),
+
+		thumbnails: playlistVideoRenderer.thumbnail.thumbnails,
+		duration: playlistVideoRenderer.lengthText,
+
+		owner: parseBylineText(playlistVideoRenderer.longBylineText || playlistVideoRenderer.shortBylineText),
 	};
 }

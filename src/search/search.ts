@@ -1,6 +1,6 @@
 import { parseOptions, type RawOptions } from '../base/options';
 import { fetch, getData, getContinuation } from '../base/utils';
-import type * as Types from './types';
+import type { Search as Types, YTCFG, ContinuationItem } from '../base/rawTypes';
 import { parseSearchResult } from './parsers';
 
 export default async function search(searchString: string, options: RawOptions){
@@ -23,14 +23,14 @@ export default async function search(searchString: string, options: RawOptions){
 	const results = data.contents.twoColumnSearchResultsRenderer.primaryContents.sectionListRenderer.contents;
 	if(!results) return null;
 
-	let continuationItem = results.find(x => 'continuationItemRenderer' in x) as Types.ContinuationItem;
+	let continuationItem = results.find(x => 'continuationItemRenderer' in x) as ContinuationItem;
 	const itemSectionRenderer = results.find(x => 'itemSectionRenderer' in x) as Types.ItemSectionRenderer;
 	if(!itemSectionRenderer) return null;
 
 	const searchResults = itemSectionRenderer.itemSectionRenderer.contents;
 
 	if(searchResults.length < parsedOptions.quantity){
-		const ytcfg = getData(body, 'ytcfg') as Types.YTCFG;
+		const ytcfg = getData(body, 'ytcfg') as YTCFG;
 
 		while(searchResults.length < parsedOptions.quantity){
 			const continuation = await getContinuation(continuationItem, ytcfg, parsedOptions) as Types.ContinuationResponse;
@@ -51,5 +51,3 @@ export default async function search(searchString: string, options: RawOptions){
 		results: searchResults.map(parseSearchResult),
 	};
 }
-
-module.exports = search;

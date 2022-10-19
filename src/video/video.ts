@@ -44,13 +44,13 @@ function videoInfo(initialData: InitialData, playerResponse: video.InitialPlayer
 		duration: playerResponse.videoDetails.lengthSeconds,
 	};
 
-	const endScreen = data1.playerOverlays.playerOverlayRenderer.endScren.watchNextEndScreenRenderer
+	const endScreen = data1.playerOverlays.playerOverlayRenderer.endScren.watchNextEndScreenRenderer;
 	if(endScreen && endScreen.results) info.endScreen = {
 		title: Utils.parseText(endScreen.title).toString(),
 		items: endScreen.results.map(parse),
 	};
 
-	const secondaryResults = data1.secondaryResults.secondaryResults.results
+	const secondaryResults = data1.secondaryResults.secondaryResults.results;
 	if(secondaryResults && secondaryResults.length > 1){
 		if(secondaryResults[secondaryResults.length - 1].continuationItemRenderer){
 			secondaryResults.pop();
@@ -92,7 +92,7 @@ function playlistVideo({ playlistPanelVideoRenderer }){
 }
 
 function getLikes(videoPrimaryInfoRenderer){
-	let likeButton = videoPrimaryInfoRenderer.videoActions.menuRenderer.topLevelButtons[0]
+	let likeButton = videoPrimaryInfoRenderer.videoActions.menuRenderer.topLevelButtons[0];
 	if(likeButton.segmentedLikeDislikeButtonRenderer){
 		// eslint-disable-next-line prefer-destructuring
 		likeButton = likeButton.segmentedLikeDislikeButtonRenderer.likeButton;
