@@ -5,7 +5,7 @@ import { parseText, parseNumber, parseBylineText, type Channel } from '../base/p
 import { compactRadioRenderer, compactPlaylistRenderer, compactVideoRenderer, playlistVideo } from './parsers';
 import parseStreamingData from './download/formats';
 
-export default async function getVideo(URLorID: string, options: RawOptions){
+export default async function getVideo(URLorID: string, options: RawOptions = {}){
 	const body = await fetch(
 		`https://www.youtube.com/watch?v=${getID(URLorID, 'video')}`,
 		parseOptions(options, 'video')

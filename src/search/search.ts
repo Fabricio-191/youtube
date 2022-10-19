@@ -3,7 +3,7 @@ import { fetch, getData, getContinuation } from '../base/utils';
 import type { Search as Types, YTCFG, ContinuationItem } from '../base/rawTypes';
 import { parseSearchResult } from './parsers';
 
-export default async function search(searchString: string, options: RawOptions){
+export default async function search(searchString: string, options: RawOptions = {}){
 	if(!searchString){
 		throw new Error("You didn't introduced a search query");
 	}else if(typeof searchString !== 'string'){
@@ -32,7 +32,7 @@ export default async function search(searchString: string, options: RawOptions){
 	if(searchResults.length < parsedOptions.quantity){
 		const ytcfg = getData(body, 'ytcfg') as YTCFG;
 
-		while(searchResults.length < parsedOptions.quantity){
+		do{
 			const continuation = await getContinuation(continuationItem, ytcfg, parsedOptions) as Types.ContinuationResponse;
 			const items = continuation.onResponseReceivedCommands[0].appendContinuationItemsAction.continuationItems;
 
@@ -40,8 +40,7 @@ export default async function search(searchString: string, options: RawOptions){
 
 			// eslint-disable-next-line prefer-destructuring
 			continuationItem = items[1];
-			if(!continuation) break;
-		}
+		}while(searchResults.length < parsedOptions.quantity);
 	}
 
 	return {

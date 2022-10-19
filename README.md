@@ -82,5 +82,6 @@ When you pass options to a method, the options without value, will be taken from
   * Get comments from a video
     
 # Credits
+  * [ytdl-core](https://www.npmjs.com/package/ytdl-core) for the how to download a youtube video
   * [ytpl](https://www.npmjs.com/package/ytpl) for the bases and the how-to
   * [This](https://stackoverflow.com/questions/6903823/regex-for-youtube-id) stack overflow post for the regex to get videos ID's from URL's

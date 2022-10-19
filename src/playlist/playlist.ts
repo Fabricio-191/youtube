@@ -4,7 +4,7 @@ import type { Playlist as Types, YTCFG, ContinuationItem, Thumbnail } from '../b
 import { parseText, parseNumber } from '../base/parsing';
 import { parsePlaylistVideo, parseVideoOwnerRenderer } from './parsers';
 
-export default async function getPlaylist(URLorID: string, options: RawOptions): Promise<object | null> {
+export default async function getPlaylist(URLorID: string, options: RawOptions = {}): Promise<object | null> {
 	const parsedOptions = parseOptions(options, 'playlist');
 
 	const body = await fetch(

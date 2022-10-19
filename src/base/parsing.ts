@@ -16,23 +16,31 @@ export function parseText(thing: Text.Any): string {
 export function parseNumber(str: Text.Any | string): number {
 	if(typeof str !== 'string') str = parseText(str);
 
-	const result = str.match(/K|M|\.|,|\d/g);
+	const result = str.match(/K|M|\.|\d/g);
 	if(result === null){
 		throw new Error("Couldn't parse number");
 	}
 
-	return Number(result.join(''));
+	return Number(result.map(char => {
+		if(char === 'K') return '000';
+		if(char === 'M') return '000000';
+		return char;
+	}).join(''));
 }
 
-// eslint-disable-next-line @typescript-eslint/sort-type-union-intersection-members
-export type Channel = ({ name: string } | { name: string; ID: string; URL: string }) & {
+export type Channel = {
+	name: string;
+	ID: string;
+	URL: string;
 	canonicalURL?: string;
+	thumbnails?: Thumbnail[];
+} | {
+	name: string;
 	thumbnails?: Thumbnail[];
 };
 
 export function parseBylineText(byLineText: Text.Runs): Channel {
 	const text = parseText(byLineText);
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 	const endpoint = byLineText.runs.find(obj => 'navigationEndpoint' in obj)?.navigationEndpoint?.browseEndpoint;
 	if(!endpoint) return { name: text };
 
