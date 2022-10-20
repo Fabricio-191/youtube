@@ -2,7 +2,7 @@ import { getID, parseOptions, type RawOptions } from './base/options';
 import { fetch, getData, getContinuation } from './base/utils';
 import type { Playlist, Video, Search, YTCFG, ContinuationItem } from './base/rawTypes';
 
-export async function getVideo(URLorID: string, options: RawOptions){
+export async function getVideo(URLorID: string, options: RawOptions = {}){
 	const body = await fetch(
 		`https://www.youtube.com/watch?v=${getID(URLorID, 'video')}`,
 		parseOptions(options, 'video')
@@ -15,7 +15,7 @@ export async function getVideo(URLorID: string, options: RawOptions){
 	};
 }
 
-export async function getPlaylist(URLorID: string, options: RawOptions): Promise<object | null> {
+export async function getPlaylist(URLorID: string, options: RawOptions = {}): Promise<object | null> {
 	const parsedOptions = parseOptions(options, 'playlist');
 
 	const body = await fetch(
@@ -53,7 +53,7 @@ export async function getPlaylist(URLorID: string, options: RawOptions): Promise
 	};
 }
 
-export async function search(searchString: string, options: RawOptions){
+export async function search(searchString: string, options: RawOptions = {}){
 	if(!searchString){
 		throw new Error("You didn't introduced a search query");
 	}else if(typeof searchString !== 'string'){

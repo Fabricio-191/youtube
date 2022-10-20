@@ -73,6 +73,7 @@ export interface ContinuationItem {
 }
 
 export interface YTCFG {
+	PLAYER_JS_URL: string;
 	INNERTUBE_API_KEY: string;
 	INNERTUBE_CONTEXT: unknown;
 }
@@ -455,6 +456,13 @@ declare namespace Video {
 	}
 
 	type VideoAndAudioFormat = AudioFormat & VideoFormat;
+	type AnyFormat = AudioFormat | VideoAndAudioFormat | VideoFormat;
+
+	interface StreamingData{
+		expiresInSeconds: string;
+		formats: VideoAndAudioFormat[];
+		adaptiveFormats: AnyFormat[];
+	}
 
 	interface InitialPlayerResponse {
 		videoDetails: {
@@ -474,10 +482,6 @@ declare namespace Video {
 			isLiveContent: boolean;
 		};
 		microformat: PlayerMicroformatRenderer;
-		streamingData: {
-			expiresInSeconds: string;
-			formats: VideoAndAudioFormat[];
-			adaptiveFormats: Array<AudioFormat | VideoAndAudioFormat | VideoFormat>;
-		};
+		streamingData: StreamingData;
 	}
 }

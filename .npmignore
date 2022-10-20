@@ -5,6 +5,7 @@
 node_modules/
 temp/
 
+.env
 *.json
 !package.json
 !test/results.json

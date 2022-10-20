@@ -856,6 +856,7 @@ module.exports = {
 					'error',
 					{
 						builtinGlobals: true,
+						allow: ['fetch'],
 					},
 				],
 				'no-throw-literal': 'off',

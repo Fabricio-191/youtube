@@ -6,14 +6,11 @@ import type { ContinuationItem, YTCFG } from './rawTypes';
 export function fetch(url: string, options: Options): Promise<string> {
 	const parsedURL = new URL(url);
 
-	if(options.language && options.location){
-		parsedURL.searchParams.set('hl', options.language);
-		parsedURL.searchParams.set('gl', options.location);
-	}
+	parsedURL.searchParams.set('hl', options.language);
+	parsedURL.searchParams.set('gl', options.location);
 
 	const lib = parsedURL.protocol === 'htts:' ? HTTPrequest : HTTPSrequest;
 	return new Promise((res, rej) => {
-		// https://nodejs.org/api/http.html#http_http_request_options_callback
 		lib(parsedURL, options.requestsOptions, response => {
 			const chunks: Buffer[] = [];
 
@@ -44,14 +41,10 @@ export async function getContinuation(
 
 	const optionsCopy = JSON.parse(JSON.stringify(options)) as Options;
 
-	optionsCopy.requestsOptions = Object.assign(
-		{}, options.requestsOptions, {
-			method: 'POST',
-			body: JSON.stringify(POST_BODY),
-		}
-	);
+	optionsCopy.requestsOptions.method = 'POST';
+	optionsCopy.requestsOptions.body = JSON.stringify(POST_BODY);
 
-	return JSON.parse(await fetch(url, optionsCopy)) as object;
+	return JSON.parse(await fetch(url, optionsCopy)) as unknown;
 }
 
 const starts = {
