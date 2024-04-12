@@ -86,5 +86,5 @@ function getLikes(videoPrimaryInfoRenderer){
 		likeButton = likeButton.segmentedLikeDislikeButtonRenderer.likeButton;
 	}
 
-	return parseNumber(likeButton.toggleButtonRenderer.defaultText) || 0;
+	return parseNumber(likeButton?.segmentedLikeDislikeButtonViewModel?.likeButtonViewModel?.likeButtonViewModel?.toggleButtonViewModel?.toggleButtonViewModel?.defaultButtonViewModel?.buttonViewModel?.title) || 0;
 }
